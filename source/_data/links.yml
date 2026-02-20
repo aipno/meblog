@@ -1,0 +1,16 @@
+- links_category: 网站
+  has_thumbnail: true
+  list:
+    - name: 江苏财会职业学院
+      link: https://www.jscfa.edu.cn/
+      description: 在读学校
+      avatar: /images/jscfa_favicon.ico
+      thumbnail: /images/jscfa_thumbnail.jpg
+
+- links_category: 友人
+  has_thumbnail: false
+  list:
+    - name: aipno
+      link: https://me.iswxl.cn
+      description: 没有友链？那我就展示一波原地tp吧。
+      avatar: /images/touxiang.jpg

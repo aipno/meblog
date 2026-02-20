@@ -1,0 +1,127 @@
+# Hexo 配置
+## 文档: https://hexo.io/docs/configuration.html
+## 源码: https://github.com/hexojs/hexo/
+
+# 站点
+title: aipno's /
+subtitle: ''
+description: ''
+keywords: 网络安全
+author: aipno
+language: zh-CN
+timezone: 'Asia/Shanghai'
+
+# URL
+## 在此设置站点 URL。例如，如果使用 GitHub Page，将 url 设置为 'https://username.github.io/project'
+url: https://me.iswxl.cn
+permalink: :year/:month/:day/:title/
+permalink_defaults:
+pretty_urls:
+  trailing_index: false # 将其设置为 false 以从固定链接中移除尾随的 'index.html'
+  trailing_html: false # 将其设置为 false 以从固定链接中移除尾随的 '.html'
+
+# 目录
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+
+# 写作
+new_post_name: :title.md # 新文章的文件名
+default_layout: post
+titlecase: false # 将标题转换为标题大小写
+external_link:
+  enable: true # 在新标签页打开外部链接
+  field: site # 应用于整个站点
+  exclude: ''
+filename_case: 0
+render_drafts: false
+post_asset_folder: false
+relative_link: false
+future: true
+syntax_highlighter: highlight.js
+highlight:
+  line_number: true
+  auto_detect: false
+  tab_replace: ''
+  wrap: true
+  hljs: true
+prismjs:
+  preprocess: true
+  line_number: true
+  tab_replace: ''
+
+# 主页设置
+# path: 博客索引页的根路径。 (默认 = '')
+# per_page: 每页显示的文章数。 (0 = 禁用分页)
+# order_by: 文章排序。 (默认按日期降序)
+index_generator:
+  path: ''
+  per_page: 10
+  order_by: -date
+
+# 分类与标签
+default_category: uncategorized
+category_map:
+tag_map:
+
+# 元数据元素
+## https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta
+
+# 日期/时间 格式
+## Hexo 使用 Moment.js 解析和显示日期
+## 你可以按照以下定义自定义日期格式
+## http://momentjs.com/docs/#/displaying/format/
+## updated_option 支持 'mtime', 'date', 'empty'
+date_format: YYYY-MM-DD
+time_format: HH:mm:ss
+## updated_option 支持 'mtime', 'date', 'empty'
+updated_option: 'mtime'
+
+# 分页
+## 将 per_page 设置为 0 以禁用分页
+per_page: 10
+pagination_dir: page
+
+# 包含/排除 文件
+## include:/exclude: 选项仅适用于 'source/' 文件夹
+include:
+exclude:
+ignore:
+
+# 扩展
+## 插件: https://hexo.io/plugins/
+theme: redefine
+
+# 部署
+## 文档: https://hexo.io/docs/one-command-deployment
+deploy:
+  type: 'url_submission'
+
+url_submission:
+   enable: false
+   type: 'latest' # latest or all( latest: modified pages; all: posts & pages)
+   channels: # included channels are `baidu`, `google`, `bing`, `shenma`
+     baidu:
+       token: "" # Baidu Private Token
+       count: 10 # Optional
+     bing:
+       token: "" # Bing Access Token
+       count: 10 # Optional
+     google:
+       key: "google.json" # Google key path (e.g. `google_key.json` or `data/google_key.json`)
+       count: 10 # Optional
+     shenma:
+       count: 10 # Optional
+       user: "" # Username used when registering
+       token: "" # ShenMa Private Key
+   prefix: ['/post', '/wiki'] # URL prefix
+   ignore: ["/post/a*", "/post/a?c"] # URL addresses that do not need to be submitted (wildcards are supported)
+   count: 10 # Submit limit
+   urls_path: 'submit_url.txt' # URL list file path
+   sitemap: '' 
+   # Sitemap path(e.g. the url is like this https://abnerwei.com/baidusitemap.xml, you can fill in `baidusitemap.xml`)
