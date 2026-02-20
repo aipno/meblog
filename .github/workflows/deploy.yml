@@ -1,0 +1,42 @@
+name: Deploy Hexo Blog to My Server
+
+# 触发条件：当代码推送到 main 分支时运行
+on:
+  push:
+    branches:
+      - main # 如果你的默认分支是 master，请改为 master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest # 使用最新版的 Ubuntu 作为运行环境
+
+    steps:
+      # 步骤1：拉取你的博客源代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 步骤2：设置 Node.js 环境
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24" # 建议和你本地 Node.js 版本保持一致
+
+      # 步骤3：安装项目依赖
+      - name: Install dependencies
+        run: npm install
+
+      # 步骤4：使用 Hexo 生成静态文件
+      - name: Build Hexo
+        run: |
+          npm run build  # 这条命令通常会执行 hexo clean && hexo generate，请确保你的 package.json 中有这个 script
+
+      # 步骤5：通过 SSH 部署到你的服务器
+      - name: Deploy to Server
+        uses: easingthemes/ssh-deploy@main # 使用第三方 Action 简化 SSH 部署
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }} # 从 GitHub Secrets 中读取私钥
+          REMOTE_HOST: ${{ secrets.SERVER_HOST }} # 从 GitHub Secrets 中读取服务器地址
+          REMOTE_USER: ${{ secrets.SERVER_USER }} # 从 GitHub Secrets 中读取用户名
+          SOURCE: "public/" # 要上传的本地文件夹，即 Hexo 生成的静态文件目录
+          TARGET: "/opt/1panel/1panel/www/sites/me.iswxl.cn/index" # 服务器上的目标路径，请替换为你自己的路径
+          ARGS: "-avz --delete" # rsync 参数：归档、压缩、删除目标目录中源目录没有的文件
