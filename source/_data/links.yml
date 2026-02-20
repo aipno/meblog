@@ -1,10 +1,10 @@
 - links_category: 网站
   has_thumbnail: true
   list:
-    - name: 江苏财会职业学院
+    - name: 江苏财会职业学院(信息工程学院)
       link: https://www.jscfa.edu.cn/
       description: 在读学校
-      avatar: /images/jscfa_favicon.ico
+      avatar: /images/jscfa_favicon.jpg
       thumbnail: /images/jscfa_thumbnail.jpg
 
 - links_category: 友人
