@@ -46,3 +46,52 @@ $home-banner-icon-size = 1.6rem
 
       +redefine-tablet()
         font-size: $title-font-size * 0.9
+
+.bg-info-container
+  cursor pointer
+  position relative
+  display inline-block
+
+  .icon
+    transform scale(1)
+    transition transform 0.3s ease-in-out, color 0.2s ease-in-out
+    
+  &:hover
+    .icon
+      transform scale(1.1)
+      color var(--primary-color)
+
+    .bg-info-popup
+      opacity 1
+      transform translateY(0) scale(1)
+      pointer-events auto
+
+.bg-info-popup
+  position absolute
+  bottom 180%
+  right 0
+  margin-bottom 14px
+  width 256px
+  background-color var(--background-color-transparent-40)
+  border 1px solid var(--border-color)
+  border-radius $redefine-border-radius-large
+  padding 16px
+  backdrop-filter blur(10px)
+  box-shadow var(--redefine-box-shadow)
+  opacity 0
+  transform translateY(16px) scale(0.95)
+  pointer-events none
+  transition opacity 0.4s ease-in-out, transform 0.4s ease-in-out
+  z-index $z-index-5
+
+  .title
+    font-weight bold
+    text-align center
+    margin-bottom 8px
+    color var(--first-text-color)
+
+  .desc
+    font-size 0.9rem
+    text-align center
+    color var(--second-text-color)
+    line-height 1.4

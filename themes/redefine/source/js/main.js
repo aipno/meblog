@@ -7,6 +7,7 @@ import initScrollTopBottom from "./tools/scrollTopBottom.js";
 import initLocalSearch from "./tools/localSearch.js";
 import initCopyCode from "./tools/codeBlock.js";
 import initBookmarkNav from "./layouts/bookmarkNav.js";
+import initBgInfo from "./layouts/bgInfo.js";
 
 export const main = {
   themeInfo: {
@@ -49,6 +50,7 @@ export const main = {
     initModeToggle();
     initScrollTopBottom();
     initBookmarkNav();
+    initBgInfo();
     
     if (
       theme.home_banner.subtitle.text.length !== 0 &&

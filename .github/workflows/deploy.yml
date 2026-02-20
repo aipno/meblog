@@ -33,7 +33,7 @@ jobs:
       # 步骤5：通过 SSH 部署到你的服务器
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@main # 使用第三方 Action 简化 SSH 部署
-        env:
+        with:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }} # 从 GitHub Secrets 中读取私钥
           REMOTE_HOST: ${{ secrets.SERVER_HOST }} # 从 GitHub Secrets 中读取服务器地址
           REMOTE_USER: ${{ secrets.SERVER_USER }} # 从 GitHub Secrets 中读取用户名

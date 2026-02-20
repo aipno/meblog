@@ -139,6 +139,30 @@
                             <% } %>
                         <% } %>
                     <% } %>
+                    <% if (theme.home_banner.bg_info && theme.home_banner.bg_info.enable) { %>
+                        <div class="social-links-divider vertical-separator w-[1px] h-4 bg-third-text-color mx-0.5"></div>
+                        <span class="bg-info-container" id="bg-info-container">
+                             <div class="text-gray-600 dark:text-gray-300">
+                                <i class="<%= theme.home_banner.bg_info.icon %> fa-fw fa-lg icon"></i>
+                                <div class="bg-info-popup">
+                                    <div class="title" id="bg-info-title">
+                                        <% if (theme.home_banner.bg_info.mode !== 'api') { %>
+                                            <%= theme.home_banner.bg_info.static.title %>
+                                        <% } else { %>
+                                            Loading...
+                                        <% } %>
+                                    </div>
+                                    <div class="desc" id="bg-info-desc">
+                                        <% if (theme.home_banner.bg_info.mode !== 'api') { %>
+                                            <%= theme.home_banner.bg_info.static.desc %>
+                                        <% } else { %>
+                                            Loading...
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </span>
+                    <% } %>
                 </div>
             </div>
         <% } %>

@@ -180,6 +180,22 @@ home_banner:
     qrs:
       weixin: # 你的微信二维码图片URL
       # ...... # 你可以添加更多
+  # 背景图片信息
+  bg_info:
+    enable: true
+    icon: "fa-solid fa-image"
+    # 模式：static (静态配置) 或 api (从API获取)
+    mode: "api" 
+    # 静态模式配置
+    static:
+      title: "Background Info"
+      desc: "This is a background image"
+    # API模式配置
+    api:
+      url: "https://bing.api.iswxl.cn/copyright.php" # API地址
+      response_fields:
+        title: "title" # 响应JSON中对应的标题字段名
+        desc: "copyright"  # 响应JSON中对应的描述字段名
 # 首页横幅 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
 
 # 导航栏 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
