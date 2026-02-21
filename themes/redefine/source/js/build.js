@@ -97,11 +97,11 @@ async function minifyJS() {
     await ensureDirectoryExists(BUILD_DIR);
 
     // Get lib files to copy
-    const libFiles = await glob(`${SOURCE_DIR.replace(/\\/g, '/')}/**/libs/**/*.js`);
+    const libFiles = await glob(`${SOURCE_DIR}/libs/**/*.js`);
     
     // Get JS files to minify (excluding libs and other ignored patterns)
-    const files = await glob(`${SOURCE_DIR.replace(/\\/g, '/')}/**/*.js`, {
-      ignore: IGNORE_PATTERNS.map(p => p.replace(/\\/g, '/')),
+    const files = await glob(`${SOURCE_DIR}/**/*.js`, {
+      ignore: IGNORE_PATTERNS,
     });
 
     if (files.length === 0 && libFiles.length === 0) {

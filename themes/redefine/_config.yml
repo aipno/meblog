@@ -6,6 +6,7 @@
 # 演示：https://redefine.ohevan.com
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
 
+
 # 基本信息 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/basic/info
 info:
@@ -19,6 +20,7 @@ info:
   url: https://me.iswxl.cn
 # 基本信息 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
 
+
 # 图片配置 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/basic/defaults
 defaults:
@@ -29,6 +31,7 @@ defaults:
   # 网站头像
   avatar: /images/touxiang.jpg
 # 图片配置 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
+
 
 # 颜色配置 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/basic/colors
@@ -41,26 +44,27 @@ colors:
   default_mode: light # light, dark
 # 颜色配置 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
 
+
 # 网站自定义 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/basic/global
 global:
   # 自定义全局字体
   fonts:
     # 中文字体
-    chinese:
+    chinese: 
       enable: false # 是否启用自定义中文字体
-      family: # 字体系列
-      url: # 字体CSS文件URL
+      family:  # 字体系列
+      url:  # 字体CSS文件URL
     # 英文字体
-    english:
+    english: 
       enable: false # 是否启用自定义英文字体
-      family: # 字体系列
-      url: # 字体CSS文件URL
+      family:  # 字体系列
+      url:  # 字体CSS文件URL
     # 自定义标题字体（导航栏、侧边栏）
     title:
       enable: false # 是否启用自定义标题字体
-      family: # 字体系列
-      url: # 字体CSS文件URL
+      family:  # 字体系列
+      url:  # 字体CSS文件URL
   # 内容最大宽度
   content_max_width: 1000px
   # 侧边栏宽度
@@ -95,13 +99,14 @@ global:
   # 是否启用开放图谱
   open_graph:
     enable: true
-    image: /images/redefine-og.webp # 默认og:image
+    image: /images/redefine-og.webp  # 默认og:image
     description: Hexo Theme Redefine, Redefine Your Hexo Journey.
   # Google Analytics
   google_analytics:
     enable: false # 是否启用Google Analytics
-    id: # Google Analytics测量ID
+    id:  # Google Analytics测量ID
 # 网站自定义 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
+    
 
 # FONTAWESOME >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/basic/fontawesome
@@ -116,6 +121,7 @@ fontawesome: # Pro v6.2.1
   sharp_solid: false
 # FONTAWESOME <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
 
+
 # 首页横幅 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/home/home_banner
 home_banner:
@@ -124,7 +130,7 @@ home_banner:
   # 首页横幅样式
   style: fixed # static 或 fixed
   # 首页横幅图片
-  image:
+  image: 
     light: https://bing.api.iswxl.cn/4k.php
     dark: https://bing.api.iswxl.cn/4k.php
   # 首页横幅标题
@@ -132,7 +138,7 @@ home_banner:
   # 首页横幅副标题
   subtitle:
     text: ["hello world"] # 副标题文本，数组
-    hitokoto: # 一言配置
+    hitokoto:  # 一言配置
       enable: true # 是否启用一言
       show_author: true # 是否显示作者
       api: https://v1.hitokoto.cn # API URL，可以添加类型，参见 https://developer.hitokoto.cn/sentence/#%E5%8F%A5%E5%AD%90%E7%B1%BB%E5%9E%8B-%E5%8F%82%E6%95%B0
@@ -143,11 +149,11 @@ home_banner:
     loop: true # 是否循环
     smart_backspace: true # 是否智能回退
   # 首页横幅文本颜色
-  text_color:
+  text_color: 
     light: "#fff" # 浅色模式
     dark: "#d1d1b6" # 深色模式
   # 文本的特定样式
-  text_style:
+  text_style: 
     # 标题字体大小
     title_size: 2.8rem
     # 副标题字体大小
@@ -155,11 +161,11 @@ home_banner:
     # 标题和副标题之间的行高
     line_height: 1.2
   # 首页横幅自定义字体
-  custom_font:
+  custom_font: 
     # 是否启用自定义字体
     enable: false
     # 字体系列
-    family:
+    family: 
     # 字体CSS文件URL
     url:
   # 首页横幅社交链接
@@ -170,17 +176,17 @@ home_banner:
     style: default # default, reverse, center
     # 社交链接
     links:
-      github: https://github.com/aipno
-      instagram: # 你的Instagram URL
-      zhihu: # 你的知乎URL
-      twitter: # 你的twitter URL
-      email: aipno@iswxl.cn
-      # ...... # 你可以添加更多
+      - icon: github
+        url: https://github.com/aipno
+      - icon: email
+        url: aipno@iswxl.cn
     # 带二维码抽屉的社交链接
     qrs:
-      weixin: # 你的微信二维码图片URL
-      # ...... # 你可以添加更多
-  # 背景图片信息
+      - icon: weixin
+        qr:
+      - icon: /images/custom-icon.svg
+        qr:
+  # 背景信息配置
   bg_info:
     enable: true
     icon: "fa-solid fa-image"
@@ -198,6 +204,7 @@ home_banner:
         desc: "copyright"  # 响应JSON中对应的描述字段名
 # 首页横幅 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
 
+
 # 导航栏 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/home/navbar
 navbar:
@@ -206,7 +213,7 @@ navbar:
   # 导航栏背景颜色
   color:
     left: "#f78736" #左侧
-    right: "#367df7" #右侧
+    right: "#367df7"  #右侧
     transparency: 35 #百分比 (10-99)
   # 导航栏宽度（通常无需修改）
   width:
@@ -241,6 +248,7 @@ navbar:
     preload: true
 # 导航栏 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
 
+
 # 首页文章设置 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/home/home
 home:
@@ -252,14 +260,14 @@ home:
     announcement: # 公告文本
     show_on_mobile: true # 是否在移动设备菜单中显示侧边栏导航
     links:
-      # Archives:
-      #   path: /archives
+      # Archives: 
+      #   path: /archives 
       #   icon: fa-regular fa-archive # 可以为空
-      # Tags:
-      #   path: /tags
+      # Tags: 
+      #   path: /tags 
       #   icon: fa-regular fa-tags # 可以为空
-      # Categories:
-      #   path: /categories
+      # Categories: 
+      #   path: /categories 
       #   icon: fa-regular fa-folder # 可以为空
       # ...... # 你可以添加更多
   # 文章日期格式
@@ -268,13 +276,14 @@ home:
   excerpt_length: 200 # 文章摘要最大长度
   # 文章分类可见性
   categories:
-    enable: true # 是否启用
+    enable: true  # 是否启用
     limit: 3 # 显示的最大分类数
   # 文章标签可见性
   tags:
-    enable: true # 是否启用
-    limit: 3 # 显示的最大标签数
+    enable: true  # 是否启用
+    limit: 3  # 显示的最大标签数
 # 首页文章设置 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
+
 
 # 文章 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/posts/articles
@@ -302,9 +311,9 @@ articles:
     count: true # 是否显示字数统计
     min2read: true # 是否显示阅读时间
   # 作者标签
-  author_label:
+  author_label: 
     enable: true # 是否启用
-    auto: true # 是否自动添加作者标签，例如Lv1, Lv2, Lv3...
+    auto: false # 是否自动添加作者标签，例如Lv1, Lv2, Lv3...
     list: []
   # 代码块设置
   code_block:
@@ -348,13 +357,14 @@ articles:
     skip_dirs: []
 # 文章 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
 
+
 # 评论 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/posts/comment
 comment:
   # 是否启用评论
   enable: false
   # 评论系统
-  system: waline # waline, gitalk, twikoo, giscus
+  system: waline # waline, gitalk, twikoo, giscus, utterances, artalk
   # 系统配置
   config:
     # Waline评论系统。参见 https://waline.js.org/
@@ -390,7 +400,20 @@ comment:
       lang: en # Giscus语言。例如 en, zh-CN, zh-TW
       input_position: bottom # 将评论框放置在评论上方/下方。例如 top, bottom
       loading: lazy # 延迟加载评论
+    # Artalk评论系统。参见 https://artalk.js.org/
+    artalk:
+      server: # Artalk服务器URL。例如 https://artalk.example.com
+      site: # Artalk后台显示的站点名称（应与服务器端站点配置匹配）
+    # Utterances评论系统。参见 https://utteranc.es/
+    utterances:
+      repo: # GitHub仓库名称 例如 owner/repo（必须启用Issues）
+      issue_term: pathname # pathname, url, title, og:title（建议：单页模式使用pathname）
+      issue_number: # 使用特定的issue编号代替issue_term
+      label: # 创建的issue的可选标签
+      theme_light: github-light # 浅色主题
+      theme_dark: github-dark # 深色主题
 # 评论 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
+
 
 # 页脚 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/footer
@@ -420,13 +443,14 @@ footer:
     url: https://icp.gov.moe/?keyword=20250716
 # 页脚 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
 
+
 # 注入 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/inject
 inject:
   # 是否启用注入
   enable: true
   # 注入自定义head html代码
-  head:
+  head: 
     - <script defer src="https://analyze.iswxl.cn/script.js" data-website-id="669d8db9-b0b5-48b3-a171-7cad9060f158"></script>
     -
   # 注入自定义footer html代码
@@ -434,6 +458,7 @@ inject:
     -
     -
 # 注入 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
+
 
 # 插件 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/plugins
@@ -451,16 +476,15 @@ plugins:
         url: /music/如果-菠萝赛东&Bo Peep/菠萝赛东,Bo Peep - 如果.mp3
         cover: /music/如果-菠萝赛东&Bo Peep/cover.png
         lrc: /music/如果-菠萝赛东&Bo Peep/菠萝赛东,Bo Peep - 如果.lrc
-  #      - name: # 音频名称
-  #        artist: # 音频艺术家
-  #        url: # 音频URL
-  #        cover: # 音频封面URL
-  #        lrc: # 音频歌词
   # Mermaid JS。需要hexo-filter-mermaid-diagrams（npm i hexo-filter-mermaid-diagrams）。参见 https://mermaid.js.org/
   mermaid:
     enable: false # 是否启用mermaid
     version: "11.4.1" # 默认 v11.4.1
+    theme:
+      light: "default"
+      dark: "dark"
 # 插件 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
+
 
 # 页面模板 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/page_templates
@@ -469,7 +493,12 @@ page_templates:
   friends_column: 2
   # 标签页面样式
   tags_style: blur # blur, cloud
+  # 瀑布流页面批次大小
+  masonry:
+    batch_size: 12
+    initial_batch_size: 24
 # 页面模板 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
+
 
 # CDN >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
 # 文档：https://redefine-docs.ohevan.com/cdn
@@ -481,7 +510,7 @@ cdn:
   # 自定义CDN URL
   # 格式示例：https://cdn.custom.com/hexo-theme-redefine/${version}/source/${path}
   # ${path}必须指向主题"source"文件夹的根目录
-  custom_url:
+  custom_url: 
 # CDN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 结束
 
 # 开发者模式 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 开始
