@@ -131,8 +131,8 @@ home_banner:
   style: fixed # static 或 fixed
   # 首页横幅图片
   image: 
-    light: https://bing.api.iswxl.cn/4k.php
-    dark: https://bing.api.iswxl.cn/4k.php
+    light: https://bing.api.iswxl.cn/
+    dark: https://bing.api.iswxl.cn/
   # 首页横幅标题
   title: aipno's /
   # 首页横幅副标题

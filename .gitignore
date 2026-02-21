@@ -7,5 +7,4 @@ public/
 .deploy*/
 _multiconfig.yml
 themes/redefine/.git/
-themes/redefine_old/
 .gitignore
