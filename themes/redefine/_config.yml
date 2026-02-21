@@ -125,8 +125,8 @@ home_banner:
   style: fixed # static 或 fixed
   # 首页横幅图片
   image:
-    light: https://bing.api.iswxl.cn
-    dark: https://bing.api.iswxl.cn
+    light: https://bing.api.iswxl.cn/4k.php
+    dark: https://bing.api.iswxl.cn/4k.php
   # 首页横幅标题
   title: aipno's /
   # 首页横幅副标题
@@ -443,20 +443,19 @@ plugins:
     enable: false # 是否启用
   # Aplayer。参见 https://github.com/DIYgod/APlayer
   aplayer:
-    enable: false # 是否启用
+    enable: true # 是否启用
     type: fixed # fixed, mini
     audios:
-      - name: # 音频名称
-        artist: # 音频艺术家
-        url: # 音频URL
-        cover: # 音频封面URL
-        lrc: # 音频歌词
+      - name: 如果
+        artist: 菠萝赛东/Bo Peep
+        url: /music/如果-菠萝赛东&Bo Peep/菠萝赛东,Bo Peep - 如果.mp3
+        cover: /music/如果-菠萝赛东&Bo Peep/cover.png
+        lrc: /music/如果-菠萝赛东&Bo Peep/菠萝赛东,Bo Peep - 如果.lrc
   #      - name: # 音频名称
   #        artist: # 音频艺术家
   #        url: # 音频URL
   #        cover: # 音频封面URL
   #        lrc: # 音频歌词
-  # .... 你可以在这里添加更多音频
   # Mermaid JS。需要hexo-filter-mermaid-diagrams（npm i hexo-filter-mermaid-diagrams）。参见 https://mermaid.js.org/
   mermaid:
     enable: false # 是否启用mermaid
