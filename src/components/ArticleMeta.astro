@@ -1,0 +1,149 @@
+---
+import FormattedDate from "../components/FormattedDate.astro";
+
+interface Props {
+	pubDate: Date;
+	updatedDate?: Date;
+	tags?: string[];
+	categories?: string[];
+}
+
+const { pubDate, updatedDate, tags, categories } = Astro.props;
+---
+
+<div class="article-meta">
+	<style is:global>
+		.article-meta {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 1.5rem;
+			align-items: center;
+		}
+
+		.meta-item {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			font-size: 0.9rem;
+			color: #7f8c8d;
+		}
+
+		.meta-icon {
+			font-size: 1.1rem;
+			color: #3498db;
+		}
+
+		.meta-text {
+			font-weight: 500;
+		}
+
+		.meta-chip {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.25rem;
+			background: #3498db;
+			color: white;
+			padding: 0.25rem 0.75rem;
+			border-radius: 20px;
+			font-size: 0.8rem;
+			font-weight: 500;
+			transition: all 0.2s ease;
+		}
+
+		.meta-chip:hover {
+			background: #2980b9;
+			transform: translateY(-1px);
+		}
+
+		.meta-chips-container {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+
+		.updated-badge {
+			background: #e74c3c;
+			animation: pulse 2s infinite;
+		}
+
+		@keyframes pulse {
+			0% {
+				opacity: 1;
+			}
+			50% {
+				opacity: 0.7;
+			}
+			100% {
+				opacity: 1;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.article-meta {
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 1rem;
+			}
+
+			.meta-item {
+				width: 100%;
+			}
+		}
+	</style>
+
+	<!-- 发布日期 -->
+	<div class="meta-item">
+		<span class="meta-icon">📅</span>
+		<span class="meta-text">发布于 <FormattedDate date={pubDate} /></span>
+	</div>
+
+	<!-- 更新日期 -->
+	{
+		updatedDate && (
+			<div class="meta-item">
+				<span class="meta-icon">🔄</span>
+				<span class="meta-text">
+					更新于 <FormattedDate date={updatedDate} />
+					<span
+						class="meta-chip updated-badge"
+						style="margin-left: 0.5rem;"
+					>
+						新
+					</span>
+				</span>
+			</div>
+		)
+	}
+
+	<!-- 分类 -->
+	{
+		categories && categories.length > 0 && (
+			<div class="meta-item">
+				<span class="meta-icon">📂</span>
+				<div class="meta-chips-container">
+					{categories.map((category) => (
+						<a href={`/categories/${category}`} class="meta-chip">
+							<span>#{category}</span>
+						</a>
+					))}
+				</div>
+			</div>
+		)
+	}
+
+	<!-- 标签 -->
+	{
+		tags && tags.length > 0 && (
+			<div class="meta-item">
+				<span class="meta-icon">🏷️</span>
+				<div class="meta-chips-container">
+					{tags.map((tag) => (
+						<a href={`/tags/${tag}`} class="meta-chip">
+							<span>{tag}</span>
+						</a>
+					))}
+				</div>
+			</div>
+		)
+	}
+</div>

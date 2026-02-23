@@ -1,0 +1,199 @@
+---
+import { SITE_TITLE } from "../consts";
+import { getCollection } from "astro:content";
+
+// 获取文章数量和字数统计
+const posts = await getCollection("blog");
+const totalWords = posts.reduce((sum, post) => {
+	const content = post.body || "";
+	return sum + content.split(/\s+/).length;
+}, 0);
+
+// 计算博客运行时间（初始值）
+const startDate = new Date("2025-01-01"); // 博客开始日期，可根据实际情况修改
+const now = new Date();
+const diff = now.getTime() - startDate.getTime();
+const initialDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+const initialHours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60));
+const initialMinutes = Math.floor((diff % (1000 * 60)) / 1000);
+const initialSeconds = Math.floor((diff % (1000 * 60)) / 1000); // 修复：从 / 100 改为 / 1000
+
+// ICP备案信息 - 每个备案项对应不同的跳转地址
+const icpInfo = [
+	{ text: "鲁ICP备2025142845号-1", url: "https://beian.miit.gov.cn/" },
+	{
+		text: "鲁公网安备37172402000442号",
+		url: "https://beian.mps.gov.cn/#/query/webSearch?code=37172402000442",
+	},
+	{ text: "闽ICP备20250716号", url: "https://icp.gov.moe/?keyword=20250716" },
+];
+
+// 格式化数字为千分位
+function formatNumber(num: number): string {
+	return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+---
+
+<footer>
+	<div class="footer-content">
+		<!-- 版权信息 -->
+		<div class="copyright">
+			© {new Date().getFullYear()} - 2026 ❤️ {SITE_TITLE}
+		</div>
+
+		<!-- 文章统计 -->
+		<div class="stats">
+			共撰写了 {posts.length} 篇文章 共 {formatNumber(totalWords)} 字
+		</div>
+
+		<!-- ICP备案信息 -->
+		<div class="icp-info">
+			{
+				icpInfo.map((item, index) => (
+					<span>
+						<a
+							href={item.url}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{item.text}
+						</a>
+						{index < icpInfo.length - 1 && " | "}
+					</span>
+				))
+			}
+		</div>
+
+		<!-- 运行时间 -->
+		<div class="uptime">
+			博客已运行
+			<span class="uptime-number" data-value="{initialDays}"
+				>{initialDays}</span
+			> 天
+			<span class="uptime-number" data-value="{initialHours}"
+				>{initialHours}</span
+			> 小时
+			<span class="uptime-number" data-value="{initialMinutes}"
+				>{initialMinutes}</span
+			> 分钟
+			<span class="uptime-number" data-value="{initialSeconds}"
+				>{initialSeconds}</span
+			> 秒
+		</div>
+	</div>
+</footer>
+
+<script is:inline>
+	document.addEventListener("DOMContentLoaded", () => {
+		// 精确到秒的启动时间，格式：YYYY-MM-DDTHH:mm:ss
+		const startTime = new Date("2025-09-07T14:00:00"); // 可根据实际需求调整具体时间
+		const uptimeElements = document.querySelectorAll(".uptime-number");
+
+		// 初始化数字显示
+		function updateUptime() {
+			const now = new Date();
+			const diff = now.getTime() - startTime.getTime();
+
+			// 定义时间单位常量提高可读性
+			const MS_PER_SECOND = 1000;
+			const MS_PER_MINUTE = 1000 * 60;
+			const MS_PER_HOUR = 1000 * 60 * 60;
+			const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+			const days = Math.floor(diff / MS_PER_DAY);
+			const remainingAfterDays = diff % MS_PER_DAY;
+			const hours = Math.floor(remainingAfterDays / MS_PER_HOUR);
+			const remainingAfterHours = remainingAfterDays % MS_PER_HOUR;
+			const minutes = Math.floor(remainingAfterHours / MS_PER_MINUTE);
+			const seconds = Math.floor(
+				(remainingAfterHours % MS_PER_MINUTE) / MS_PER_SECOND,
+			);
+
+			const values = [days, hours, minutes, seconds];
+
+			uptimeElements.forEach((el, index) => {
+				const currentValue = parseInt(el.textContent);
+				const targetValue = values[index];
+
+				// 如果数值变化，添加动画效果
+				if (currentValue !== targetValue) {
+					el.classList.add("animate-change");
+
+					// 使用CSS transition实现平滑变化
+					el.style.transition = "transform 0.5s ease-in-out";
+					el.style.transform = "scale(1.2)";
+
+					// 重置动画
+					setTimeout(() => {
+						el.textContent = targetValue.toString();
+						el.style.transform = "scale(1)";
+						el.classList.remove("animate-change");
+					}, 300);
+				}
+			});
+		}
+
+		// 初始更新
+		updateUptime();
+
+		// 每秒更新一次
+		setInterval(updateUptime, 1000);
+	});
+</script>
+
+<style>
+	footer {
+		padding: 2em 1em 1em 1em;
+		background: linear-gradient(var(--gray-gradient)) no-repeat;
+		color: rgb(var(--gray));
+		text-align: center;
+		font-size: 0.9rem;
+	}
+
+	.footer-content {
+		margin-bottom: 1.5em;
+		line-height: 1.8;
+	}
+
+	.copyright {
+		font-weight: 600;
+		margin-bottom: 0.5em;
+		font-size: 1.1rem;
+	}
+
+	.stats,
+	.icp-info,
+	.uptime {
+		margin-bottom: 0.5em;
+		font-size: 0.95rem;
+	}
+
+	.icp-info {
+		color: (var(--gray-dark));
+	}
+
+	.uptime {
+		color: rgb(var(--accent));
+		font-weight: 500;
+	}
+
+	.uptime-number {
+		display: inline-block;
+		font-weight: 600;
+		transition: transform 0.3s ease-in-out;
+	}
+
+	.uptime-number.animate-change {
+		transform: scale(1.2);
+	}
+
+	.icp-info a {
+		color: inherit;
+		text-decoration: none;
+		transition: color 0.3s ease;
+	}
+
+	.icp-info a:hover {
+		color: #a31f34;
+	}
+</style>

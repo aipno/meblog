@@ -1,0 +1,520 @@
+---
+
+---
+
+<div class="reading-experience-tools">
+	<style is:global>
+		.reading-experience-tools {
+			position: fixed;
+			right: 2rem;
+			bottom: 2rem;
+			z-index: 100;
+			display: flex;
+			flex-direction: column;
+			gap: 0.75rem;
+		}
+
+		.tool-button {
+			width: 48px;
+			height: 48px;
+			border-radius: 50%;
+			background: white;
+			border: none;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.2rem;
+			transition: all 0.3s ease;
+			color: #2c3e50;
+		}
+
+		.tool-button:hover {
+			transform: scale(1.1);
+			box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+		}
+
+		.tool-button.active {
+			background: #3498db;
+			color: white;
+		}
+
+		.font-size-controls {
+			background: white;
+			border-radius: 12px;
+			padding: 1rem;
+			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+			display: none;
+			flex-direction: column;
+			gap: 0.75rem;
+			width: 200px;
+		}
+
+		.font-size-controls.show {
+			display: flex;
+		}
+
+		.font-size-title {
+			font-weight: 600;
+			color: #2c3e50;
+			font-size: 0.9rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.size-control {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+		}
+
+		.size-button {
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+			border: 2px solid #3498db;
+			background: white;
+			color: #3498db;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: bold;
+			transition: all 0.2s ease;
+		}
+
+		.size-button:hover {
+			background: #3498db;
+			color: white;
+		}
+
+		.size-display {
+			flex: 1;
+			text-align: center;
+			font-weight: 500;
+			color: #7f8c8d;
+		}
+
+		.night-mode-toggle {
+			position: relative;
+		}
+
+		.night-mode-toggle::after {
+			content: "🌙";
+			position: absolute;
+			top: -8px;
+			right: -8px;
+			background: #e74c3c;
+			color: white;
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			font-size: 0.7rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			animation: pulse 2s infinite;
+		}
+
+		@keyframes pulse {
+			0% {
+				transform: scale(1);
+			}
+			50% {
+				transform: scale(1.2);
+			}
+			100% {
+				transform: scale(1);
+			}
+		}
+
+		@media (max-width: 768px) {
+			.reading-experience-tools {
+				right: 1rem;
+				bottom: 1rem;
+			}
+
+			.tool-button {
+				width: 40px;
+				height: 40px;
+				font-size: 1rem;
+			}
+
+			.font-size-controls {
+				width: 180px;
+				right: 60px;
+				bottom: 0;
+			}
+		}
+	</style>
+
+	<!-- 字体大小控制 -->
+	<div class="tool-button" id="fontSizeToggle" title="字体大小">
+		<span>🔤</span>
+	</div>
+	<div class="font-size-controls" id="fontSizeControls">
+		<div class="font-size-title">调整字体大小</div>
+		<div class="size-control">
+			<button class="size-button" id="decreaseFont">-</button>
+			<span class="size-display" id="fontSizeDisplay">中等</span>
+			<button class="size-button" id="increaseFont">+</button>
+		</div>
+		<button class="size-button" id="resetFont" style="width: 100%;"
+			>重置</button
+		>
+	</div>
+
+	<!-- 夜间模式切换 -->
+	<button
+		class="tool-button night-mode-toggle"
+		id="nightModeToggle"
+		title="夜间模式"
+	>
+		<span>🌓</span>
+	</button>
+
+	<!-- 回到顶部 -->
+	<button class="tool-button" id="backToTop" title="回到顶部">
+		<span>⬆️</span>
+	</button>
+
+	<!-- 阅读计时 -->
+	<button class="tool-button" id="readingTimer" title="阅读计时">
+		<span>⏱️</span>
+	</button>
+</div>
+
+<script is:inline>
+	// 字体大小控制
+	class FontSizeController {
+		constructor() {
+			this.currentSize = 16;
+			this.minSize = 12;
+			this.maxSize = 24;
+			this.step = 2;
+			this.articleBody = document.querySelector(".article-body");
+			this.init();
+		}
+
+		init() {
+			this.loadSavedSize();
+			this.bindEvents();
+			this.updateDisplay();
+		}
+
+		loadSavedSize() {
+			const savedSize = localStorage.getItem("articleFontSize");
+			if (savedSize) {
+				this.currentSize = parseInt(savedSize);
+				this.applyFontSize();
+			}
+		}
+
+		bindEvents() {
+			document
+				.getElementById("fontSizeToggle")
+				.addEventListener("click", () => {
+					this.toggleControls();
+				});
+
+			document
+				.getElementById("increaseFont")
+				.addEventListener("click", () => {
+					this.increase();
+				});
+
+			document
+				.getElementById("decreaseFont")
+				.addEventListener("click", () => {
+					this.decrease();
+				});
+
+			document
+				.getElementById("resetFont")
+				.addEventListener("click", () => {
+					this.reset();
+				});
+
+			// 点击其他地方关闭控制面板
+			document.addEventListener("click", (e) => {
+				const controls = document.getElementById("fontSizeControls");
+				const toggle = document.getElementById("fontSizeToggle");
+				if (
+					!controls.contains(e.target) &&
+					!toggle.contains(e.target)
+				) {
+					controls.classList.remove("show");
+				}
+			});
+		}
+
+		toggleControls() {
+			const controls = document.getElementById("fontSizeControls");
+			controls.classList.toggle("show");
+		}
+
+		increase() {
+			if (this.currentSize < this.maxSize) {
+				this.currentSize += this.step;
+				this.applyFontSize();
+				this.updateDisplay();
+				this.saveSize();
+			}
+		}
+
+		decrease() {
+			if (this.currentSize > this.minSize) {
+				this.currentSize -= this.step;
+				this.applyFontSize();
+				this.updateDisplay();
+				this.saveSize();
+			}
+		}
+
+		reset() {
+			this.currentSize = 16;
+			this.applyFontSize();
+			this.updateDisplay();
+			this.saveSize();
+		}
+
+		applyFontSize() {
+			if (this.articleBody) {
+				this.articleBody.style.fontSize = `${this.currentSize}px`;
+			}
+		}
+
+		updateDisplay() {
+			const display = document.getElementById("fontSizeDisplay");
+			let sizeText;
+			if (this.currentSize <= 14) sizeText = "较小";
+			else if (this.currentSize <= 18) sizeText = "中等";
+			else sizeText = "较大";
+			display.textContent = sizeText;
+		}
+
+		saveSize() {
+			localStorage.setItem(
+				"articleFontSize",
+				this.currentSize.toString(),
+			);
+		}
+	}
+
+	// 夜间模式控制
+	class NightModeController {
+		constructor() {
+			this.isEnabled = false;
+			this.init();
+		}
+
+		init() {
+			this.loadSavedState();
+			this.bindEvents();
+		}
+
+		loadSavedState() {
+			const savedState = localStorage.getItem("nightMode");
+			if (savedState === "true") {
+				this.enable();
+			}
+		}
+
+		bindEvents() {
+			document
+				.getElementById("nightModeToggle")
+				.addEventListener("click", () => {
+					this.toggle();
+				});
+		}
+
+		toggle() {
+			if (this.isEnabled) {
+				this.disable();
+			} else {
+				this.enable();
+			}
+		}
+
+		enable() {
+			document.body.classList.add("night-mode");
+			this.isEnabled = true;
+			localStorage.setItem("nightMode", "true");
+		}
+
+		disable() {
+			document.body.classList.remove("night-mode");
+			this.isEnabled = false;
+			localStorage.setItem("nightMode", "false");
+		}
+	}
+
+	// 回到顶部功能
+	class BackToTopController {
+		constructor() {
+			this.button = document.getElementById("backToTop");
+			this.init();
+		}
+
+		init() {
+			this.bindEvents();
+			this.checkVisibility();
+		}
+
+		bindEvents() {
+			this.button.addEventListener("click", () => {
+				window.scrollTo({
+					top: 0,
+					behavior: "smooth",
+				});
+			});
+
+			window.addEventListener("scroll", () => {
+				this.checkVisibility();
+			});
+		}
+
+		checkVisibility() {
+			if (window.pageYOffset > 300) {
+				this.button.style.opacity = "1";
+				this.button.style.transform = "scale(1)";
+			} else {
+				this.button.style.opacity = "0";
+				this.button.style.transform = "scale(0.8)";
+			}
+		}
+	}
+
+	// 阅读计时器
+	class ReadingTimerController {
+		constructor() {
+			this.startTime = null;
+			this.timerInterval = null;
+			this.totalTime = 0;
+			this.button = document.getElementById("readingTimer");
+			this.init();
+		}
+
+		init() {
+			this.loadSavedTime();
+			this.bindEvents();
+			this.startTimer();
+		}
+
+		loadSavedTime() {
+			const savedTime = localStorage.getItem("readingTime");
+			if (savedTime) {
+				this.totalTime = parseInt(savedTime);
+			}
+		}
+
+		bindEvents() {
+			this.button.addEventListener("click", () => {
+				this.showReadingStats();
+			});
+		}
+
+		startTimer() {
+			this.startTime = Date.now();
+			this.timerInterval = setInterval(() => {
+				this.updateTotalTime();
+			}, 60000); // 每分钟更新一次
+		}
+
+		updateTotalTime() {
+			if (this.startTime) {
+				const currentTime = Date.now();
+				const sessionTime = Math.floor(
+					(currentTime - this.startTime) / 1000,
+				);
+				this.totalTime += sessionTime;
+				this.startTime = currentTime;
+				this.saveTime();
+			}
+		}
+
+		saveTime() {
+			localStorage.setItem("readingTime", this.totalTime.toString());
+		}
+
+		showReadingStats() {
+			const minutes = Math.floor(this.totalTime / 60);
+			const hours = Math.floor(minutes / 60);
+			const remainingMinutes = minutes % 60;
+
+			let message = "您的阅读统计：\n\n";
+			if (hours > 0) {
+				message += `总计阅读时间：${hours}小时${remainingMinutes}分钟\n`;
+			} else {
+				message += `总计阅读时间：${minutes}分钟\n`;
+			}
+			message += `\n继续保持阅读的好习惯！📚`;
+
+			alert(message);
+		}
+	}
+
+	// 夜间模式CSS
+	const nightModeStyle = document.createElement("style");
+	nightModeStyle.textContent = `
+		.night-mode {
+			background: #1a1a1a !important;
+		}
+		
+		.night-mode .article-page-wrapper {
+			background: #1a1a1a;
+		}
+		
+		.night-mode .main-content,
+		.night-mode .toc-widget,
+		.night-mode .related-posts,
+		.night-mode .font-size-controls {
+			background: #2d2d2d !important;
+			color: #e0e0e0 !important;
+		}
+		
+		.night-mode .article-title,
+		.night-mode .hero-title,
+		.night-mode .toc-title,
+		.night-mode .related-title-text {
+			color: #ffffff !important;
+		}
+		
+		.night-mode .article-body {
+			color: #cccccc !important;
+		}
+		
+		.night-mode .article-body h1,
+		.night-mode .article-body h2,
+		.night-mode .article-body h3,
+		.night-mode .article-body h4,
+		.night-mode .article-body h5,
+		.night-mode .article-body h6 {
+			color: #ffffff !important;
+		}
+		
+		.night-mode .meta-text,
+		.night-mode .toc-link,
+		.night-mode .related-excerpt {
+			color: #aaaaaa !important;
+		}
+		
+		.night-mode .tool-button {
+			background: #2d2d2d !important;
+			color: #e0e0e0 !important;
+		}
+		
+		.night-mode .tool-button:hover {
+			background: #3d3d3d !important;
+		}
+	`;
+	document.head.appendChild(nightModeStyle);
+
+	// 初始化所有控制器
+	document.addEventListener("DOMContentLoaded", () => {
+		new FontSizeController();
+		new NightModeController();
+		new BackToTopController();
+		new ReadingTimerController();
+	});
+</script>

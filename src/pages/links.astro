@@ -1,0 +1,162 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+
+const links = [
+	{
+		name: 'Astro 官方',
+		url: 'https://astro.build/',
+		desc: '现代静态站点构建框架，极速、简洁、好用。',
+		tag: '前端 · 框架',
+	},
+	{
+		name: 'MDN Web Docs',
+		url: 'https://developer.mozilla.org/',
+		desc: '权威 Web 文档与教程，前端开发必备参考。',
+		tag: '文档',
+	},
+];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="友情链接" description="收集一些值得一逛的站点与朋友们。" />
+	</head>
+	<body>
+		<Header />
+		<main class="links-page">
+			<section class="links-header">
+				<h1>友情链接</h1>
+				<p class="summary">
+					一些我喜欢、也愿意推荐给你的站点。
+				</p>
+			</section>
+			<section class="links-list">
+				<ul>
+					{
+						links.map((item) => (
+							<li>
+								<a
+									class="link-card"
+									href={item.url}
+									target="_blank"
+									rel="noreferrer"
+								>
+									<div class="link-main">
+										<div class="link-title-row">
+											<span class="link-name">
+												{item.name}
+											</span>
+											<span class="link-tag">
+												{item.tag}
+											</span>
+										</div>
+										<p class="link-desc">
+											{item.desc}
+										</p>
+									</div>
+									<span class="link-icon">
+										<i class="fa-solid fa-arrow-up-right-from-square"></i>
+									</span>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+		</main>
+		<Footer />
+	</body>
+	<style>
+		.links-page {
+			max-width: 960px;
+			margin: 0 auto;
+			padding: 2rem 1rem 4rem;
+		}
+		.links-header {
+			margin-bottom: 1.5rem;
+		}
+		.links-header h1 {
+			margin: 0 0 0.5rem;
+			font-size: 1.75rem;
+		}
+		.links-header .summary {
+			margin: 0;
+			color: rgb(var(--gray));
+			font-size: 0.95rem;
+		}
+		.links-list ul {
+			list-style: none;
+			padding: 0;
+			margin: 1rem 0 0;
+			display: flex;
+			flex-direction: column;
+			gap: 0.75rem;
+		}
+		.links-list li {
+			margin: 0;
+		}
+		.link-card {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0.75rem;
+			padding: 0.9rem 1rem;
+			border-radius: 0.75rem;
+			border: 1px solid rgba(var(--gray), 0.3);
+			background: white;
+			text-decoration: none;
+			color: inherit;
+			box-shadow: 0 4px 12px rgba(var(--black), 0.03);
+			transition: box-shadow 0.15s ease, transform 0.1s ease,
+				border-color 0.15s ease;
+		}
+		.link-card:hover {
+			box-shadow: 0 10px 24px rgba(var(--black), 0.08);
+			transform: translateY(-1px);
+			border-color: rgba(var(--accent), 0.5);
+		}
+		.link-main {
+			min-width: 0;
+		}
+		.link-title-row {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			margin-bottom: 0.25rem;
+		}
+		.link-name {
+			font-weight: 600;
+		}
+		.link-tag {
+			padding: 0.05rem 0.45rem;
+			border-radius: 999px;
+			font-size: 0.8rem;
+			background: rgba(var(--black), 0.04);
+			color: rgb(var(--gray-dark));
+		}
+		.link-desc {
+			margin: 0;
+			font-size: 0.95rem;
+			color: rgb(var(--gray-dark));
+		}
+		.link-icon {
+			flex-shrink: 0;
+			color: rgb(var(--gray));
+			font-size: 1rem;
+		}
+		@media (max-width: 720px) {
+			.links-page {
+				padding-top: 1.5rem;
+			}
+			.links-header h1 {
+				font-size: 1.5rem;
+			}
+			.link-card {
+				align-items: flex-start;
+			}
+		}
+	</style>
+</html>

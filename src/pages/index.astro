@@ -1,0 +1,354 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<div class="page-root">
+			<div class="hero">
+				<div class="hero-overlay">
+					<Header />
+					<div class="hero-content">
+						<h1 class="title">{SITE_TITLE}</h1>
+						<p class="subtitle" id="hitokoto">加载一言中…</p>
+					</div>
+				</div>
+			</div>
+			<!-- <main class="home-main"></main> -->
+			<Footer />
+		</div>
+		<script>
+			if (typeof window !== "undefined") {
+				const main = document.querySelector(".home-main");
+				const scrollBtn = document.querySelector(".scroll-down");
+				const hero = document.querySelector(".hero");
+
+				if (scrollBtn && main) {
+					scrollBtn.addEventListener("click", (event) => {
+						event.preventDefault();
+						main.scrollIntoView({ behavior: "smooth" });
+					});
+				}
+
+				if (hero) {
+					hero.setAttribute(
+						"style",
+						"background-image: url('https://bing.api.iswxl.cn');",
+					);
+				}
+
+				// 打字机效果函数
+				function typeWriter(
+					element: HTMLElement,
+					text: string,
+					speed: number = 100,
+				) {
+					let i = 0;
+					element.textContent = "";
+
+					function type() {
+						if (i < text.length) {
+							element.textContent += text.charAt(i);
+							i++;
+							setTimeout(type, speed);
+						}
+					}
+
+					type();
+				}
+
+				// 增强版打字机效果函数 - 支持删除和循环
+				function advancedTypeWriter(
+					element: HTMLElement,
+					texts: string[],
+					typeSpeed: number = 150,
+					deleteSpeed: number = 100,
+					pauseTime: number = 2000,
+				) {
+					let textIndex = 0;
+					let charIndex = 0;
+					let isDeleting = false;
+					let currentText = texts[0];
+
+					function type() {
+						// 更新当前显示的文本
+						const fullText = isDeleting
+							? currentText.substring(0, charIndex - 1)
+							: currentText.substring(0, charIndex + 1);
+
+						element.textContent = fullText;
+						element.setAttribute("data-text", fullText);
+
+						// 添加视觉反馈类
+						if (isDeleting) {
+							element.classList.add("changing");
+						} else {
+							element.classList.remove("changing");
+						}
+
+						if (!isDeleting) {
+							charIndex++;
+							// 打字完成
+							if (charIndex === currentText.length) {
+								isDeleting = true;
+								setTimeout(type, pauseTime); // 暂停后开始删除
+								return;
+							}
+						} else {
+							charIndex--;
+							// 删除完成
+							if (charIndex === 0) {
+								isDeleting = false;
+								textIndex = (textIndex + 1) % texts.length; // 循环到下一个文本
+								currentText = texts[textIndex];
+								element.classList.remove("changing");
+								setTimeout(type, 500); // 删除完成后短暂暂停
+								return;
+							}
+						}
+
+						// 设置下次调用的时间间隔
+						const timeout = isDeleting ? deleteSpeed : typeSpeed;
+						setTimeout(type, timeout);
+					}
+
+					// 启动打字机
+					type();
+				}
+
+				// 获取一言并应用打字机效果
+				fetch("https://v1.hitokoto.cn?encode=text")
+					.then((res) => res.text())
+					.then((text) => {
+						const el = document.getElementById("hitokoto");
+						if (el) {
+							// 先清空内容，然后应用打字机效果
+							el.textContent = "";
+							typeWriter(el, text, 150);
+						}
+					})
+					.catch(() => {
+						const el = document.getElementById("hitokoto");
+						if (el) {
+							el.textContent = "一言加载失败";
+						}
+					});
+
+				// 获取多条一言并应用循环打字机效果
+				async function startTypewriterLoop() {
+					try {
+						// 获取多条一言
+						const promises = Array.from({ length: 5 }, () =>
+							fetch("https://v1.hitokoto.cn?encode=text").then(
+								(res) => res.text(),
+							),
+						);
+
+						const texts = await Promise.all(promises);
+						const el = document.getElementById("hitokoto");
+
+						if (el) {
+							// 应用循环打字机效果
+							advancedTypeWriter(el, texts, 120, 80, 2500);
+						}
+					} catch (error) {
+						const el = document.getElementById("hitokoto");
+						if (el) {
+							el.textContent = "一言加载失败";
+						}
+					}
+				}
+
+				// 启动循环打字机
+				startTypewriterLoop();
+			}
+		</script>
+		<style>
+			.page-root {
+				min-height: 100vh;
+				display: flex;
+				flex-direction: column;
+			}
+			.hero {
+				position: relative;
+				min-height: 100vh;
+				background-size: cover;
+				background-position: center center;
+				background-repeat: no-repeat;
+			}
+			.hero-overlay {
+				position: relative;
+				min-height: inherit;
+				/* background: linear-gradient(
+					to bottom,
+					rgba(0, 0, 0, 0.4),
+					rgba(0, 0, 0, 0.3),
+					rgba(255, 255, 255, 0.2)
+				); */
+				display: flex;
+				flex-direction: column;
+			}
+			.hero-content {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				text-align: center;
+				padding: 0;
+				color: #fff;
+				flex: 1;
+			}
+			.hero-content .title {
+				margin: 0 0 1rem;
+				font-size: 2.8rem;
+				text-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+			}
+			.hero-content .subtitle {
+				margin: 0;
+				font-size: 1.2rem;
+				max-width: 640px;
+				text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+				/* 打字机效果相关样式 */
+				position: relative;
+				min-height: 1.5em; /* 确保有足够的空间显示光标 */
+				transition: all 0.1s ease; /* 平滑过渡效果 */
+			}
+
+			/* 打字机光标效果 - 增强版 */
+			.hero-content .subtitle::after {
+				content: "|";
+				animation: blink 0.8s infinite;
+				color: #fff;
+				margin-left: 4px;
+				text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+				/* 根据打字状态调整光标样式 */
+				opacity: 1;
+			}
+
+			/* 删除状态下的光标样式 */
+			.hero-content .subtitle[data-deleting="true"]::after {
+				content: "⌫"; /* 退格符号 */
+				color: #ff6b6b; /* 红色表示删除状态 */
+				animation: blinkDelete 0.6s infinite;
+			}
+
+			@keyframes blink {
+				0%,
+				100% {
+					opacity: 1;
+				}
+				50% {
+					opacity: 0;
+				}
+			}
+
+			@keyframes blinkDelete {
+				0%,
+				100% {
+					opacity: 1;
+					transform: scale(1.2);
+				}
+				50% {
+					opacity: 0.3;
+					transform: scale(1);
+				}
+			}
+
+			/* 打字机文本变化时的淡入效果 */
+			.hero-content .subtitle.changing {
+				opacity: 0.8;
+				transform: translateY(-2px);
+			}
+			.hero-bottom {
+				position: absolute;
+				left: 50%;
+				bottom: 2rem;
+				transform: translateX(-50%);
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 0.9rem;
+			}
+			.hero-social {
+				display: flex;
+				gap: 0.6rem;
+			}
+			.hero-side {
+				position: absolute;
+				right: 1.5rem;
+				top: 50%;
+				transform: translateY(-50%);
+				display: flex;
+				flex-direction: column;
+				gap: 0.6rem;
+			}
+			.circle-btn {
+				width: 36px;
+				height: 36px;
+				border-radius: 999px;
+				border: none;
+				outline: none;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				background: rgba(255, 255, 255, 0.88);
+				color: rgb(80, 80, 80);
+				box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+				cursor: pointer;
+				text-decoration: none;
+				font-size: 0.95rem;
+				transition:
+					transform 0.1s ease,
+					box-shadow 0.15s ease,
+					background 0.15s ease;
+			}
+			.circle-btn:hover {
+				transform: translateY(-1px);
+				box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+				background: #fff;
+			}
+			.scroll-down {
+				background: rgba(255, 255, 255, 0.96);
+			}
+			.hero-side .side-btn {
+				background: rgba(255, 192, 203, 0.92);
+				color: #a83c5f;
+			}
+			.home-main {
+				max-width: 960px;
+				margin: 0 auto;
+				padding: 2rem 1rem 4rem;
+				flex: 1;
+				width: 100%;
+			}
+			.home-intro h2 {
+				margin: 0 0 0.75rem;
+				font-size: 1.5rem;
+			}
+			.home-intro p {
+				margin: 0;
+				color: rgb(var(--gray-dark));
+				font-size: 0.98rem;
+				line-height: 1.9;
+			}
+			@media (max-width: 720px) {
+				.hero-content .title {
+					font-size: 2.2rem;
+				}
+				.hero-content .subtitle {
+					font-size: 1rem;
+				}
+				.hero-side {
+					right: 1rem;
+				}
+			}
+		</style>
+	</body>
+</html>

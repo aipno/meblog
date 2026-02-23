@@ -1,0 +1,175 @@
+---
+import BaseHead from "../../components/BaseHead.astro";
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
+import FormattedDate from "../../components/FormattedDate.astro";
+
+type BlogEntry = CollectionEntry<"blog">;
+
+export async function getStaticPaths() {
+    const posts = await getCollection("blog");
+    const map = new Map<string, BlogEntry[]>();
+
+    for (const post of posts) {
+        const tags = (post.data as any).tags as string[] | undefined;
+        if (!Array.isArray(tags)) continue;
+
+        for (const tag of tags) {
+            if (!tag) continue;
+            const list = map.get(tag) ?? [];
+            list.push(post);
+            map.set(tag, list);
+        }
+    }
+
+    return Array.from(map.entries()).map(([tag, posts]) => ({
+        params: { tag },
+        props: { tag, posts },
+    }));
+}
+
+interface Props {
+    tag: string;
+    posts: BlogEntry[];
+}
+
+const { tag, posts } = Astro.props as Props;
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <BaseHead
+            title={`Tag: ${tag}`}
+            description={`Articles tagged with "${tag}".`}
+        />
+    </head>
+    <body>
+        <Header />
+        <main class="tag-page">
+            <section class="tag-header">
+                <h1>标签：{tag}</h1>
+                <p class="summary">
+                    共 {posts.length} 篇文章
+                </p>
+                <a href="/tags" class="back-link">
+                    ← 返回标签列表
+                </a>
+            </section>
+            <section class="tag-posts">
+                {
+                    posts.length === 0 ? (
+                        <p class="empty">这个标签下还没有文章。</p>
+                    ) : (
+                        <ul>
+                            {
+                                posts.map((post) => (
+                                    <li>
+                                        <a
+                                            href={`/blog/${post.id}/`}
+                                            class="tag-post-card"
+                                        >
+                                            <h2>{post.data.title}</h2>
+                                            <div class="meta">
+                                                <FormattedDate
+                                                    date={post.data.pubDate}
+                                                />
+                                            </div>
+                                            <p class="excerpt">
+                                                {post.data.description}
+                                            </p>
+                                        </a>
+                                    </li>
+                                ))
+                            }
+                        </ul>
+                    )
+                }
+            </section>
+        </main>
+        <Footer />
+    </body>
+    <style>
+        .tag-page {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem;
+        }
+        .tag-header {
+            margin-bottom: 1.5rem;
+        }
+        .tag-header h1 {
+            margin: 0 0 0.5rem;
+            font-size: 1.75rem;
+        }
+        .tag-header .summary {
+            margin: 0 0 0.5rem;
+            color: rgb(var(--gray));
+            font-size: 0.95rem;
+        }
+        .back-link {
+            display: inline-block;
+            font-size: 0.9rem;
+            color: rgb(var(--accent));
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .tag-posts ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .tag-posts li {
+            margin: 0;
+        }
+        .tag-post-card {
+            display: block;
+            padding: 1rem 1.25rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(var(--gray), 0.3);
+            text-decoration: none;
+            color: inherit;
+            background: white;
+            transition: box-shadow 0.15s ease, transform 0.1s ease,
+                border-color 0.15s ease;
+        }
+        .tag-post-card:hover {
+            box-shadow: 0 8px 20px rgba(var(--black), 0.06);
+            transform: translateY(-1px);
+            border-color: rgba(var(--accent), 0.7);
+        }
+        .tag-post-card h2 {
+            margin: 0 0 0.35rem;
+            font-size: 1.1rem;
+        }
+        .tag-post-card .meta {
+            margin: 0 0 0.4rem;
+            font-size: 0.85rem;
+            color: rgb(var(--gray));
+        }
+        .tag-post-card .excerpt {
+            margin: 0;
+            font-size: 0.95rem;
+            color: rgb(var(--gray-dark));
+        }
+        .empty {
+            margin: 0;
+            color: rgb(var(--gray));
+            font-size: 0.95rem;
+        }
+        @media (max-width: 720px) {
+            .tag-page {
+                padding-top: 1.5rem;
+            }
+            .tag-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</html>

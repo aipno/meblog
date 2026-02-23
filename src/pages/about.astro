@@ -1,0 +1,118 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import AboutHeroImage from "../assets/touxiang.jpg";
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="关于我" description="一些关于我的简单介绍。" />
+	</head>
+	<body>
+		<Header />
+		<main class="about-page">
+			<section class="about-hero">
+				<img src={AboutHeroImage.src} alt="" class="avatar" />
+				<div class="hero-text">
+					<h1>你好，我是aipno</h1>
+					<p class="tagline">
+						喜欢折腾技术，也喜欢把遇到的问题写成文章。
+					</p>
+				</div>
+			</section>
+			<section class="about-section">
+				<h2>我在做什么</h2>
+				<p>
+					目前主要关注 Web 技术、前端工程化，以及一些安全方向的内容。
+					这个博客会记录我在学习和实践过程中的笔记、踩过的坑和一些有趣的想法。
+				</p>
+			</section>
+			<section class="about-section">
+				<h2>技能与兴趣</h2>
+				<ul class="chips">
+					<li>JavaScript / TypeScript</li>
+					<li>Web 安全与 CTF</li>
+					<li>Node.js 与服务端开发</li>
+					<li>前端工程化与性能优化</li>
+				</ul>
+			</section>
+			<section class="about-section">
+				<h2>关于这个站点</h2>
+				<p>
+					本站基于 Astro 搭建，尽量保持简洁、专注内容本身。
+					后续会逐步完善文章分类、标签、归档等功能，也欢迎你通过友链页面与我互换链接。
+				</p>
+			</section>
+		</main>
+		<Footer />
+	</body><style>
+		.about-page {
+			max-width: 960px;
+			margin: 0 auto;
+			padding: 2rem 1rem 4rem;
+		}
+		.about-hero {
+			display: flex;
+			align-items: center;
+			gap: 1.5rem;
+			margin-bottom: 2rem;
+		}
+		.avatar {
+			width: 96px;
+			height: 96px;
+			border-radius: 24px;
+			object-fit: cover;
+			box-shadow: 0 10px 24px rgba(var(--black), 0.25);
+		}
+		.hero-text h1 {
+			margin: 0 0 0.4rem;
+			font-size: 1.75rem;
+		}
+		.tagline {
+			margin: 0;
+			color: rgb(var(--gray));
+			font-size: 0.95rem;
+		}
+		.about-section {
+			margin-bottom: 1.75rem;
+		}
+		.about-section h2 {
+			margin: 0 0 0.5rem;
+			font-size: 1.25rem;
+		}
+		.about-section p {
+			margin: 0;
+			line-height: 1.8;
+			font-size: 0.95rem;
+			color: rgb(var(--gray-dark));
+		}
+		.chips {
+			list-style: none;
+			padding: 0;
+			margin: 0.5rem 0 0;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+		.chips li {
+			padding: 0.2rem 0.7rem;
+			border-radius: 999px;
+			background: rgba(var(--black), 0.04);
+			font-size: 0.85rem;
+			color: rgb(var(--gray-dark));
+		}
+		@media (max-width: 720px) {
+			.about-page {
+				padding-top: 1.5rem;
+			}
+			.about-hero {
+				align-items: flex-start;
+			}
+			.hero-text h1 {
+				font-size: 1.5rem;
+			}
+		}
+	</style>
+</html>

@@ -1,0 +1,128 @@
+---
+import { SITE_TITLE } from "../consts";
+import HeaderLink from "./HeaderLink.astro";
+import AvatarImage from "../assets/logo.png";
+---
+
+<header>
+	<nav>
+		<a href="/" class="brand">
+			<img src={AvatarImage.src} alt="" width={42} height={42} />
+			<span class="brand-text">{SITE_TITLE}</span>
+		</a>
+		<div class="internal-links">
+			<HeaderLink href="/" class="nav-link">
+				<span class="fa-regular fa-house"> 首页</span>
+			</HeaderLink>
+			<HeaderLink href="/archives" class="nav-link">
+				<span class="fa-regular fa-archive"> 归档</span>
+			</HeaderLink>
+			<HeaderLink href="/about" class="nav-link">
+				<span class="fa-regular fa-user"> 关于</span>
+			</HeaderLink>
+			<HeaderLink href="/categories" class="nav-link">
+				<span class="fa-regular fa-folder"> 分类</span>
+			</HeaderLink>
+			<HeaderLink href="/tags" class="nav-link">
+				<span class="fa-regular fa-tags"> 标签</span>
+			</HeaderLink>
+			<HeaderLink href="/links" class="nav-link">
+				<span class="fa-regular fa-link"> 友情链接</span>
+			</HeaderLink>
+		</div>
+	</nav>
+</header>
+<style>
+	header {
+		margin: 0;
+		padding: 0.5rem 1.5rem;
+		background: linear-gradient(
+			to right,
+			rgb(189, 168, 158),
+			rgb(182, 196, 224)
+		);
+		backdrop-filter: blur(14px);
+		border-bottom: 1px solid rgba(var(--gray), 0.2);
+		position: sticky;
+		top: 0;
+		z-index: 20;
+	}
+	nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		max-width: 1040px;
+		margin: 0 auto;
+		min-height: 3rem;
+	}
+	.brand {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		text-decoration: none;
+		color: inherit;
+	}
+	.brand img {
+		/* border-radius: 10px; */
+		/* box-shadow: 0 2px 8px rgba(var(--black), 0.25); */
+	}
+	.brand-text {
+		font-size: 2rem;
+		font-weight: 600;
+	}
+	.internal-links {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.nav-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 0.35rem 0.55rem;
+		color: rgb(var(--gray-dark));
+		text-decoration: none;
+		font-size: 1.05rem;
+		position: relative;
+		border-radius: 4px;
+	}
+	.nav-link .icon {
+		font-size: 0.9rem;
+	}
+	.nav-link::after {
+		content: "";
+		position: absolute;
+		left: 0.5rem;
+		right: 0.5rem;
+		bottom: -6px;
+		height: 2px;
+		border-radius: 999px;
+		background: transparent;
+		transition: background 0.15s ease;
+	}
+	.nav-link:hover {
+		color: rgb(var(--black));
+	}
+	.nav-link.active {
+		color: rgb(var(--black));
+	}
+	.nav-link.active::after {
+		background: #c0392b;
+	}
+	@media (max-width: 720px) {
+		header {
+			padding: 0.4rem 1rem;
+		}
+		nav {
+			min-height: 2.75rem;
+			gap: 0.5rem;
+		}
+		.brand-text {
+			font-size: 1rem;
+		}
+		.nav-link {
+			padding: 0.3rem 0.45rem;
+			font-size: 0.9rem;
+		}
+	}
+</style>

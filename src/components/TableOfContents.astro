@@ -1,0 +1,585 @@
+---
+
+---
+
+<div class="toc-widget">
+	<style is:global>
+		.toc-widget {
+			background: white;
+			border-radius: var(--border-radius-md);
+			box-shadow: var(--shadow-md);
+			padding: 1.5rem;
+			position: sticky;
+			top: 2rem;
+		}
+
+		.toc-title {
+			font-size: 1.2rem;
+			font-weight: 700;
+			color: #2c3e50;
+			margin: 0 0 1rem 0;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			cursor: pointer;
+			user-select: none;
+		}
+
+		.toc-title:hover {
+			color: #3498db;
+		}
+
+		.toc-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+
+		.toc-item {
+			margin-bottom: 0.25rem;
+		}
+
+		.toc-link {
+			display: block;
+			padding: 0.5rem 0.75rem;
+			color: #7f8c8d;
+			text-decoration: none;
+			border-radius: 6px;
+			font-size: 0.9rem;
+			transition: all 0.2s ease;
+			border-left: 2px solid transparent;
+		}
+
+		.toc-link:hover {
+			background: #f8f9fa;
+			color: #3498db;
+			border-left-color: #3498db;
+		}
+
+		.toc-link.active {
+			background: #e3f2fd;
+			color: #3498db;
+			border-left-color: #3498db;
+			font-weight: 500;
+		}
+
+		.toc-link.level-2 {
+			padding-left: 1.5rem;
+			font-size: 0.85rem;
+		}
+
+		.toc-link.level-3 {
+			padding-left: 2.5rem;
+			font-size: 0.8rem;
+		}
+
+		/* 折叠相关样式 */
+		.toc-section {
+			margin-bottom: 0.5rem;
+		}
+
+		.toc-section-header {
+			display: flex;
+			align-items: center;
+			padding: 0.5rem 0.75rem;
+			background: #f8f9fa;
+			border-radius: 6px;
+			cursor: pointer;
+			user-select: none;
+			font-weight: 500;
+			color: #2c3e50;
+			transition: all 0.2s ease;
+		}
+
+		.toc-section-header:hover {
+			background: #e9ecef;
+			color: #3498db;
+		}
+
+		.toc-section-header .toggle-icon {
+			margin-right: 0.5rem;
+			transition: transform 0.2s ease;
+		}
+
+		.toc-section-header.collapsed .toggle-icon {
+			transform: rotate(-90deg);
+		}
+
+		.toc-sub-items {
+			padding-left: 1rem;
+			transition: all 0.3s ease;
+			overflow: hidden;
+		}
+
+		.toc-sub-items.collapsed {
+			max-height: 0;
+			opacity: 0;
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+
+		.toc-sub-items.expanded {
+			max-height: 1000px;
+			opacity: 1;
+		}
+
+		.progress-container {
+			margin-top: 1.5rem;
+			padding-top: 1.5rem;
+			border-top: 1px solid #eee;
+		}
+
+		.progress-title {
+			font-size: 0.9rem;
+			color: #7f8c8d;
+			margin-bottom: 0.5rem;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		.progress-bar {
+			width: 100%;
+			height: 6px;
+			background: #ecf0f1;
+			border-radius: 3px;
+			overflow: hidden;
+		}
+
+		.progress-fill {
+			height: 100%;
+			background: linear-gradient(90deg, #3498db, #2ecc71);
+			border-radius: 3px;
+			transition: width 0.3s ease;
+			width: 0%;
+		}
+
+		.progress-text {
+			font-size: 0.8rem;
+			color: #7f8c8d;
+			text-align: right;
+			margin-top: 0.25rem;
+		}
+
+		@media (max-width: 1024px) {
+			.toc-widget {
+				position: static;
+				margin-bottom: 2rem;
+			}
+		}
+	</style>
+
+	<h3 class="toc-title" id="toc-main-title">
+		<span>📋</span>
+		<span>目录</span>
+	</h3>
+
+	<div id="toc-container">
+		<!-- 目录内容将通过JavaScript动态生成 -->
+	</div>
+
+	<div class="progress-container">
+		<div class="progress-title">
+			<span>📊</span>
+			<span>阅读进度</span>
+		</div>
+		<div class="progress-bar">
+			<div class="progress-fill" id="reading-progress"></div>
+		</div>
+		<div class="progress-text" id="progress-text">0%</div>
+	</div>
+</div>
+
+<script is:inline>
+	// 目录生成功能 - 支持折叠
+	function generateTableOfContents() {
+		const headers = document.querySelectorAll(
+			".article-body h2, .article-body h3, .article-body h4",
+		);
+		const tocContainer = document.getElementById("toc-container");
+
+		if (!tocContainer || headers.length === 0) return;
+
+		tocContainer.innerHTML = "";
+
+		// 按层级组织标题
+		const tocStructure = organizeHeadersByLevel(headers);
+
+		// 生成折叠式目录
+		tocStructure.forEach((section, index) => {
+			const sectionElement = createSectionElement(section, index);
+			tocContainer.appendChild(sectionElement);
+		});
+
+		// 初始化折叠状态
+		initializeCollapseState();
+	}
+
+	// 按层级组织标题结构
+	function organizeHeadersByLevel(headers) {
+		const structure = [];
+		let currentSection = null;
+
+		headers.forEach((header, index) => {
+			const level = parseInt(header.tagName.charAt(1));
+			const text = header.textContent.trim();
+			const id = `heading-${index}`;
+
+			header.id = id;
+
+			if (level === 2) {
+				// H2作为新的章节开始
+				currentSection = {
+					id: id,
+					title: text,
+					level: level,
+					subItems: [],
+				};
+				structure.push(currentSection);
+			} else if (currentSection && level > 2) {
+				// H3/H4作为子项添加到当前章节
+				currentSection.subItems.push({
+					id: id,
+					title: text,
+					level: level,
+				});
+			} else if (!currentSection && level > 2) {
+				// 如果没有H2但有H3/H4，创建一个虚拟章节
+				currentSection = {
+					id: `virtual-section-${index}`,
+					title: "章节",
+					level: 2,
+					subItems: [
+						{
+							id: id,
+							title: text,
+							level: level,
+						},
+					],
+				};
+				structure.push(currentSection);
+			}
+		});
+
+		return structure;
+	}
+
+	// 创建章节元素
+	function createSectionElement(section, index) {
+		const sectionDiv = document.createElement("div");
+		sectionDiv.className = "toc-section";
+		sectionDiv.dataset.sectionIndex = index;
+
+		// 章节标题（可点击折叠）
+		const sectionHeader = document.createElement("div");
+		sectionHeader.className = "toc-section-header";
+		sectionHeader.innerHTML = `
+			<span class="toggle-icon">▼</span>
+			<span>${section.title}</span>
+		`;
+
+		// 子项容器
+		const subItemsContainer = document.createElement("div");
+		subItemsContainer.className = "toc-sub-items collapsed";
+
+		// 创建子项链接
+		section.subItems.forEach((subItem) => {
+			const listItem = document.createElement("div");
+			listItem.className = "toc-item";
+
+			const link = document.createElement("a");
+			link.href = `#${subItem.id}`;
+			link.className = `toc-link level-${subItem.level - 2}`;
+			link.textContent = subItem.title;
+
+			link.addEventListener("click", (e) => {
+				e.preventDefault();
+				const target = document.getElementById(subItem.id);
+				if (target) {
+					target.scrollIntoView({
+						behavior: "smooth",
+						block: "center",
+					});
+				}
+			});
+
+			listItem.appendChild(link);
+			subItemsContainer.appendChild(listItem);
+		});
+
+		// 章节标题点击事件
+		sectionHeader.addEventListener("click", () => {
+			toggleSection(sectionDiv);
+		});
+
+		sectionDiv.appendChild(sectionHeader);
+
+		// 只有当有子项时才添加子项容器
+		if (section.subItems.length > 0) {
+			sectionDiv.appendChild(subItemsContainer);
+		}
+
+		return sectionDiv;
+	}
+
+	// 切换章节折叠状态
+	function toggleSection(sectionElement) {
+		const header = sectionElement.querySelector(".toc-section-header");
+		const subItems = sectionElement.querySelector(".toc-sub-items");
+
+		if (!subItems) return; // 没有子项的章节
+
+		const isCollapsed = subItems.classList.contains("collapsed");
+
+		if (isCollapsed) {
+			// 展开当前章节
+			subItems.classList.remove("collapsed");
+			subItems.classList.add("expanded");
+			header.classList.remove("collapsed");
+		} else {
+			// 折叠当前章节
+			subItems.classList.remove("expanded");
+			subItems.classList.add("collapsed");
+			header.classList.add("collapsed");
+		}
+	}
+
+	// 初始化折叠状态 - 只展开包含当前活动标题的章节
+	function initializeCollapseState() {
+		const sections = document.querySelectorAll(".toc-section");
+		const activeHeader = findActiveHeader();
+
+		sections.forEach((section) => {
+			const sectionHeader = section.querySelector(".toc-section-header");
+			const subItems = section.querySelector(".toc-sub-items");
+
+			if (!subItems) {
+				// 没有子项的章节保持展开状态
+				return;
+			}
+
+			// 检查当前章节是否包含活动标题
+			const isActiveSection = isSectionActive(section, activeHeader);
+
+			if (isActiveSection) {
+				// 展开包含活动标题的章节
+				subItems.classList.remove("collapsed");
+				subItems.classList.add("expanded");
+				sectionHeader.classList.remove("collapsed");
+			} else {
+				// 折叠其他章节
+				subItems.classList.remove("expanded");
+				subItems.classList.add("collapsed");
+				sectionHeader.classList.add("collapsed");
+			}
+		});
+	}
+
+	// 查找当前活动的标题
+	function findActiveHeader() {
+		const headers = document.querySelectorAll(
+			".article-body h2, .article-body h3, .article-body h4",
+		);
+		const scrollTop =
+			window.pageYOffset || document.documentElement.scrollTop;
+
+		// 找到当前应该激活的标题
+		for (let i = headers.length - 1; i >= 0; i--) {
+			const header = headers[i];
+			const headerTop = header.offsetTop;
+			if (scrollTop >= headerTop - 100) {
+				return header;
+			}
+		}
+		return headers[0]; // 默认返回第一个标题
+	}
+
+	// 检查章节是否包含活动标题
+	function isSectionActive(section, activeHeader) {
+		if (!activeHeader) return false;
+
+		const sectionIndex = parseInt(section.dataset.sectionIndex);
+		const headers = document.querySelectorAll(
+			".article-body h2, .article-body h3, .article-body h4",
+		);
+		const sectionHeaders = [];
+
+		// 收集该章节的所有标题
+		for (let i = 0; i < headers.length; i++) {
+			const header = headers[i];
+			const headerLevel = parseInt(header.tagName.charAt(1));
+
+			if (headerLevel === 2) {
+				if (sectionHeaders.length > 0) break; // 遇到下一个H2就停止
+				if (i === sectionIndex) {
+					sectionHeaders.push(header);
+				}
+			} else if (sectionHeaders.length > 0) {
+				sectionHeaders.push(header);
+			}
+		}
+
+		return sectionHeaders.includes(activeHeader);
+	}
+
+	// 阅读进度跟踪
+	function updateReadingProgress() {
+		const articleBody = document.querySelector(".article-body");
+		const progressBar = document.getElementById("reading-progress");
+		const progressText = document.getElementById("progress-text");
+
+		if (!articleBody || !progressBar || !progressText) return;
+
+		function calculateProgress() {
+			const scrollTop =
+				window.pageYOffset || document.documentElement.scrollTop;
+			const docHeight = articleBody.offsetHeight;
+			const winHeight = window.innerHeight;
+			const scrollPercent = Math.min(
+				100,
+				Math.round((scrollTop / (docHeight - winHeight)) * 100),
+			);
+
+			progressBar.style.width = `${Math.max(0, scrollPercent)}%`;
+			progressText.textContent = `${Math.max(0, scrollPercent)}%`;
+		}
+
+		window.addEventListener("scroll", calculateProgress);
+		window.addEventListener("resize", calculateProgress);
+		calculateProgress();
+	}
+
+	// 活动目录项高亮和自动展开
+	function highlightActiveTocItem() {
+		const headers = document.querySelectorAll(
+			".article-body h2, .article-body h3, .article-body h4",
+		);
+		const tocLinks = document.querySelectorAll(".toc-link");
+
+		if (headers.length === 0 || tocLinks.length === 0) return;
+
+		function setActive() {
+			const scrollTop =
+				window.pageYOffset || document.documentElement.scrollTop;
+
+			// 移除所有活动状态
+			tocLinks.forEach((link) => link.classList.remove("active"));
+
+			// 找到当前应该激活的标题
+			let activeIndex = 0;
+			let activeHeader = null;
+			for (let i = headers.length - 1; i >= 0; i--) {
+				const header = headers[i];
+				const headerTop = header.offsetTop;
+				if (scrollTop >= headerTop - 100) {
+					activeIndex = i;
+					activeHeader = header;
+					break;
+				}
+			}
+
+			// 设置对应的TOC链接为活动状态
+			const activeLinkId = activeHeader
+				? activeHeader.id
+				: headers[0]?.id;
+			if (activeLinkId) {
+				const activeLink = document.querySelector(
+					`.toc-link[href="#${activeLinkId}"]`,
+				);
+				if (activeLink) {
+					activeLink.classList.add("active");
+				}
+			}
+
+			// 自动展开包含活动标题的章节
+			if (activeHeader) {
+				autoExpandActiveSection(activeHeader);
+			}
+		}
+
+		window.addEventListener("scroll", setActive);
+		setActive();
+	}
+
+	// 自动展开包含活动标题的章节
+	function autoExpandActiveSection(activeHeader) {
+		const tocSections = document.querySelectorAll(".toc-section");
+
+		tocSections.forEach((section) => {
+			const subItems = section.querySelector(".toc-sub-items");
+			const sectionHeader = section.querySelector(".toc-section-header");
+
+			if (!subItems) return; // 没有子项的章节
+
+			// 检查该章节是否包含活动标题
+			const sectionContainsActive = sectionContainsHeader(
+				section,
+				activeHeader,
+			);
+
+			if (sectionContainsActive) {
+				// 展开包含活动标题的章节
+				subItems.classList.remove("collapsed");
+				subItems.classList.add("expanded");
+				sectionHeader.classList.remove("collapsed");
+			} else {
+				// 折叠其他章节
+				subItems.classList.remove("expanded");
+				subItems.classList.add("collapsed");
+				sectionHeader.classList.add("collapsed");
+			}
+		});
+	}
+
+	// 检查章节是否包含指定标题
+	function sectionContainsHeader(section, targetHeader) {
+		const sectionIndex = parseInt(section.dataset.sectionIndex);
+		const headers = document.querySelectorAll(
+			".article-body h2, .article-body h3, .article-body h4",
+		);
+
+		if (sectionIndex >= headers.length) return false;
+
+		const sectionStartHeader = headers[sectionIndex];
+		if (sectionStartHeader === targetHeader) return true;
+
+		// 检查后续的子标题
+		for (let i = sectionIndex + 1; i < headers.length; i++) {
+			const header = headers[i];
+			const level = parseInt(header.tagName.charAt(1));
+
+			if (level === 2) break; // 遇到下一个H2就停止
+
+			if (header === targetHeader) return true;
+		}
+
+		return false;
+	}
+
+	// 初始化
+	document.addEventListener("DOMContentLoaded", () => {
+		generateTableOfContents();
+		updateReadingProgress();
+		highlightActiveTocItem();
+	});
+
+	// 页面加载完成后重新生成（处理异步内容）
+	window.addEventListener("load", () => {
+		setTimeout(() => {
+			generateTableOfContents();
+			highlightActiveTocItem();
+		}, 100);
+	});
+
+	// 监听窗口滚动，实时更新折叠状态
+	window.addEventListener("scroll", () => {
+		// 使用防抖优化性能
+		clearTimeout(window.tocScrollTimeout);
+		window.tocScrollTimeout = setTimeout(() => {
+			const activeHeader = findActiveHeader();
+			if (activeHeader) {
+				autoExpandActiveSection(activeHeader);
+			}
+		}, 100);
+	});
+</script>
