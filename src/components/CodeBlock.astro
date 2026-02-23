@@ -1,0 +1,274 @@
+---
+interface Props {
+  children: any;
+  language?: string;
+  fileName?: string;
+}
+
+const { children, language, fileName } = Astro.props;
+---
+
+<div class="code-block-wrapper">
+  <style is:global>
+    /* 代码块包装器样式 */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.5rem 0;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e1e4e8;
+    }
+
+    /* 代码块头部 */
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      background: #f6f8fa;
+      border-bottom: 1px solid #e1e4e8;
+      font-size: 0.85rem;
+      color: #586069;
+    }
+
+    .code-language {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .code-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .code-copy-btn {
+      background: none;
+      border: none;
+      color: #586069;
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .code-copy-btn:hover {
+      background: rgba(27, 31, 35, 0.05);
+      color: #0366d6;
+    }
+
+    /* 代码块内容 */
+    .code-content {
+      position: relative;
+      background: #f6f8fa;
+    }
+
+    .code-content pre {
+      margin: 0;
+      padding: 1rem;
+      background: #f6f8fa;
+      border: none;
+      border-radius: 0;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.875rem;
+      line-height: 1.45;
+      overflow-x: auto;
+    }
+
+    .code-content code {
+      background: none;
+      padding: 0;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    /* 行号样式 */
+    .line-numbers {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 40px;
+      background: #f6f8fa;
+      border-right: 1px solid #e1e4e8;
+      padding: 1rem 0;
+      text-align: right;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.8125rem;
+      color: #959da5;
+      user-select: none;
+    }
+
+    .line-numbers .line-number {
+      padding: 0 0.5rem;
+      line-height: 1.45;
+    }
+
+    /* 语法高亮样式 */
+    .token.comment,
+    .token.prolog,
+    .token.doctype,
+    .token.cdata {
+      color: #6a737d;
+    }
+
+    .token.punctuation {
+      color: #24292e;
+    }
+
+    .token.property,
+    .token.tag,
+    .token.boolean,
+    .token.number,
+    .token.constant,
+    .token.symbol,
+    .token.deleted {
+      color: #005cc5;
+    }
+
+    .token.selector,
+    .token.attr-name,
+    .token.string,
+    .token.char,
+    .token.builtin,
+    .token.inserted {
+      color: #032f62;
+    }
+
+    .token.operator,
+    .token.entity,
+    .token.url,
+    .language-css .token.string,
+    .style .token.string {
+      color: #d73a49;
+    }
+
+    .token.atrule,
+    .token.attr-value,
+    .token.keyword {
+      color: #d73a49;
+    }
+
+    .token.function,
+    .token.class-name {
+      color: #6f42c1;
+    }
+
+    .token.regex,
+    .token.important,
+    .token.variable {
+      color: #e36209;
+    }
+
+    /* 复制成功提示 */
+    .copy-success {
+      position: absolute;
+      top: 50%;
+      right: 1rem;
+      transform: translateY(-50%);
+      background: #28a745;
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .copy-success.show {
+      opacity: 1;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .code-header {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+      }
+      
+      .code-content pre {
+        padding: 0.75rem;
+        font-size: 0.75rem;
+      }
+      
+      .line-numbers {
+        width: 30px;
+        font-size: 0.7rem;
+      }
+    }
+  </style>
+
+  <!-- 代码块头部 -->
+  <div class="code-header">
+    {fileName && (
+      <span class="file-name">{fileName}</span>
+    )}
+    <div class="code-info">
+      {language && (
+        <span class="code-language">{language}</span>
+      )}
+    </div>
+    <div class="code-actions">
+      <button class="code-copy-btn" title="复制代码">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+          <path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- 代码块内容 -->
+  <div class="code-content">
+    <div class="copy-success">已复制!</div>
+    {children}
+  </div>
+</div>
+
+<script is:inline>
+  // 代码复制功能
+  document.addEventListener('DOMContentLoaded', () => {
+    const copyButtons = document.querySelectorAll('.code-copy-btn');
+    
+    copyButtons.forEach(button => {
+      button.addEventListener('click', async () => {
+        const codeBlockWrapper = button.closest('.code-block-wrapper');
+        const codeElement = codeBlockWrapper.querySelector('code');
+        const successMessage = codeBlockWrapper.querySelector('.copy-success');
+        
+        if (codeElement) {
+          try {
+            await navigator.clipboard.writeText(codeElement.textContent);
+            
+            // 显示成功提示
+            successMessage.classList.add('show');
+            setTimeout(() => {
+              successMessage.classList.remove('show');
+            }, 2000);
+            
+            // 更新按钮状态
+            button.innerHTML = `
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
+              </svg>
+            `;
+            
+            setTimeout(() => {
+              button.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+                  <path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+                </svg>
+              `;
+            }, 2000);
+            
+          } catch (err) {
+            console.error('复制失败:', err);
+          }
+        }
+      });
+    });
+  });
+</script>

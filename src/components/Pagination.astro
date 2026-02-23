@@ -1,0 +1,181 @@
+---
+interface Props {
+	currentPage: number;
+	totalPages: number;
+	getPageUrl: (page: number) => string;
+}
+
+const { currentPage, totalPages, getPageUrl } = Astro.props as Props;
+
+const generatePaginationArray = (current: number, total: number) => {
+	if (total <= 1) return [];
+
+	const delta = 2;
+	const range: number[] = [];
+	const rangeWithDots: (number | string)[] = [];
+
+	for (
+		let i = Math.max(2, current - delta);
+		i <= Math.min(total - 1, current + delta);
+		i++
+	) {
+		range.push(i);
+	}
+
+	if (current - delta > 2) {
+		rangeWithDots.push(1, "...");
+	} else if (total > 0) {
+		rangeWithDots.push(1);
+	}
+
+	rangeWithDots.push(...range);
+
+	if (current + delta < total - 1) {
+		rangeWithDots.push("...", total);
+	} else if (total > 1) {
+		rangeWithDots.push(total);
+	}
+
+	return rangeWithDots;
+};
+
+const paginationArray = generatePaginationArray(currentPage, totalPages);
+---
+
+{totalPages > 1 && (
+	<nav class="pagination" aria-label="文章分页导航">
+		<div class="pagination-info">
+			第 {currentPage} 页，共 {totalPages} 页
+		</div>
+
+		<a
+			href={currentPage > 1 ? getPageUrl(currentPage - 1) : "#"}
+			class={`pagination-button ${currentPage <= 1 ? "disabled" : ""}`}
+			aria-label="上一页"
+			aria-disabled={currentPage <= 1}
+			rel={currentPage > 1 ? "prev" : undefined}
+		>
+			‹
+		</a>
+
+		{
+			paginationArray.map((pageNum, index) => {
+				if (typeof pageNum === "string" && pageNum === "...") {
+					return (
+						<span class="pagination-ellipsis" aria-hidden="true">
+							…
+						</span>
+					);
+				}
+				
+				return (
+					<a
+						href={getPageUrl(pageNum as number)}
+						class={`pagination-button ${pageNum === currentPage ? "active" : ""}`}
+						aria-current={pageNum === currentPage ? "page" : undefined}
+					>
+						{pageNum}
+					</a>
+				);
+			})
+		}
+
+		<a
+			href={currentPage < totalPages ? getPageUrl(currentPage + 1) : "#"}
+			class={`pagination-button ${currentPage >= totalPages ? "disabled" : ""}`}
+			aria-label="下一页"
+			aria-disabled={currentPage >= totalPages}
+			rel={currentPage < totalPages ? "next" : undefined}
+		>
+			›
+		</a>
+	</nav>
+)}
+
+<style>
+	.pagination {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 0.5rem;
+		margin: 3rem 0;
+		padding: 1rem;
+	}
+
+	.pagination-info {
+		color: rgb(var(--gray));
+		font-size: 1rem;
+		margin: 0 1rem;
+		white-space: nowrap;
+	}
+
+	.pagination-button {
+		padding: 0.6rem 1.2rem;
+		background: white;
+		border: 1px solid rgba(var(--gray), 20%);
+		border-radius: 8px;
+		color: rgb(var(--black));
+		text-decoration: none;
+		font-weight: 500;
+		transition: all 0.3s ease;
+		min-width: 40px;
+		text-align: center;
+		font-size: 1rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.pagination-button:hover:not(.disabled):not(.active) {
+		background: rgba(var(--gray), 5%);
+		border-color: rgba(var(--gray), 40%);
+		transform: translateY(-2px);
+	}
+
+	.pagination-button.active {
+		background: var(--accent);
+		color: white;
+		border-color: var(--accent);
+		box-shadow: 0 4px 12px rgba(var(--accent), 30%);
+	}
+
+	.pagination-button.disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+		background: rgba(var(--gray), 10%);
+		border-color: rgba(var(--gray), 20%);
+	}
+
+	.pagination-ellipsis {
+		color: rgb(var(--gray));
+		padding: 0.6rem 0.8rem;
+		font-size: 1rem;
+	}
+
+	/* 响应式设计 */
+	@media (max-width: 768px) {
+		.pagination {
+			gap: 0.25rem;
+			flex-wrap: wrap;
+		}
+
+		.pagination-button {
+			padding: 0.4rem 0.8rem;
+			font-size: 0.9rem;
+			min-width: 36px;
+		}
+
+		.pagination-info {
+			font-size: 0.9rem;
+			margin: 0 0.5rem;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.pagination-button {
+			padding: 0.3rem 0.6rem;
+			font-size: 0.85rem;
+			min-width: 32px;
+		}
+	}
+</style>

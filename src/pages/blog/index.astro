@@ -1,28 +1,27 @@
 ---
 import { Image } from "astro:assets";
-import { getCollection } from "astro:content";
-import BaseHead from "@/components/BaseHead.astro";
-import Footer from "@/components/Footer.astro";
-import FormattedDate from "@/components/FormattedDate.astro";
-import Header from "@/components/Header.astro";
-import { SITE_DESCRIPTION, SITE_TITLE } from "@/consts";
+import { getCollection, type CollectionEntry } from "astro:content";
+import BaseHead from "../../components/BaseHead.astro";
+import Footer from "../../components/Footer.astro";
+import FormattedDate from "../../components/FormattedDate.astro";
+import Header from "../../components/Header.astro";
+import Pagination from "../../components/Pagination.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 
-// 获取所有博客文章并按发布日期排序
-const allPosts = (await getCollection("blog")).sort(
+type BlogEntry = CollectionEntry<"blog">;
+
+const allPosts: BlogEntry[] = (await getCollection("blog")).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
-// 分页配置
 const POSTS_PER_PAGE = 10;
-const currentPage = 1; // 主页始终是第1页
+const currentPage = 1;
 const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
 
-// 计算当前页的文章
 const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
 const endIndex = startIndex + POSTS_PER_PAGE;
 const posts = allPosts.slice(startIndex, endIndex);
 
-// 生成分页链接
 const getPageUrl = (pageNum: number) => {
 	if (pageNum === 1) return "/blog/";
 	return `/blog/page/${pageNum}/`;
@@ -39,18 +38,13 @@ const getPageUrl = (pageNum: number) => {
 				max-width: calc(100% - 2em);
 				margin: auto;
 			}
-
-			/* 博客列表容器 */
 			.blog-list-container {
 				padding: 2rem 0;
 			}
-
-			/* 博客列表标题 */
 			.blog-list-header {
 				text-align: center;
 				margin-bottom: 3rem;
 			}
-
 			.blog-list-title {
 				font-size: 2.5rem;
 				font-weight: 700;
@@ -59,7 +53,6 @@ const getPageUrl = (pageNum: number) => {
 				position: relative;
 				display: inline-block;
 			}
-
 			.blog-list-title::after {
 				content: "";
 				position: absolute;
@@ -71,7 +64,6 @@ const getPageUrl = (pageNum: number) => {
 				background: linear-gradient(90deg, var(--accent), #667eea);
 				border-radius: 2px;
 			}
-
 			.blog-list-subtitle {
 				color: rgb(var(--gray));
 				font-size: 1.1rem;
@@ -79,8 +71,6 @@ const getPageUrl = (pageNum: number) => {
 				margin: 0 auto;
 				line-height: 1.6;
 			}
-
-			/* 博客文章卡片 */
 			.blog-cards {
 				display: flex;
 				flex-direction: column;
@@ -88,32 +78,28 @@ const getPageUrl = (pageNum: number) => {
 				max-width: 800px;
 				margin: 0 auto;
 			}
-
 			.blog-card {
 				background: white;
 				border-radius: 16px;
 				overflow: hidden;
-				box-shadow: 0 4px 12px rgba(var(--gray), 10%);
+				box-shadow: 0 4px 12px rgba(var(--gray), 0.1);
 				transition: all 0.3s ease;
 				display: flex;
 				flex-direction: row;
-				height: auto;
-				border: 1px solid rgba(var(--gray), 10%);
+				border: 1px solid rgba(var(--gray), 0.1);
 				max-width: 100%;
+				text-decoration: none;
 			}
-
 			@media (max-width: 768px) {
 				.blog-card {
 					flex-direction: column;
 				}
 			}
-
 			.blog-card:hover {
-				box-shadow: 0 12px 32px rgba(var(--gray), 25%);
-				border-color: rgba(var(--accent), 20%);
+				box-shadow: 0 12px 32px rgba(var(--gray), 0.25);
+				border-color: rgba(var(--accent), 0.2);
+				transform: translateY(-2px);
 			}
-
-			/* 卡片头部 - 图片区域 */
 			.card-image-wrapper {
 				position: relative;
 				width: 300px;
@@ -121,7 +107,6 @@ const getPageUrl = (pageNum: number) => {
 				height: 200px;
 				overflow: hidden;
 			}
-
 			@media (max-width: 768px) {
 				.card-image-wrapper {
 					width: 100%;
@@ -129,29 +114,32 @@ const getPageUrl = (pageNum: number) => {
 					height: 200px;
 				}
 			}
-
 			.card-image {
 				width: 100%;
 				height: 100%;
 				object-fit: cover;
+				transition: transform 0.3s ease;
 			}
-
-			/* 卡片内容区域 */
+			.blog-card:hover .card-image {
+				transform: scale(1.05);
+			}
 			.card-content {
 				padding: 1.5rem;
 				flex-grow: 1;
 				display: flex;
 				flex-direction: column;
 			}
-
 			.card-title {
 				font-size: 1.5rem;
 				font-weight: 600;
 				color: rgb(var(--black));
 				margin: 0 0 1rem 0;
 				line-height: 1.4;
+				transition: color 0.3s ease;
 			}
-
+			.blog-card:hover .card-title {
+				color: var(--accent);
+			}
 			.card-excerpt {
 				color: rgb(var(--gray));
 				font-size: 1rem;
@@ -159,7 +147,6 @@ const getPageUrl = (pageNum: number) => {
 				margin-bottom: 1.5rem;
 				flex-grow: 1;
 			}
-
 			.card-meta {
 				display: flex;
 				align-items: center;
@@ -167,20 +154,17 @@ const getPageUrl = (pageNum: number) => {
 				font-size: 0.9rem;
 				margin-top: auto;
 			}
-
 			.card-date {
 				margin-right: 1rem;
 				display: flex;
 				align-items: center;
 			}
-
 			.card-date svg {
 				width: 14px;
 				height: 14px;
 				margin-right: 0.5rem;
 				fill: currentColor;
 			}
-
 			.card-read-more {
 				color: var(--accent);
 				font-weight: 600;
@@ -189,18 +173,19 @@ const getPageUrl = (pageNum: number) => {
 				align-items: center;
 				transition: all 0.3s ease;
 			}
-
 			.card-read-more:hover {
 				color: var(--accent-dark);
+				padding-right: 4px;
 			}
-
 			.card-read-more svg {
 				width: 16px;
 				height: 16px;
 				margin-left: 4px;
+				transition: transform 0.3s ease;
 			}
-
-			/* 分页导航 */
+			.card-read-more:hover svg {
+				transform: translateX(2px);
+			}
 			.pagination {
 				display: flex;
 				justify-content: center;
@@ -209,17 +194,15 @@ const getPageUrl = (pageNum: number) => {
 				margin: 3rem 0;
 				padding: 1rem;
 			}
-
 			.pagination-info {
 				color: rgb(var(--gray));
 				font-size: 1rem;
 				margin: 0 1rem;
 			}
-
 			.pagination-button {
 				padding: 0.6rem 1.2rem;
 				background: white;
-				border: 1px solid rgba(var(--gray), 20%);
+				border: 1px solid rgba(var(--gray), 0.2);
 				border-radius: 8px;
 				color: rgb(var(--black));
 				text-decoration: none;
@@ -229,91 +212,63 @@ const getPageUrl = (pageNum: number) => {
 				text-align: center;
 				font-size: 1rem;
 			}
-
-			.pagination-button:hover:not(.disabled) {
-				background: rgba(var(--gray), 5%);
-				border-color: rgba(var(--gray), 40%);
+			.pagination-button:hover {
+				background: rgba(var(--gray), 0.05);
+				border-color: rgba(var(--gray), 0.4);
+				transform: translateY(-2px);
 			}
-
 			.pagination-button.active {
 				background: var(--accent);
 				color: white;
 				border-color: var(--accent);
+				box-shadow: 0 4px 12px rgba(var(--accent), 0.3);
 			}
-
-			.pagination-button.disabled {
-				opacity: 0.5;
-				cursor: not-allowed;
-				background: rgba(var(--gray), 10%);
-				border-color: rgba(var(--gray), 20%);
-			}
-
 			.pagination-ellipsis {
 				color: rgb(var(--gray));
 				padding: 0.6rem 0.8rem;
 				font-size: 1rem;
 			}
-
-			/* 响应式分页 */
 			@media (max-width: 768px) {
 				.pagination {
 					gap: 0.5rem;
 					flex-wrap: wrap;
 				}
-
 				.pagination-button {
 					padding: 0.4rem 0.8rem;
 					font-size: 0.9rem;
 					min-width: 36px;
 				}
-
 				.pagination-info {
 					font-size: 0.9rem;
 					margin: 0 0.5rem;
 				}
-			}
-
-			/* 响应式设计 */
-			@media (max-width: 768px) {
 				main {
 					width: 100%;
 					padding: 0 1rem;
 				}
-
 				.blog-list-title {
 					font-size: 2rem;
 				}
-
-				.blog-cards {
-					grid-template-columns: 1fr;
-				}
-
 				.card-image-wrapper {
 					height: 180px;
 				}
-
 				.card-title {
 					font-size: 1.3rem;
 				}
-
 				.blog-list-header {
 					margin-bottom: 2rem;
 				}
 			}
-
 			@media (max-width: 480px) {
 				.blog-list-title {
 					font-size: 1.8rem;
 				}
-
 				.card-image-wrapper {
 					height: 160px;
 				}
-
 				.card-content {
 					padding: 1.2rem;
 				}
-
 				.card-title {
 					font-size: 1.2rem;
 				}
@@ -324,9 +279,15 @@ const getPageUrl = (pageNum: number) => {
 		<Header />
 		<main>
 			<div class="blog-list-container">
+				<header class="blog-list-header">
+					<h1 class="blog-list-title">博客文章</h1>
+					<p class="blog-list-subtitle">
+						分享技术心得与生活感悟，共 {allPosts.length} 篇文章
+					</p>
+				</header>
 				<div class="blog-cards">
 					{
-						posts.map((post) => (
+						posts.map((post: BlogEntry) => (
 							<a href={`/blog/${post.id}/`} class="blog-card">
 								{post.data.heroImage && (
 									<div class="card-image-wrapper">
@@ -407,33 +368,12 @@ const getPageUrl = (pageNum: number) => {
 						))
 					}
 				</div>
-
-				<!-- 分页导航 -->
-				<nav class="pagination">
-					{/* 当前页码 - 红色背景 */}
-					<span class="pagination-button active">{currentPage}</span>
-
-					{/* 下一页按钮 - 白色背景 */}
-					<a
-						href={currentPage < totalPages
-							? `/blog/page/${currentPage + 1}/`
-							: "#"}
-						class={`pagination-button ${currentPage >= totalPages ? "disabled" : ""}`}
-					>
-						{currentPage < totalPages ? currentPage + 1 : ""}
-					</a>
-
-					{/* 箭头按钮 - 白色背景 */}
-					<a
-						href={currentPage < totalPages
-							? `/blog/page/${currentPage + 1}/`
-							: "#"}
-						class={`pagination-button ${currentPage >= totalPages ? "disabled" : ""}`}
-					>
-						›
-					</a>
-				</nav>
-			</div>
+				<Pagination
+					currentPage={currentPage}
+					totalPages={totalPages}
+					getPageUrl={getPageUrl}
+				/>
+		<Footer />
 		</main>
 		<Footer />
 	</body>

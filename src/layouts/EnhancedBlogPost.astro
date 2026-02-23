@@ -29,6 +29,149 @@ const pageDescription = description || "暂无描述";
 	<head>
 		<BaseHead title={pageTitle} description={pageDescription} />
 		<style is:global>
+			/* GitHub风格的Markdown渲染样式 */
+			.github-markdown {
+				-ms-text-size-adjust: 100%;
+				-webkit-text-size-adjust: 100%;
+				margin: 0;
+				color: #24292f;
+				background-color: #ffffff;
+				font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+				font-size: 16px;
+				line-height: 1.5;
+				word-wrap: break-word;
+			}
+
+			.github-markdown h1, .github-markdown h2, .github-markdown h3, 
+			.github-markdown h4, .github-markdown h5, .github-markdown h6 {
+				margin-top: 24px;
+				margin-bottom: 16px;
+				font-weight: 600;
+				line-height: 1.25;
+			}
+
+			.github-markdown h1 {
+				font-size: 2em;
+				border-bottom: 1px solid #eaecef;
+				padding-bottom: .3em;
+			}
+
+			.github-markdown h2 {
+				font-size: 1.5em;
+				border-bottom: 1px solid #eaecef;
+				padding-bottom: .3em;
+			}
+
+			.github-markdown h3 {
+				font-size: 1.25em;
+			}
+
+			.github-markdown h4 {
+				font-size: 1em;
+			}
+
+			.github-markdown h5 {
+				font-size: .875em;
+			}
+
+			.github-markdown h6 {
+				font-size: .85em;
+				color: #6a737d;
+			}
+
+			.github-markdown p {
+				margin-top: 0;
+				margin-bottom: 16px;
+			}
+
+			.github-markdown blockquote {
+				margin: 0;
+				padding: 0 1em;
+				color: #6a737d;
+				border-left: .25em solid #dfe2e5;
+			}
+
+			.github-markdown ul, .github-markdown ol {
+				margin-top: 0;
+				margin-bottom: 0;
+				padding-left: 2em;
+			}
+
+			.github-markdown li+li {
+				margin-top: .25em;
+			}
+
+			.github-markdown code {
+				padding: .2em .4em;
+				margin: 0;
+				font-size: 85%;
+				background-color: rgba(27,31,35,.05);
+				border-radius: 3px;
+				font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+			}
+
+			.github-markdown pre {
+				padding: 16px;
+				overflow: auto;
+				font-size: 85%;
+				line-height: 1.45;
+				background-color: #f6f8fa;
+				border-radius: 3px;
+				border: 1px solid #dfe2e5;
+			}
+
+			.github-markdown pre code {
+				padding: 0;
+				margin: 0;
+				overflow: visible;
+				line-height: inherit;
+				word-wrap: normal;
+				background-color: transparent;
+				border: 0;
+			}
+
+			.github-markdown table {
+				display: block;
+				width: 100%;
+				overflow: auto;
+				border-collapse: collapse;
+			}
+
+			.github-markdown table th {
+				font-weight: 600;
+			}
+
+			.github-markdown table th,
+			.github-markdown table td {
+				padding: 6px 13px;
+				border: 1px solid #dfe2e5;
+			}
+
+			.github-markdown table tr {
+				background-color: #fff;
+				border-top: 1px solid #c6cbd1;
+			}
+
+			.github-markdown table tr:nth-child(2n) {
+				background-color: #f6f8fa;
+			}
+
+			.github-markdown img {
+				max-width: 100%;
+				box-sizing: content-box;
+				background-color: #fff;
+				border-radius: 3px;
+				border: 1px solid #dfe2e5;
+			}
+
+			.github-markdown hr {
+				height: .25em;
+				padding: 0;
+				margin: 24px 0;
+				background-color: #e1e4e8;
+				border: 0;
+			}
+
 			/* 文章页面样式 - 简洁清晰版本（匹配图片） */
 			:root {
 				--article-max-width: 800px;
@@ -111,12 +254,13 @@ const pageDescription = description || "暂无描述";
 				margin-bottom: 2rem;
 			}
 
-			/* 文章正文区域 */
+			/* 文章正文区域 - 应用GitHub Markdown样式 */
 			.article-body {
 				padding: 2rem;
-				font-size: 1.1rem;
-				line-height: 1.8;
-				color: rgb(var(--gray-dark));
+				font-size: 16px;
+				line-height: 1.5;
+				color: #24292f;
+				font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
 			}
 
 			.article-body h1,
@@ -125,111 +269,108 @@ const pageDescription = description || "暂无描述";
 			.article-body h4,
 			.article-body h5,
 			.article-body h6 {
-				margin: 2.5rem 0 1.5rem 0;
-				color: rgb(var(--black));
+				margin: 24px 0 16px 0;
+				color: #24292f;
 				scroll-margin-top: 100px;
 			}
 
 			.article-body h2 {
-				font-size: 1.9rem;
-				border-bottom: 2px solid var(--accent);
-				padding-bottom: 0.5rem;
-				color: rgb(var(--black));
+				font-size: 1.5em;
+				border-bottom: 1px solid #eaecef;
+				padding-bottom: 0.3em;
 			}
 
 			.article-body h3 {
-				font-size: 1.6rem;
-				color: rgb(var(--black));
+				font-size: 1.25em;
 			}
 
 			.article-body p {
-				margin-bottom: 1.5rem;
-				text-align: justify;
+				margin-bottom: 16px;
 			}
 
 			.article-body ul,
 			.article-body ol {
-				margin: 1.5rem 0;
-				padding-left: 2rem;
+				margin: 16px 0;
+				padding-left: 2em;
 			}
 
 			.article-body li {
-				margin-bottom: 0.6rem;
+				margin-bottom: 4px;
 			}
 
 			.article-body blockquote {
-				margin: 2rem 0;
-				padding: 1.5rem 2rem;
-				border-left: 3px solid var(--accent);
-				background: rgba(var(--accent), 5%);
-				border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
-				font-style: italic;
-				color: rgb(var(--gray));
+				margin: 16px 0;
+				padding: 0 1em;
+				color: #6a737d;
+				border-left: .25em solid #dfe2e5;
 			}
 
 			.article-body code {
-				background: rgba(var(--gray-light), 50%);
-				padding: 0.2em 0.4em;
-				border-radius: 4px;
-				font-family: "Monaco", "Consolas", monospace;
-				font-size: 0.9em;
-				color: #e74c3c;
+				padding: .2em .4em;
+				margin: 0;
+				font-size: 85%;
+				background-color: rgba(27,31,35,.05);
+				border-radius: 3px;
+				font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
 			}
 
 			.article-body pre {
-				background: rgb(var(--gray-dark));
-				color: #ecf0f1;
-				padding: 1.5rem;
-				border-radius: var(--border-radius-md);
+				background: #f6f8fa;
+				padding: 16px;
+				border-radius: 3px;
 				overflow-x: auto;
-				margin: 2rem 0;
-				border: 1px solid rgba(var(--gray), 20%);
+				margin: 16px 0;
+				border: 1px solid #dfe2e5;
+				font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+				font-size: 85%;
+				line-height: 1.45;
 			}
 
 			.article-body pre code {
 				background: none;
 				color: inherit;
 				padding: 0;
+				font-size: 100%;
 			}
 
 			.article-body img {
 				max-width: 100%;
 				height: auto;
-				border-radius: var(--border-radius-md);
+				border-radius: 3px;
 				box-shadow: var(--shadow-md);
-				margin: 2rem 0;
+				margin: 16px 0;
 				display: block;
-				border: 1px solid rgba(var(--gray), 10%);
+				border: 1px solid #dfe2e5;
 			}
 
-			/* 表格样式 - 匹配图片中的表格 */
+			/* 表格样式 - GitHub风格 */
 			.article-body table {
 				width: 100%;
 				border-collapse: collapse;
-				margin: 2rem 0;
+				margin: 16px 0;
 				background: white;
-				border-radius: var(--border-radius-md);
+				border-radius: 3px;
 				overflow: hidden;
 				box-shadow: var(--shadow-md);
-				border: 1px solid rgba(var(--gray), 10%);
+				border: 1px solid #dfe2e5;
+				display: block;
+				overflow-x: auto;
 			}
 
 			.article-body th,
 			.article-body td {
-				padding: 1rem;
+				padding: 6px 13px;
 				text-align: left;
-				border-bottom: 1px solid rgba(var(--gray), 15%);
+				border: 1px solid #dfe2e5;
 			}
 
 			.article-body th {
-				background: var(--accent);
-				color: white;
+				background: #f6f8fa;
 				font-weight: 600;
-				font-size: 1rem;
 			}
 
-			.article-body tr:nth-child(even) {
-				background: rgba(var(--gray-light), 20%);
+			.article-body tr:nth-child(2n) {
+				background: #f6f8fa;
 			}
 
 			/* 目录样式 - 匹配图片中的目录 */
@@ -340,6 +481,14 @@ const pageDescription = description || "暂无描述";
 				.toc-container {
 					border-radius: var(--border-radius-md);
 				}
+				
+				.article-body {
+					font-size: 14px;
+				}
+				
+				.article-body pre {
+					font-size: 12px;
+				}
 			}
 		</style>
 	</head>
@@ -386,8 +535,8 @@ const pageDescription = description || "暂无描述";
 					)}
 				</header>
 
-				<!-- 文章正文 -->
-				<div class="article-body">
+				<!-- 文章正文 - 应用GitHub Markdown样式 -->
+				<div class="article-body github-markdown">
 					<slot />
 				</div>
 			</main>

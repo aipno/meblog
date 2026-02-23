@@ -5,6 +5,7 @@ import BaseHead from "@/components/BaseHead.astro";
 import Footer from "@/components/Footer.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import Header from "@/components/Header.astro";
+import Pagination from "@/components/Pagination.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/consts";
 
 // 生成所有分页路径
@@ -131,6 +132,7 @@ const getPageUrl = (pageNum: number) => {
 				height: auto;
 				border: 1px solid rgba(var(--gray), 10%);
 				max-width: 100%;
+				text-decoration: none;
 			}
 
 			@media (max-width: 768px) {
@@ -142,6 +144,7 @@ const getPageUrl = (pageNum: number) => {
 			.blog-card:hover {
 				box-shadow: 0 12px 32px rgba(var(--gray), 25%);
 				border-color: rgba(var(--accent), 20%);
+				transform: translateY(-2px);
 			}
 
 			/* 卡片头部 - 图片区域 */
@@ -165,6 +168,11 @@ const getPageUrl = (pageNum: number) => {
 				width: 100%;
 				height: 100%;
 				object-fit: cover;
+				transition: transform 0.3s ease;
+			}
+
+			.blog-card:hover .card-image {
+				transform: scale(1.05);
 			}
 
 			/* 卡片内容区域 */
@@ -242,60 +250,6 @@ const getPageUrl = (pageNum: number) => {
 				transform: translateX(2px);
 			}
 
-			/* 分页导航 */
-			.pagination {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				gap: 1rem;
-				margin: 3rem 0;
-				padding: 1rem;
-			}
-
-			.pagination-info {
-				color: rgb(var(--gray));
-				font-size: 1rem;
-				margin: 0 1rem;
-			}
-
-			.pagination-button {
-				padding: 0.5rem 1rem;
-				background: white;
-				border: 1px solid rgba(var(--gray), 20%);
-				border-radius: 8px;
-				color: rgb(var(--black));
-				text-decoration: none;
-				font-weight: 500;
-				transition: all 0.3s ease;
-				min-width: 40px;
-				text-align: center;
-			}
-
-			.pagination-button:hover:not(.disabled) {
-				background: var(--accent);
-				color: white;
-				border-color: var(--accent);
-				transform: translateY(-2px);
-				box-shadow: 0 4px 12px rgba(var(--accent), 20%);
-			}
-
-			.pagination-button.active {
-				background: var(--accent);
-				color: white;
-				border-color: var(--accent);
-			}
-
-			.pagination-button.disabled {
-				opacity: 0.5;
-				cursor: not-allowed;
-				background: rgba(var(--gray), 10%);
-			}
-
-			.pagination-ellipsis {
-				color: rgb(var(--gray));
-				padding: 0.5rem;
-			}
-
 			/* 响应式设计 */
 			@media (max-width: 768px) {
 				main {
@@ -317,22 +271,6 @@ const getPageUrl = (pageNum: number) => {
 
 				.blog-list-header {
 					margin-bottom: 2rem;
-				}
-
-				.pagination {
-					gap: 0.5rem;
-					flex-wrap: wrap;
-				}
-
-				.pagination-button {
-					padding: 0.4rem 0.8rem;
-					font-size: 0.9rem;
-					min-width: 36px;
-				}
-
-				.pagination-info {
-					font-size: 0.9rem;
-					margin: 0 0.5rem;
 				}
 			}
 
@@ -359,6 +297,13 @@ const getPageUrl = (pageNum: number) => {
 		<Header />
 		<main>
 			<div class="blog-list-container">
+				<header class="blog-list-header">
+					<h1 class="blog-list-title">博客文章</h1>
+					<p class="blog-list-subtitle">
+						分享技术心得与生活感悟，共 {allPosts.length} 篇文章
+					</p>
+				</header>
+
 				<div class="blog-cards">
 					{
 						posts.map((post) => (
@@ -443,31 +388,11 @@ const getPageUrl = (pageNum: number) => {
 					}
 				</div>
 
-				<!-- 分页导航 -->
-				<nav class="pagination">
-					{/* 上一页按钮 */}
-					<a
-						href={currentPage > 1
-							? getPageUrl(currentPage - 1)
-							: "#"}
-						class={`pagination-button ${currentPage <= 1 ? "disabled" : ""}`}
-					>
-						‹
-					</a>
-
-					{/* 当前页码 */}
-					<span class="pagination-button active">{currentPage}</span>
-
-					{/* 下一页按钮 */}
-					<a
-						href={currentPage < totalPages
-							? getPageUrl(currentPage + 1)
-							: "#"}
-						class={`pagination-button ${currentPage >= totalPages ? "disabled" : ""}`}
-					>
-						›
-					</a>
-				</nav>
+				<Pagination
+					currentPage={currentPage}
+					totalPages={totalPages}
+					getPageUrl={getPageUrl}
+				/>
 			</div>
 		</main>
 		<Footer />

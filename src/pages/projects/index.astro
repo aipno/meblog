@@ -1,0 +1,400 @@
+---
+import BaseHead from "@/components/BaseHead.astro";
+import Footer from "@/components/Footer.astro";
+import Header from "@/components/Header.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  tags: string[];
+  githubUrl?: string;
+  demoUrl?: string;
+  status: 'completed' | 'in-progress' | 'planned';
+  year: number;
+}
+
+const projects: Project[] = [
+  {
+    id: 'pwn-learning-platform',
+    title: 'PWN学习平台',
+    description: '一个专注于二进制安全和PWN技术的学习平台，包含完整的漏洞利用教程和实战练习环境。提供从基础到高级的系统性学习路径。',
+    tags: ['网络安全', '二进制安全', '教育平台', 'Astro'],
+    githubUrl: 'https://github.com/example/pwn-learning',
+    demoUrl: 'https://pwn.example.com',
+    status: 'completed',
+    year: 2024
+  },
+  {
+    id: 'ctf-challenge-generator',
+    title: 'CTF题目生成器',
+    description: '自动化生成CTF竞赛题目的工具，支持多种漏洞类型的题目自动生成和部署。包含Web、Crypto、PWN等多个方向的题目模板。',
+    tags: ['CTF', '自动化', '安全工具', 'Python'],
+    githubUrl: 'https://github.com/example/ctf-generator',
+    status: 'in-progress',
+    year: 2024
+  },
+  {
+    id: 'binary-exploitation-framework',
+    title: '二进制利用框架',
+    description: '现代化的二进制漏洞利用辅助框架，集成调试、分析和利用功能于一体。支持多种架构和操作系统环境。',
+    tags: ['逆向工程', '漏洞利用', '框架', 'C++'],
+    githubUrl: 'https://github.com/example/bin-exploit',
+    status: 'planned',
+    year: 2025
+  },
+  {
+    id: 'security-blog-engine',
+    title: '安全技术博客引擎',
+    description: '专为安全技术博客设计的内容管理系统，支持Markdown、代码高亮、数学公式等功能。注重性能和SEO优化。',
+    tags: ['博客系统', '内容管理', 'Astro', 'TypeScript'],
+    githubUrl: 'https://github.com/example/sec-blog',
+    demoUrl: 'https://blog.example.com',
+    status: 'completed',
+    year: 2023
+  },
+  {
+    id: 'malware-analysis-toolkit',
+    title: '恶意软件分析工具包',
+    description: '静态和动态恶意软件分析工具集，提供沙箱环境和行为监控功能。支持多种文件格式的自动化分析。',
+    tags: ['恶意软件', '逆向分析', '沙箱', 'Go'],
+    status: 'in-progress',
+    year: 2024
+  },
+  {
+    id: 'network-security-monitor',
+    title: '网络安全监控系统',
+    description: '实时网络流量监控和异常检测系统，支持入侵检测和威胁情报集成。具备可视化界面和告警功能。',
+    tags: ['网络安全', '监控系统', 'IDS', 'Python'],
+    status: 'planned',
+    year: 2025
+  }
+];
+
+const getStatusColorClass = (status: Project['status']) => {
+  switch (status) {
+    case 'completed': return 'status-completed';
+    case 'in-progress': return 'status-in-progress';
+    case 'planned': return 'status-planned';
+    default: return 'status-default';
+  }
+};
+
+const getStatusText = (status: Project['status']) => {
+  switch (status) {
+    case 'completed': return '已完成';
+    case 'in-progress': return '进行中';
+    case 'planned': return '计划中';
+    default: return '未知';
+  }
+};
+
+// 按年份分组项目
+const projectsByYear = projects.reduce((acc, project) => {
+  if (!acc[project.year]) {
+    acc[project.year] = [];
+  }
+  acc[project.year].push(project);
+  return acc;
+}, {} as Record<number, Project[]>);
+
+const sortedYears = Object.keys(projectsByYear).sort((a, b) => parseInt(b) - parseInt(a));
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <BaseHead title={`项目 - ${SITE_TITLE}`} description="我的技术项目作品集" />
+    <link rel="stylesheet" href="/fontawesome/fontawesome.min.css" />
+    <link rel="stylesheet" href="/fontawesome/brands.min.css" />
+    <link rel="stylesheet" href="/fontawesome/solid.min.css" />
+  </head>
+  <body>
+    <div class="page-root">
+      <div class="hero">
+        <div class="hero-overlay">
+          <Header />
+          <!-- 页面标题 -->
+          <div class="hero-content hero-centered">
+            <h1 class="title">我的<span class="text-accent">项目</span>作品</h1>
+            <p class="subtitle subtitle-centered">
+              探索我在网络安全、二进制安全和软件开发领域的项目实践
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <main class="projects-main">
+        <!-- 项目统计 -->
+        <div class="stats-container">
+          <div class="stats-card">
+            <div class="stats-number accent-colored">{projects.length}</div>
+            <div class="stats-label">总项目数</div>
+          </div>
+          <div class="stats-card">
+            <div class="stats-number green-colored">
+              {projects.filter(p => p.status === 'completed').length}
+            </div>
+            <div class="stats-label">已完成</div>
+          </div>
+          <div class="stats-card">
+            <div class="stats-number blue-colored">
+              {projects.filter(p => p.status === 'in-progress').length}
+            </div>
+            <div class="stats-label">进行中</div>
+          </div>
+        </div>
+
+        <!-- 项目筛选 -->
+        <div class="filter-container">
+          <button 
+            class="filter-button filter-active"
+            data-filter="all"
+          >
+            全部项目 ({projects.length})
+          </button>
+          <button 
+            class="filter-button"
+            data-filter="completed"
+          >
+            已完成 ({projects.filter(p => p.status === 'completed').length})
+          </button>
+          <button 
+            class="filter-button"
+            data-filter="in-progress"
+          >
+            进行中 ({projects.filter(p => p.status === 'in-progress').length})
+          </button>
+          <button 
+            class="filter-button"
+            data-filter="planned"
+          >
+            计划中 ({projects.filter(p => p.status === 'planned').length})
+          </button>
+        </div>
+
+        <!-- 按年份展示项目 -->
+        {
+          sortedYears.map((year) => (
+            <section class="year-section">
+              <h2 class="year-section-title">
+                <span class="year-icon accent-colored">
+                  <i class="fas fa-calendar-alt"></i>
+                </span>
+                {year}年项目
+              </h2>
+              
+              <div class="projects-grid">
+                {
+                  projectsByYear[parseInt(year)].map((project) => (
+                    <article 
+                      class="project-card"
+                      data-project-id={project.id}
+                      data-status={project.status}
+                    >
+                      <!-- 项目图片占位 -->
+                      <div class="project-image-placeholder">
+                        <div class="project-icon">
+                          <i class="fas fa-code"></i>
+                        </div>
+                        <p class="project-image-text">项目预览图</p>
+                      </div>
+
+                      <!-- 项目内容 -->
+                      <div class="project-content">
+                        <div class="project-header">
+                          <h3 class="project-title">{project.title}</h3>
+                          <span class={`status-badge ${getStatusColorClass(project.status)}`}>
+                            {getStatusText(project.status)}
+                          </span>
+                        </div>
+
+                        <p class="project-description">
+                          {project.description}
+                        </p>
+
+                        <!-- 标签 -->
+                        <div class="project-tags">
+                          {project.tags.map((tag) => (
+                            <span class="project-tag">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="project-actions">
+                          {project.githubUrl && (
+                            <a 
+                              href={project.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="btn btn-secondary"
+                            >
+                              <i class="fab fa-github"></i>
+                              GitHub
+                            </a>
+                          )}
+                          {project.demoUrl && (
+                            <a 
+                              href={project.demoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="btn btn-primary"
+                            >
+                              <i class="fas fa-external-link-alt"></i>
+                              演示
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                      <!-- 年份标识 -->
+                      <div class="project-footer">
+                        <span class="project-year">
+                          <i class="far fa-calendar"></i>
+                          {project.year}年
+                        </span>
+                      </div>
+                    </article>
+                  ))
+                }
+              </div>
+            </section>
+          ))
+        }
+
+        <!-- 底部CTA -->
+        <div class="cta-section">
+          <div class="cta-card">
+            <h3 class="cta-title">想了解更多？</h3>
+            <p class="cta-description">
+              对我的项目感兴趣？欢迎查看源代码或联系我讨论合作机会。
+            </p>
+            <div class="cta-buttons">
+              <a 
+                href="/contact" 
+                class="btn btn-primary"
+              >
+                <i class="fas fa-envelope"></i>
+                联系我
+              </a>
+              <a 
+                href="https://github.com/yourusername" 
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-secondary"
+              >
+                <i class="fab fa-github"></i>
+                GitHub主页
+              </a>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+
+    <!-- 客户端交互脚本 -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // 项目筛选功能
+        const filterButtons = document.querySelectorAll('[data-filter]');
+        const projectCards = document.querySelectorAll('[data-project-id]');
+        
+        filterButtons.forEach((button: Element) => {
+          button.addEventListener('click', function(this: HTMLElement) {
+            const filterStatus = this.dataset.filter;
+            
+            // 更新按钮状态 - 使用项目定义的CSS类名
+            filterButtons.forEach((btn: Element) => {
+              const btnElement = btn as HTMLElement;
+              btnElement.classList.remove('filter-active');
+              btnElement.classList.add('filter-inactive');
+            });
+            this.classList.remove('filter-inactive');
+            this.classList.add('filter-active');
+            
+            // 筛选项目卡片
+            projectCards.forEach((card: Element) => {
+              const cardElement = card as HTMLElement;
+              const projectStatus = cardElement.dataset.status;
+              if (filterStatus === 'all' || projectStatus === filterStatus) {
+                cardElement.style.display = 'block';
+                // 添加淡入动画
+                cardElement.style.opacity = '0';
+                cardElement.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                  cardElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                  cardElement.style.opacity = '1';
+                  cardElement.style.transform = 'translateY(0)';
+                }, 50);
+              } else {
+                cardElement.style.display = 'none';
+              }
+            });
+          });
+        });
+        
+        // 添加滚动动画
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const targetElement = entry.target as HTMLElement;
+              targetElement.style.opacity = '1';
+              targetElement.style.transform = 'translateY(0)';
+            }
+          });
+        }, observerOptions);
+        
+        projectCards.forEach((card: Element, index: number) => {
+          const cardElement = card as HTMLElement;
+          cardElement.style.opacity = '0';
+          cardElement.style.transform = 'translateY(20px)';
+          cardElement.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+          observer.observe(card);
+        });
+        
+        // 平滑滚动到顶部
+        const scrollToTop = () => {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        };
+        
+        // 回到顶部按钮
+        const createBackToTopButton = () => {
+          const button = document.createElement('button');
+          button.innerHTML = '<i class="fas fa-arrow-up"></i>';
+          button.className = 'back-to-top-button';
+          document.body.appendChild(button);
+          
+          let timeout: number;
+          window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+              button.classList.add('back-to-top-visible');
+              clearTimeout(timeout);
+            } else {
+              timeout = window.setTimeout(() => {
+                button.classList.remove('back-to-top-visible');
+              }, 300);
+            }
+          });
+          
+          button.addEventListener('click', scrollToTop);
+        };
+        
+        // 创建回到顶部按钮
+        createBackToTopButton();
+      });
+    </script>
+  </body>
+</html>
