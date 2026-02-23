@@ -1,8 +1,8 @@
 ---
-import BaseHead from "../components/BaseHead.astro";
-import Footer from "../components/Footer.astro";
-import Header from "../components/Header.astro";
-import FormattedDate from "../components/FormattedDate.astro";
+import BaseHead from "@/components/BaseHead.astro";
+import Footer from "@/components/Footer.astro";
+import Header from "@/components/Header.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
 import { getCollection } from "astro:content";
 
 const posts = (await getCollection("blog")).sort(
@@ -13,20 +13,22 @@ const archiveMap = new Map<string, typeof posts>();
 
 for (const post of posts) {
 	const year = post.data.pubDate.getFullYear().toString();
-	const list = archiveMap.get(year) ?? [];
+	const month = String(post.data.pubDate.getMonth() + 1).padStart(2, "0");
+	const yearMonth = `${year}-${month}`;
+	const list = archiveMap.get(yearMonth) ?? [];
 	list.push(post);
-	archiveMap.set(year, list);
+	archiveMap.set(yearMonth, list);
 }
 
-const archiveYears = Array.from(archiveMap.keys()).sort(
-	(a, b) => Number(b) - Number(a),
+const archiveYearMonths = Array.from(archiveMap.keys()).sort((a, b) =>
+	b.localeCompare(a),
 );
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title="归档" description="按年份浏览站点所有文章归档。" />
+		<BaseHead title="归档" description="按年月浏览站点所有文章归档。" />
 	</head>
 	<body>
 		<Header />
@@ -34,16 +36,16 @@ const archiveYears = Array.from(archiveMap.keys()).sort(
 			<section class="archives-header">
 				<h1>归档</h1>
 				<p class="summary">
-					共 {posts.length} 篇文章，按年份归档。
+					共 {posts.length} 篇文章，按年月归档。
 				</p>
 			</section>
 			<section class="archives-list">
 				{
-					archiveYears.map((year) => (
+					archiveYearMonths.map((yearMonth) => (
 						<section class="year-block">
-							<h2>{year}</h2>
+							<h2>{yearMonth}</h2>
 							<ul>
-								{archiveMap.get(year)?.map((post) => (
+								{archiveMap.get(yearMonth)?.map((post) => (
 									<li>
 										<a
 											href={`/blog/${post.id}/`}
