@@ -25,8 +25,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 步骤4：使用 Hexo 生成静态文件
-      - name: Build Hexo
+      # 步骤4：使用 Astro 生成静态文件
+      - name: Build Astro
         run: |
           npm run build  # 这条命令通常会执行 hexo clean && hexo generate，请确保你的 package.json 中有这个 script
 
