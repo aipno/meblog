@@ -1,0 +1,321 @@
+---
+import BaseHead from "@/components/BaseHead.astro";
+import Footer from "@/components/Footer.astro";
+import Header from "@/components/Header.astro";
+
+// 定义里程碑数据类型
+interface Milestone {
+    id: number;
+    date: string;
+    title: string;
+    description: string;
+    tags: string[];
+    isActive?: boolean;
+}
+
+// 网站发展历程数据
+const milestones: Milestone[] = [
+    {
+        id: 1,
+        date: "2026年1月",
+        title: "网站诞生",
+        description:
+            "使用 Astro 框架搭建了第一个版本的个人博客，专注于简洁的设计和优质的阅读体验。",
+        tags: ["Astro", "静态站点"],
+    },
+    {
+        id: 2,
+        date: "2026年2月",
+        title: "内容系统完善",
+        description:
+            "引入了内容集合系统，实现了文章分类、标签管理功能，让知识整理更加系统化。",
+        tags: ["内容管理", "Markdown", "SEO优化"],
+    },
+    {
+        id: 3,
+        date: "至今",
+        title: "持续进化中",
+        description:
+            "网站仍在不断迭代和完善中，致力于为访客提供更好的阅读体验，同时也在探索更多有趣的技术实现方案。",
+        tags: ["持续更新", "技术创新", "用户体验"],
+        isActive: true,
+    },
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <BaseHead
+            title="本站历史"
+            description="记录这个网站的发展历程和重要里程碑。"
+        />
+    </head>
+    <body>
+        <Header />
+        <main class="history-page">
+            <section class="history-header">
+                <h1 class="page-title">网站发展历程</h1>
+                <p class="page-subtitle">记录每一次成长与蜕变</p>
+            </section>
+
+            <section class="timeline-container">
+                <div class="timeline">
+                    {
+                        milestones.map((milestone) => (
+                            <div
+                                class={`timeline-item ${milestone.isActive ? "current" : ""}`}
+                            >
+                                <div
+                                    class={`timeline-marker ${milestone.isActive ? "active" : ""}`}
+                                />
+                                <div
+                                    class={`timeline-content card ${milestone.isActive ? "current-card" : ""}`}
+                                >
+                                    <div class="timeline-date">
+                                        {milestone.date}
+                                    </div>
+                                    <h3 class="timeline-title">
+                                        {milestone.title}
+                                    </h3>
+                                    <p class="timeline-description">
+                                        {milestone.description}
+                                    </p>
+                                    <div class="timeline-tags">
+                                        {milestone.tags.map((tag) => (
+                                            <span
+                                                class={`tag ${milestone.isActive ? "active" : ""}`}
+                                            >
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
+        </main>
+        <Footer />
+    </body><style>
+        .history-page {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem;
+        }
+
+        /* 页面头部 */
+        .history-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 1rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem;
+            color: rgb(var(--black));
+            background: linear-gradient(45deg, var(--accent), #667eea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: rgb(var(--gray));
+            margin: 0;
+            font-weight: 400;
+        }
+
+        /* 时间线容器 */
+        .timeline-container {
+            position: relative;
+            margin: 3rem 0;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        /* 时间线轴 */
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(
+                to bottom,
+                var(--accent),
+                rgba(var(--gray), 30%)
+            );
+        }
+
+        /* 时间线项目 */
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2.5rem;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 时间线标记点 */
+        .timeline-marker {
+            position: absolute;
+            left: -0.5rem;
+            top: 1.5rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--accent);
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-marker.active {
+            background: var(--accent);
+            width: 16px;
+            height: 16px;
+            left: -0.7rem;
+            top: 1.3rem;
+            box-shadow: 0 0 0 4px rgba(35, 55, 255, 0.2);
+        }
+
+        /* 时间线内容卡片 */
+        .timeline-content {
+            margin-left: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(var(--gray), 10%);
+            box-shadow: 0 4px 12px rgba(var(--gray), 10%);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            box-shadow: 0 12px 32px rgba(var(--gray), 25%);
+            transform: translateY(-2px);
+            border-color: rgba(var(--accent), 20%);
+        }
+
+        .current-card {
+            border-color: var(--accent);
+            box-shadow: 0 8px 24px rgba(35, 55, 255, 0.15);
+        }
+
+        .current-card:hover {
+            box-shadow: 0 16px 40px rgba(35, 55, 255, 0.25);
+        }
+
+        /* 时间线日期 */
+        .timeline-date {
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* 时间线标题 */
+        .timeline-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 0 0 0.75rem;
+            color: rgb(var(--black));
+        }
+
+        /* 时间线描述 */
+        .timeline-description {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: rgb(var(--gray-dark));
+            margin: 0 0 1rem;
+        }
+
+        /* 标签 */
+        .timeline-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: rgba(var(--gray-light), 60%);
+            color: rgb(var(--gray));
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            background: rgba(var(--accent), 15%);
+            color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .tag.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .history-page {
+                padding: 1.5rem 1rem 3rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .timeline {
+                padding-left: 1.5rem;
+            }
+
+            .timeline-content {
+                margin-left: 1rem;
+                padding: 1.25rem;
+            }
+
+            .timeline-marker {
+                left: -0.4rem;
+                top: 1.25rem;
+                width: 10px;
+                height: 10px;
+            }
+
+            .timeline-marker.active {
+                left: -0.6rem;
+                top: 1.15rem;
+                width: 14px;
+                height: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .timeline-item {
+                margin-bottom: 2rem;
+            }
+
+            .timeline-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</html>
