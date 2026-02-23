@@ -1,3 +1,4 @@
+# yaml-language-server: ignore
 name: Deploy Astro Blog to My Server
 
 # 触发条件：当代码推送到 main 分支时运行
@@ -32,7 +33,7 @@ jobs:
 
       # 步骤5：通过 SSH 部署到你的服务器
       - name: Deploy to Server
-        uses: easingthemes/ssh-deploy@main # 使用第三方 Action 简化 SSH 部署
+        uses: easingthemes/ssh-deploy@main
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }} # 从 GitHub Secrets 中读取私钥
           REMOTE_HOST: ${{ secrets.SERVER_HOST }} # 从 GitHub Secrets 中读取服务器地址

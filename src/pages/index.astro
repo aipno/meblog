@@ -9,6 +9,9 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 <html lang="zh-CN">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<link rel="stylesheet" href="/fontawesome/fontawesome.min.css" />
+		<link rel="stylesheet" href="/fontawesome/brands.min.css" />
+		<link rel="stylesheet" href="/fontawesome/solid.min.css" />
 	</head>
 	<body>
 		<div class="page-root">
@@ -20,48 +23,39 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 						<p class="subtitle" id="hitokoto">加载一言中…</p>
 					</div>
 				</div>
+				<!-- 将联系组件移到hero容器内部 -->
+				<div class="contact-container">
+					<a
+						href="https://github.com/your-username"
+						class="contact-icon"
+						title="GitHub"
+					>
+						<i class="fab fa-github"></i>
+					</a>
+					<a
+						href="mailto:contact@example.com"
+						class="contact-icon"
+						title="Email"
+					>
+						<i class="fas fa-at"></i>
+					</a>
+					<div class="contact-divider">|</div>
+					<a href="#" class="contact-icon" title="图片">
+						<i class="fas fa-image"></i>
+					</a>
+				</div>
 			</div>
-			<!-- <main class="home-main"></main> -->
 			<Footer />
 		</div>
 		<script>
 			if (typeof window !== "undefined") {
-				const main = document.querySelector(".home-main");
-				const scrollBtn = document.querySelector(".scroll-down");
 				const hero = document.querySelector(".hero");
-
-				if (scrollBtn && main) {
-					scrollBtn.addEventListener("click", (event) => {
-						event.preventDefault();
-						main.scrollIntoView({ behavior: "smooth" });
-					});
-				}
 
 				if (hero) {
 					hero.setAttribute(
 						"style",
 						"background-image: url('https://bing.api.iswxl.cn');",
 					);
-				}
-
-				// 打字机效果函数
-				function typeWriter(
-					element: HTMLElement,
-					text: string,
-					speed: number = 100,
-				) {
-					let i = 0;
-					element.textContent = "";
-
-					function type() {
-						if (i < text.length) {
-							element.textContent += text.charAt(i);
-							i++;
-							setTimeout(type, speed);
-						}
-					}
-
-					type();
 				}
 
 				// 增强版打字机效果函数 - 支持删除和循环
@@ -122,24 +116,6 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 					// 启动打字机
 					type();
 				}
-
-				// 获取一言并应用打字机效果
-				fetch("https://v1.hitokoto.cn?encode=text")
-					.then((res) => res.text())
-					.then((text) => {
-						const el = document.getElementById("hitokoto");
-						if (el) {
-							// 先清空内容，然后应用打字机效果
-							el.textContent = "";
-							typeWriter(el, text, 150);
-						}
-					})
-					.catch(() => {
-						const el = document.getElementById("hitokoto");
-						if (el) {
-							el.textContent = "一言加载失败";
-						}
-					});
 
 				// 获取多条一言并应用循环打字机效果
 				async function startTypewriterLoop() {
@@ -266,6 +242,65 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 				opacity: 0.8;
 				transform: translateY(-2px);
 			}
+
+			/* 新的联系组件样式 - 固定在hero界面右下角 */
+			.contact-container {
+				position: absolute;
+				bottom: 2rem;
+				right: 22rem;
+				display: flex;
+				align-items: center;
+				background: rgba(255, 255, 255, 0.88);
+				border-radius: 16px;
+				padding: 0.5rem 0.8rem;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+				backdrop-filter: blur(10px);
+				-webkit-backdrop-filter: blur(10px);
+				z-index: 10;
+				gap: 0.4rem;
+			}
+
+			.contact-icon {
+				width: 32px;
+				height: 32px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: rgb(80, 80, 80);
+				text-decoration: none;
+				font-size: 1rem;
+				transition: all 0.2s ease;
+				border-radius: 8px;
+			}
+
+			.contact-icon:hover {
+				background: rgba(255, 255, 255, 0.5);
+				transform: translateY(-1px);
+				color: #333;
+			}
+
+			.contact-divider {
+				color: rgba(80, 80, 80, 0.6);
+				font-size: 1.2rem;
+				font-weight: bold;
+				line-height: 1;
+				user-select: none;
+				margin: 0 0.3rem;
+			}
+
+			/* 移除原有的contact-buttons样式 */
+			.contact-buttons {
+				display: none;
+			}
+
+			.contact-btn {
+				display: none;
+			}
+
+			.contact-separator {
+				display: none;
+			}
+
 			.hero-bottom {
 				position: absolute;
 				left: 50%;
@@ -314,19 +349,9 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 				box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
 				background: #fff;
 			}
-			.scroll-down {
-				background: rgba(255, 255, 255, 0.96);
-			}
 			.hero-side .side-btn {
 				background: rgba(255, 192, 203, 0.92);
 				color: #a83c5f;
-			}
-			.home-main {
-				max-width: 960px;
-				margin: 0 auto;
-				padding: 2rem 1rem 4rem;
-				flex: 1;
-				width: 100%;
 			}
 			.home-intro h2 {
 				margin: 0 0 0.75rem;
@@ -347,6 +372,17 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 				}
 				.hero-side {
 					right: 1rem;
+				}
+				/* 响应式调整联系容器 */
+				.contact-container {
+					bottom: 1rem;
+					right: 1rem;
+					padding: 0.4rem 0.6rem;
+				}
+				.contact-icon {
+					width: 28px;
+					height: 28px;
+					font-size: 0.9rem;
 				}
 			}
 		</style>
