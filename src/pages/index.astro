@@ -3,19 +3,6 @@ import BaseHead from "@/components/BaseHead.astro";
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
-
-// 获取图片版权信息（server-side）
-let imageCopyright = "";
-let imageTitle = "";
-
-try {
-	const response = await fetch("https://bing.api.iswxl.cn/copyright.php");
-	const data = await response.json();
-	imageCopyright = data.copyright || "";
-	imageTitle = data.title || "";
-} catch (error) {
-	console.error("获取版权信息失败:", error);
-}
 ---
 
 <!doctype html>
@@ -59,10 +46,7 @@ try {
 						</a>
 						<!-- 气泡聊天框子组件 -->
 						<div class="tooltip-bubble">
-							<div class="tooltip-content">
-								<p>{imageTitle}</p>
-								<p>{imageCopyright}</p>
-							</div>
+							<div class="tooltip-content"></div>
 							<div class="tooltip-arrow"></div>
 						</div>
 					</div>
@@ -71,6 +55,35 @@ try {
 			<Footer />
 		</div>
 		<script>
+			// 在客户端执行
+			let imageCopyright = "";
+			let imageTitle = "";
+
+			async function loadCopyrightInfo() {
+				try {
+					const response = await fetch(
+						"https://bing.api.iswxl.cn/copyright.php",
+					);
+					const data = await response.json();
+					imageCopyright = data.copyright || "";
+					imageTitle = data.title || "";
+
+					// 更新DOM中的内容
+					const tooltipContent =
+						document.querySelector(".tooltip-content");
+					if (tooltipContent) {
+						tooltipContent.innerHTML = `<p>${imageTitle}</p><p>${imageCopyright}</p>`;
+					}
+				} catch (error) {
+					console.error("获取版权信息失败:", error);
+				}
+			}
+
+			// 页面加载完成后执行
+			if (typeof window !== "undefined") {
+				loadCopyrightInfo();
+			}
+
 			if (typeof window !== "undefined") {
 				const hero = document.querySelector(".hero");
 
@@ -273,8 +286,8 @@ try {
 				right: 22rem;
 				display: flex;
 				align-items: center;
-				background: rgba(255, 255, 255, 0.85);
-				border-radius: 16px;
+				background: rgba(255, 255, 255, 0.2);
+				border-radius: 26px;
 				padding: 0.5rem 0.8rem;
 				box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
 				backdrop-filter: blur(12px);
@@ -346,6 +359,13 @@ try {
 				color: rgb(80, 80, 80);
 				font-size: 0.9rem;
 				line-height: 1.5;
+				/* 添加居中对齐 */
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				text-align: center;
+				height: 100%;
 			}
 
 			.tooltip-bubble .tooltip-content p {
