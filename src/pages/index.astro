@@ -59,11 +59,16 @@ const latestPosts = (await getCollection("blog"))
 				</div>
 			</div>
 
-			<!-- 最新文章组件 -->
 			<div class="latest-posts-section">
 				<div class="section-header">
-					<h2 class="section-title">最新文章</h2>
-					<a href="/blog/" class="view-all-link">查看更多</a>
+					<div class="section-header-main">
+						<h2 class="section-title">最新文章</h2>
+						<p class="section-subtitle">最近更新的内容，一眼就能找到想看的。</p>
+					</div>
+					<a href="/blog/" class="view-all-button">
+						<span>查看更多</span>
+						<span class="view-all-button-icon">→</span>
+					</a>
 				</div>
 
 				<div class="posts-grid">
@@ -362,7 +367,7 @@ const latestPosts = (await getCollection("blog"))
 				right: 22rem;
 				display: flex;
 				align-items: center;
-				background: rgba(255, 255, 255, 0.2);
+				background: rgba(255, 255, 255, 0.55);
 				border-radius: 26px;
 				padding: 0.5rem 0.8rem;
 				box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
@@ -553,21 +558,24 @@ const latestPosts = (await getCollection("blog"))
 				line-height: 1.9;
 			}
 
-			/* 最新文章组件 - 精简版 */
 			.latest-posts-section {
-				padding: 3rem 0;
-				background: rgb(var(--white));
-				max-width: 1200px;
-				margin: 0 auto;
+				padding: 3.5rem 1.5rem 3rem;
+				max-width: 1120px;
+				margin: 0 auto 3rem;
 			}
 
 			.section-header {
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				margin-bottom: 2rem;
-				padding-bottom: 0.8rem;
-				border-bottom: 1px solid rgba(var(--gray), 15%);
+				gap: 1.5rem;
+				margin-bottom: 2.5rem;
+			}
+
+			.section-header-main {
+				display: flex;
+				flex-direction: column;
+				gap: 0.45rem;
 			}
 
 			.section-title {
@@ -585,34 +593,44 @@ const latestPosts = (await getCollection("blog"))
 				left: 0;
 				width: 50px;
 				height: 2px;
-				background: linear-gradient(90deg, var(--accent), #667eea);
+				background: linear-gradient(90deg, var(--accent), rgba(var(--accent), 0.1));
 				border-radius: 2px;
 			}
 
-			.view-all-link {
-				color: var(--accent);
-				font-weight: 600;
-				text-decoration: none;
+			.section-subtitle {
+				margin: 0;
+				font-size: 0.95rem;
+				color: rgb(var(--gray));
+				max-width: 420px;
+			}
+
+			.view-all-button {
 				display: inline-flex;
 				align-items: center;
-				transition: all 0.3s ease;
-				font-size: 0.95rem;
+				justify-content: center;
+				gap: 0.4rem;
+				padding: 0.6rem 1.3rem;
+				border-radius: 999px;
+				font-size: 0.9rem;
+				font-weight: 600;
+				color: var(--accent);
+				background: rgba(var(--accent), 0.06);
+				border: 1px solid rgba(var(--accent), 0.25);
+				text-decoration: none;
+				transition: var(--transition-base);
+				white-space: nowrap;
 			}
 
-			.view-all-link:hover {
-				color: var(--accent-dark);
-				transform: translateX(3px);
+			.view-all-button:hover {
+				background: var(--accent);
+				color: #fff;
+				transform: translateY(-1px);
+				box-shadow: 0 10px 30px rgba(74, 144, 226, 0.35);
 			}
 
-			.view-all-link svg {
-				width: 14px;
-				height: 14px;
-				margin-left: 3px;
-				transition: transform 0.3s ease;
-			}
-
-			.view-all-link:hover svg {
-				transform: translateX(2px);
+			.view-all-button-icon {
+				font-size: 1rem;
+				line-height: 1;
 			}
 
 			.posts-grid {
@@ -624,25 +642,28 @@ const latestPosts = (await getCollection("blog"))
 			}
 
 			.post-card {
-				background: white;
-				border-radius: 12px;
+				background: rgba(255, 255, 255, 0.96);
+				border-radius: 16px;
 				overflow: hidden;
-				box-shadow: 0 3px 8px rgba(var(--gray), 6%);
-				transition: all 0.3s ease;
+				box-shadow: 0 10px 30px rgba(var(--gray), 0.08);
+				transition: var(--transition-base);
 				text-decoration: none;
-				display: block;
-				border: 1px solid rgba(var(--gray), 6%);
+				display: flex;
+				flex-direction: column;
+				border: 1px solid rgba(var(--gray), 0.08);
+				backdrop-filter: blur(10px);
+				-webkit-backdrop-filter: blur(10px);
 			}
 
 			.post-card:hover {
-				transform: translateY(-4px);
-				box-shadow: 0 8px 20px rgba(var(--gray), 12%);
-				border-color: rgba(var(--accent), 12%);
+				transform: translateY(-2px);
+				box-shadow: 0 18px 40px rgba(var(--gray), 0.16);
+				border-color: rgba(var(--accent), 0.35);
 			}
 
 			.post-image-wrapper {
 				position: relative;
-				height: 160px;
+				height: 180px;
 				overflow: hidden;
 			}
 
@@ -658,7 +679,7 @@ const latestPosts = (await getCollection("blog"))
 			}
 
 			.post-content {
-				padding: 1.2rem 1rem;
+				padding: 1.2rem 1.1rem 1.1rem;
 			}
 
 			.post-title {
@@ -692,8 +713,8 @@ const latestPosts = (await getCollection("blog"))
 			}
 
 			.post-date svg {
-				width: 12px;
-				height: 12px;
+				width: 13px;
+				height: 13px;
 				margin-right: 0.4rem;
 				fill: currentColor;
 			}
@@ -737,15 +758,13 @@ const latestPosts = (await getCollection("blog"))
 			/* 响应式优化 */
 			@media (max-width: 768px) {
 				.latest-posts-section {
-					padding: 2.5rem 1rem;
+					padding: 2.5rem 1.25rem 2.75rem;
 				}
 
 				.section-header {
 					flex-direction: column;
 					gap: 1.2rem;
 					text-align: center;
-					border-bottom: none;
-					padding-bottom: 0;
 				}
 
 				.section-title::after {
@@ -753,12 +772,16 @@ const latestPosts = (await getCollection("blog"))
 					transform: translateX(-50%);
 				}
 
+				.section-subtitle {
+					max-width: none;
+				}
+
 				.posts-grid {
 					grid-template-columns: 1fr;
 				}
 
 				.post-image-wrapper {
-					height: 140px;
+					height: 160px;
 				}
 
 				.post-content {
@@ -790,11 +813,11 @@ const latestPosts = (await getCollection("blog"))
 				}
 
 				.post-image-wrapper {
-					height: 120px;
+					height: 140px;
 				}
 
 				.post-content {
-					padding: 0.9rem 0.7rem;
+					padding: 0.9rem 0.8rem 1rem;
 				}
 
 				.post-category {
@@ -806,6 +829,58 @@ const latestPosts = (await getCollection("blog"))
 					font-size: 0.6rem;
 					padding: 0.1rem 0.4rem;
 				}
+			}
+
+			.night-mode .latest-posts-section {
+				background: transparent;
+			}
+
+			.night-mode .section-title {
+				color: #f5f5f5;
+			}
+
+			.night-mode .section-subtitle {
+				color: #b0b0b0;
+			}
+
+			.night-mode .post-card {
+				background: #1f1f23;
+				border-color: rgba(255, 255, 255, 0.06);
+				box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+			}
+
+			.night-mode .post-title {
+				color: #f9fafb;
+			}
+
+			.night-mode .post-meta {
+				color: #9ca3af;
+			}
+
+			.night-mode .post-category {
+				background: rgba(var(--accent), 0.22);
+				color: #f9fafb;
+			}
+
+			.night-mode .post-tag {
+				background: rgba(255, 255, 255, 0.06);
+				color: #a5b4fc;
+			}
+
+			.night-mode .post-tag:hover {
+				background: rgba(255, 255, 255, 0.14);
+				color: #e5e7eb;
+			}
+
+			.night-mode .view-all-button {
+				background: rgba(15, 23, 42, 0.9);
+				color: #e5e7eb;
+				border-color: rgba(148, 163, 184, 0.6);
+			}
+
+			.night-mode .view-all-button:hover {
+				background: var(--accent);
+				color: #fff;
 			}
 		</style>
 	</body>

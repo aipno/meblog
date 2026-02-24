@@ -651,6 +651,70 @@ hr {
 	}
 }
 
+/* 通用表格渲染样式 */
+.table-render {
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+	margin: 1.5rem 0;
+	font-size: 0.95rem;
+}
+
+.table-render th,
+.table-render td {
+	padding: 0.5rem 0.75rem;
+	border-width: 0.09375rem;
+	border-style: solid;
+	border-color: #d0d7de;
+	vertical-align: top;
+}
+
+.table-render thead th {
+	background-color: #f6f8fa;
+	font-weight: 600;
+	font-size: 1.05rem;
+}
+
+.table-render tbody tr:nth-child(even) {
+	background-color: #f6f8fa;
+}
+
+.table-render tbody tr:hover {
+	background-color: #ddf4ff;
+}
+
+.table-render caption {
+	caption-side: top;
+	text-align: center;
+	font-weight: 600;
+	font-size: 1.05rem;
+	margin-bottom: 0.75rem;
+	color: rgb(var(--gray-dark));
+}
+
+.table-render-wrapper {
+	width: 100%;
+	overflow-x: auto;
+}
+
+.night-mode .table-render th,
+.night-mode .table-render td {
+	border-color: #30363d;
+}
+
+.night-mode .table-render thead th {
+	background-color: #161b22;
+	color: #e6edf3;
+}
+
+.night-mode .table-render tbody tr:nth-child(even) {
+	background-color: #161b22;
+}
+
+.night-mode .table-render tbody tr:hover {
+	background-color: rgba(31, 111, 235, 0.2);
+}
+
 /* 回到顶部按钮样式 */
 .back-to-top-button {
 	position: fixed;

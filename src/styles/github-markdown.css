@@ -556,23 +556,56 @@
   margin-bottom: 16px;
 }
 
-.github-markdown table th {
+.github-markdown table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+.github-markdown table thead th {
+  background-color: #f6f8fa;
   font-weight: 600;
+  font-size: 1.1em;
 }
 
 .github-markdown table th,
 .github-markdown table td {
-  padding: 6px 13px;
-  border: 1px solid #d0d7de;
+  padding: 0.5rem 0.75rem;
+  border-width: 0.09375rem;
+  border-style: solid;
+  border-color: #d0d7de;
+  vertical-align: top;
 }
 
-.github-markdown table tr {
+.github-markdown table tbody tr {
   background-color: #ffffff;
-  border-top: 1px solid hsla(210, 18%, 87%, 1);
 }
 
-.github-markdown table tr:nth-child(2n) {
+.github-markdown table tbody tr:nth-child(2n) {
   background-color: #f6f8fa;
+}
+
+.github-markdown table tbody tr:hover {
+  background-color: #ddf4ff;
+}
+
+.github-markdown table caption {
+  caption-side: top;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: 0.75rem;
+  color: #24292f;
+}
+
+@media (max-width: 768px) {
+  .github-markdown table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
 }
 
 .github-markdown table img {
@@ -775,6 +808,24 @@
   font-weight: 600;
   background: #f6f8fa;
   border-top: 0;
+}
+
+.night-mode .github-markdown table th,
+.night-mode .github-markdown table td {
+  border-color: #30363d;
+}
+
+.night-mode .github-markdown table thead th {
+  background-color: #161b22;
+  color: #e6edf3;
+}
+
+.night-mode .github-markdown table tbody tr:nth-child(2n) {
+  background-color: #161b22;
+}
+
+.night-mode .github-markdown table tbody tr:hover {
+  background-color: rgba(31, 111, 235, 0.2);
 }
 
 .github-markdown [data-footnote-ref]::before {
