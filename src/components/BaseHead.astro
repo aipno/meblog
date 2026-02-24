@@ -1,4 +1,27 @@
 ---
+/**
+ * 页面头部元信息组件
+ * 
+ * 作用：
+ * - 生成HTML页面的<head>部分内容
+ * - 设置页面标题、描述、关键词等SEO信息
+ * - 配置Open Graph和Twitter Card社交分享标签
+ * - 引入必要的CSS样式文件
+ * - 设置viewport和字符编码
+ * 
+ * 相关文件：
+ * - src/consts.ts：网站基本信息
+ * - src/styles/目录下的CSS文件：样式资源
+ * - 所有页面布局文件：都会引入此组件
+ * - astro.config.mjs：可能包含额外的head配置
+ * 
+ * SEO优化：
+ * - 标准化的meta标签
+ * - 社交媒体分享优化
+ * - 移动端viewport设置
+ * - 字符编码声明
+ * - favicon图标配置
+ */
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
 import "../styles/global.css";

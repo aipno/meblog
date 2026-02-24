@@ -1,4 +1,29 @@
 ---
+/**
+ * 博客文章布局组件
+ * 
+ * 作用：
+ * - 为单篇博客文章提供完整的页面布局
+ * - 包含文章头部信息展示（标题、日期、标签等）
+ * - 集成侧边栏目录导航功能
+ * - 应用GitHub风格的Markdown渲染样式
+ * - 提供响应式设计支持
+ * 
+ * 相关文件：
+ * - src/pages/blog/[...slug].astro：动态路由文件，使用此布局
+ * - src/components/TableOfContents.astro：目录组件
+ * - src/components/Header.astro：页面头部组件
+ * - src/components/Footer.astro：页面底部组件
+ * - src/styles/github-markdown.css：Markdown样式文件
+ * - src/content.config.ts：内容集合配置
+ * 
+ * 主要特性：
+ * - 中文界面支持
+ * - 阅读时间估算
+ * - 标签和分类显示
+ * - 响应式侧边栏目录
+ * - 代码高亮和表格样式
+ */
 import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import BaseHead from "../components/BaseHead.astro";

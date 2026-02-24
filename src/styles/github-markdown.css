@@ -1,3 +1,28 @@
+/**
+ * GitHub风格Markdown渲染样式
+ * 
+ * 作用：
+ * - 提供GitHub风格的Markdown内容渲染样式
+ * - 定义代码块、表格、引用等元素的视觉表现
+ * - 实现语法高亮和代码行号显示
+ * - 配置响应式表格和图片处理
+ * - 提供打印友好的样式支持
+ * 
+ * 相关文件：
+ * - src/layouts/BlogPost.astro：文章布局中应用此样式
+ * - src/content/blog/：Markdown文章内容
+ * - src/styles/global.css：全局样式基础
+ * - src/content.config.ts：配置shiki代码高亮
+ * 
+ * 主要特性：
+ * - 代码块语法高亮
+ * - 表格响应式处理
+ * - 引用块和通知样式
+ * - 图片和媒体元素样式
+ * - 打印样式优化
+ * - 深色模式支持
+ */
+
 /* GitHub风格的Markdown渲染样式 */
 .github-markdown {
   -ms-text-size-adjust: 100%;
@@ -143,6 +168,7 @@
 .github-markdown [type=reset],
 .github-markdown [type=submit] {
   -webkit-appearance: button;
+  appearance: button;
 }
 
 .github-markdown [type=checkbox],

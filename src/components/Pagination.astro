@@ -1,4 +1,27 @@
 ---
+/**
+ * 分页导航组件
+ * 
+ * 作用：
+ * - 提供智能分页导航UI组件
+ * - 支持大量页面的省略号显示
+ * - 实现当前页高亮和禁用状态
+ * - 提供无障碍访问支持
+ * - 响应式设计适配移动端
+ * 
+ * 相关文件：
+ * - src/pages/blog/index.astro：博客主页
+ * - src/pages/blog/page/[page].astro：分页页面
+ * - src/utils/blogUtils.ts：分页逻辑计算
+ * - src/styles/global.css：样式定义
+ * 
+ * 主要特性：
+ * - 智能分页算法（显示当前页前后各2页）
+ * - 省略号自动处理
+ * - ARIA标签支持无障碍访问
+ * - 平滑的CSS过渡动画
+ * - 移动端友好的按钮尺寸
+ */
 interface Props {
 	currentPage: number;
 	totalPages: number;

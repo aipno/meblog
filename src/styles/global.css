@@ -3,6 +3,29 @@
   https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
   License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
  */
+/**
+ * 全局样式文件
+ * 
+ * 作用：
+ * - 定义网站的全局CSS变量和基础样式
+ * - 设置CSS自定义属性（颜色、尺寸、间距等）
+ * - 配置响应式断点和媒体查询
+ * - 定义通用的工具类和重置样式
+ * - 提供组件间共享的样式基础
+ * 
+ * 相关文件：
+ * - src/styles/github-markdown.css：Markdown渲染样式
+ * - src/components/目录下的所有组件：使用这些样式变量
+ * - src/layouts/目录下的布局文件：应用全局样式
+ * - astro.config.mjs：可能包含CSS处理配置
+ * 
+ * 主要内容：
+ * - CSS变量定义（颜色、尺寸、阴影等）
+ * - 基础HTML元素样式重置
+ * - 响应式布局工具类
+ * - 通用按钮和卡片样式
+ * - 动画和过渡效果定义
+ */
 
 :root {
 	--accent: #4A90E2;

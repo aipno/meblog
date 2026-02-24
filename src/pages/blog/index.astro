@@ -1,4 +1,29 @@
 ---
+/**
+ * 博客主页文件
+ * 
+ * 作用：
+ * - 展示博客文章列表的第一页
+ * - 显示最新的博客文章摘要
+ * - 提供文章搜索和筛选功能
+ * - 集成分页导航组件
+ * - 展示分类和标签统计信息
+ * 
+ * 相关文件：
+ * - src/pages/blog/page/[page].astro：分页页面
+ * - src/components/Pagination.astro：分页组件
+ * - src/utils/blogUtils.ts：博客工具函数
+ * - src/content.config.ts：内容集合配置
+ * - src/consts.ts：分页常量配置
+ * 
+ * 主要功能：
+ * - 文章列表展示（带摘要和元信息）
+ * - 搜索框和筛选功能
+ * - 分类标签云展示
+ * - 分页导航支持
+ * - 响应式卡片布局设计
+ */
+
 import { Image } from "astro:assets";
 import { getCollection, type CollectionEntry } from "astro:content";
 import BaseHead from "../../components/BaseHead.astro";

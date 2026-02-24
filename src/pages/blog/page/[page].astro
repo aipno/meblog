@@ -1,4 +1,26 @@
 ---
+/**
+ * 博客分页页面文件
+ * 
+ * 作用：
+ * - 处理博客文章列表的分页路由
+ * - 根据页码参数显示对应的文章列表
+ * - 实现分页导航和URL参数处理
+ * - 与主页共享相同的文章展示逻辑
+ * 
+ * 相关文件：
+ * - src/pages/blog/index.astro：博客主页（第1页）
+ * - src/components/Pagination.astro：分页组件
+ * - src/utils/blogUtils.ts：博客工具函数
+ * - src/consts.ts：分页常量配置
+ * 
+ * 路由特点：
+ * - [page]动态参数接收页码
+ * - 与主页共用文章渲染逻辑
+ * - 支持SEO友好的分页URL
+ * - 实现服务端静态路径生成
+ */
+
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import BaseHead from "@/components/BaseHead.astro";

@@ -1,4 +1,25 @@
 ---
+/**
+ * 博客文章动态路由文件
+ * 
+ * 作用：
+ * - 处理所有博客文章的动态路由
+ * - 根据URL参数渲染对应的Markdown文章
+ * - 使用BlogPost布局组件包装文章内容
+ * - 实现静态路径生成和SSG预渲染
+ * 
+ * 相关文件：
+ * - src/layouts/BlogPost.astro：文章布局组件
+ * - src/content/blog/：博客文章Markdown文件目录
+ * - src/content.config.ts：内容集合配置
+ * - src/utils/blogUtils.ts：博客工具函数
+ * 
+ * 路由逻辑：
+ * - [...slug]：捕获所有层级的路径参数
+ * - getStaticPaths：生成所有文章的静态路径
+ * - render函数：渲染Markdown内容为HTML
+ * - props传递：将文章数据传递给布局组件
+ */
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
 

@@ -1,4 +1,27 @@
 ---
+/**
+ * 网站头部导航组件
+ * 
+ * 作用：
+ * - 提供网站的主要导航菜单
+ * - 显示网站Logo和标题
+ * - 实现移动端汉堡菜单交互
+ * - 集成搜索功能入口
+ * - 提供主题切换等辅助功能
+ * 
+ * 相关文件：
+ * - src/components/HeaderLink.astro：导航链接子组件
+ * - src/styles/global.css：导航样式定义
+ * - src/consts.ts：网站基本信息
+ * - 所有页面布局文件：都会引入此组件
+ * 
+ * 主要特性：
+ * - 响应式设计支持移动端
+ * - 平滑的动画过渡效果
+ * - 无障碍访问支持
+ * - 毛玻璃背景效果
+ * - 悬停状态反馈
+ */
 import { SITE_TITLE } from "../consts";
 import HeaderLink from "./HeaderLink.astro";
 import AvatarImage from "../assets/logo.png";
