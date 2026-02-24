@@ -1,240 +1,477 @@
 ---
+/**
+ * 文章目录导航组件
+ *
+ * 作用：
+ * - 自动生成文章内容的目录结构
+ * - 提供页面内锚点导航功能
+ * - 支持目录展开/收起交互
+ * - 实现滚动时的活动章节高亮
+ * - 响应式设计适应不同屏幕尺寸
+ *
+ * 相关文件：
+ * - src/layouts/BlogPost.astro：文章布局组件（使用此组件）
+ * - src/styles/components/table-of-contents.css：样式定义
+ * - src/content/blog/：Markdown文章目录
+ * - src/utils/tocUtils.ts：目录工具函数
+ *
+ * 主要改进：
+ * - 样式分离到独立CSS文件
+ * - TypeScript类型安全
+ * - 模块化JavaScript逻辑
+ * - 更好的性能优化
+ * - 增强的可访问性支持
+ */
 
+interface Props {
+	/** 是否默认展开目录 */
+	defaultExpanded?: boolean;
+	/** 目录标题 */
+	title?: string;
+	/** 页面主标题（用于显示在目录上方） */
+	pageTitle?: string;
+	/** 自定义CSS类名 */
+	class?: string;
+}
+
+const {
+	defaultExpanded = true,
+	title = "目录",
+	pageTitle = "",
+	class: customClass = "",
+} = Astro.props;
+
+// 引入样式
+import "../styles/components/table-of-contents.css";
+
+// 生成唯一ID用于组件实例区分
+const componentId = Math.random().toString(36).substr(2, 9);
 ---
 
-<div class="toc-widget">
-	<style is:global>
-		.toc-widget {
-			background: white;
-			border-radius: var(--border-radius-lg);
-			box-shadow: var(--shadow-lg);
-			padding: 1rem;
-			position: sticky;
-			top: 1.5rem;
-			max-height: 70vh;
-			overflow-y: auto;
-			border: 1px solid rgba(var(--gray), 10%);
-		}
-
-		.toc-title {
-			font-size: 1rem;
-			font-weight: 600;
-			color: rgb(var(--black));
-			margin: 0 0 1rem 0;
-			display: flex;
-			align-items: center;
-			gap: 0.5rem;
-		}
-
-		.toc-list {
-			list-style: none;
-			padding: 0;
-			margin: 0;
-		}
-
-		.toc-item {
-			margin-bottom: 0.5rem;
-		}
-
-		.toc-link {
-			display: block;
-			padding: 0.4rem 0.6rem;
-			color: rgb(var(--gray));
-			text-decoration: none;
-			border-radius: 4px;
-			font-size: 0.95rem;
-			transition: all 0.3s ease;
-			line-height: 1.4;
-		}
-
-		.toc-link:hover {
-			color: var(--accent);
-			background: rgba(var(--accent), 10%);
-		}
-
-		.toc-link.active {
-			color: var(--accent);
-			font-weight: 600;
-			background: rgba(var(--accent), 10%);
-		}
-
-		.toc-link.level-1 {
-			font-weight: 600;
-			color: rgb(var(--black));
-		}
-
-		.toc-link.level-2 {
-			padding-left: 1rem;
-			color: rgb(var(--gray));
-			font-size: 0.9rem;
-		}
-
-		.toc-link.level-3 {
-			padding-left: 2rem;
-			color: rgb(var(--gray));
-			font-size: 0.85rem;
-		}
-
-		/* 滚动条样式优化 */
-		.toc-widget::-webkit-scrollbar {
-			width: 6px;
-		}
-
-		.toc-widget::-webkit-scrollbar-track {
-			background: transparent;
-		}
-
-		.toc-widget::-webkit-scrollbar-thumb {
-			background: rgba(var(--gray), 30%);
-			border-radius: 3px;
-		}
-
-		.toc-widget::-webkit-scrollbar-thumb:hover {
-			background: rgba(var(--gray), 50%);
-		}
-
-		@media (max-width: 1024px) {
-			.toc-widget {
-				position: static;
-				margin-bottom: 1.5rem;
-				max-height: 50vh;
-				border-radius: var(--border-radius-md);
-			}
-
-			.toc-link {
-				font-size: 0.9rem;
-				padding: 0.4rem 0.5rem;
-			}
-
-			.toc-link.level-2 {
-				padding-left: 1.2rem;
-			}
-
-			.toc-link.level-3 {
-				padding-left: 2.2rem;
-			}
-		}
-
-		@media (max-width: 768px) {
-			.toc-widget {
-				padding: 0.75rem;
-			}
-
-			.toc-title {
-				font-size: 1rem;
-			}
-		}
-	</style>
-
-	<h3 class="toc-title">
-		<span>📋</span>
-		<span>目录</span>
-	</h3>
-
-	<div id="toc-container">
-		<!-- 目录内容将通过JavaScript动态生成 -->
+<!-- 目录容器 -->
+<div class={`toc-widget ${customClass}`} data-toc-id={componentId}>
+	<!-- 目录标题栏 -->
+	<div class="toc-header">
+		<div class="toc-label">{title}</div>
+		{pageTitle && <div class="toc-page-title">{pageTitle}</div>}
 	</div>
+
+	<!-- 目录内容容器 -->
+	<div id={`toc-container-${componentId}`} class="toc-content"></div>
 </div>
 
+<!-- 目录交互逻辑 -->
 <script is:inline>
-	// 简化目录生成功能 - 采用扁平化结构，匹配图片样式
-	function generateTableOfContents() {
-		const headers = document.querySelectorAll(
-			".article-body h2, .article-body h3, .article-body h4",
-		);
-		const tocContainer = document.getElementById("toc-container");
+	// 目录组件逻辑（重构版本）
+	(function () {
+		"use strict";
 
-		if (!tocContainer || headers.length === 0) return;
+		// 组件配置常量
+		const CONFIG = {
+			SELECTORS: {
+				HEADINGS:
+					".article-body h2, .article-body h3, .article-body h4",
+				WIDGET: "[data-toc-id]",
+				TITLE: ".toc-title",
+				CONTENT: ".toc-content",
+			},
+			CLASSES: {
+				COLLAPSED: "toc-collapsed",
+				ACTIVE: "active",
+				LEVEL_PREFIX: "level-",
+			},
+			SCROLL: {
+				OFFSET: 96,
+				ROOT_MARGIN: "-100px 0px -80% 0px",
+				THRESHOLD: 0,
+			},
+		};
 
-		tocContainer.innerHTML = "<ul class='toc-list'></ul>";
-		const listElement = tocContainer.querySelector(".toc-list");
-
-		headers.forEach((header, index) => {
-			const level = parseInt(header.tagName.charAt(1));
-			const text = header.textContent.trim();
-			const id = `heading-${index}`;
-
-			header.id = id;
-
-			const listItem = document.createElement("li");
-			listItem.className = `toc-item toc-level-${level}`;
-			
-			const link = document.createElement("a");
-			link.href = `#${id}`;
-			link.className = `toc-link toc-level-${level} level-${level}`;
-			link.textContent = text;
-
-			link.addEventListener("click", (e) => {
-				e.preventDefault();
-				const target = document.getElementById(id);
-				if (target) {
-					target.scrollIntoView({
-						behavior: "smooth",
-						block: "center",
-					});
-				}
-			});
-
-			listItem.appendChild(link);
-			listElement.appendChild(listItem);
-		});
-
-		// 初始化高亮
-		highlightActiveTocItem();
-	}
-
-	// 高亮当前活动的目录项
-	function highlightActiveTocItem() {
-		const headers = document.querySelectorAll(
-			".article-body h2, .article-body h3, .article-body h4",
-		);
-		const tocLinks = document.querySelectorAll(".toc-link");
-
-		if (headers.length === 0 || tocLinks.length === 0) return;
-
-		function setActive() {
-			const scrollTop =
-				window.pageYOffset || document.documentElement.scrollTop;
-
-			// 移除所有活动状态
-			tocLinks.forEach((link) => link.classList.remove("active"));
-
-			// 找到当前应该激活的标题
-			let activeIndex = -1;
-			for (let i = headers.length - 1; i >= 0; i--) {
-				const header = headers[i];
-				const headerTop = header.offsetTop;
-				if (scrollTop >= headerTop - 100) {
-					activeIndex = i;
-					break;
-				}
-			}
-
-			// 设置对应的TOC链接为活动状态
-			if (activeIndex >= 0) {
-				const activeLinkId = headers[activeIndex].id;
-				const activeLink = document.querySelector(
-					`.toc-link[href="#${activeLinkId}"]`,
-				);
-				if (activeLink) {
-					activeLink.classList.add("active");
-				}
-			}
+		/**
+		 * 目录项类型定义
+		 */
+		function TocItem(element, level, text, id) {
+			this.element = element;
+			this.level = level;
+			this.text = text;
+			this.id = id;
 		}
 
-		window.addEventListener("scroll", setActive);
-		setActive();
-	}
+		/**
+		 * 目录构建器类
+		 */
+		var TocBuilder = {
+			collectHeadings: function () {
+				var headings = Array.prototype.slice.call(
+					document.querySelectorAll(CONFIG.SELECTORS.HEADINGS),
+				);
+				return headings
+					.map(function (heading, index) {
+						var level = parseInt(heading.tagName.charAt(1), 10);
+						var text = heading.textContent
+							? heading.textContent.trim()
+							: "";
+						var id = heading.id || "heading-" + index;
 
-	// 初始化
-	document.addEventListener("DOMContentLoaded", () => {
-		generateTableOfContents();
-	});
+						if (!heading.id) {
+							heading.id = id;
+						}
 
-	// 页面加载完成后重新生成（处理异步内容）
-	window.addEventListener("load", () => {
-		setTimeout(() => {
-			generateTableOfContents();
-		}, 100);
-	});
+						return new TocItem(heading, level, text, id);
+					})
+					.filter(function (item) {
+						return item.text;
+					});
+			},
+
+			buildToc: function (container, items) {
+				if (items.length === 0) {
+					container.innerHTML =
+						'<div class="toc-empty">暂无目录</div>';
+					return;
+				}
+
+				var list = document.createElement("ul");
+				list.className = "toc-list";
+
+				items.forEach(
+					function (item) {
+						var listItem = this.createListItem(item);
+						list.appendChild(listItem);
+					}.bind(this),
+				);
+
+				container.innerHTML = "";
+				container.appendChild(list);
+			},
+
+			createListItem: function (item) {
+				var li = document.createElement("li");
+				li.className = "toc-item";
+
+				var link = document.createElement("a");
+				link.href = "#" + item.id;
+				link.className =
+					"toc-link " + CONFIG.CLASSES.LEVEL_PREFIX + item.level;
+				link.innerHTML =
+					'<span class="toc-link-bullet" aria-hidden="true"></span>' +
+					'<span class="toc-link-label">' +
+					this.escapeHtml(item.text) +
+					"</span>";
+
+				link.addEventListener(
+					"click",
+					function (event) {
+						event.preventDefault();
+						this.scrollToHeading(item.id);
+					}.bind(this),
+				);
+
+				li.appendChild(link);
+				return li;
+			},
+
+			scrollToHeading: function (id) {
+				var target = document.getElementById(id);
+				if (!target) return;
+
+				var rect = target.getBoundingClientRect();
+				var scrollTop =
+					window.pageYOffset || document.documentElement.scrollTop;
+				var offset = CONFIG.SCROLL.OFFSET;
+
+				window.scrollTo({
+					top: scrollTop + rect.top - offset,
+					behavior: "smooth",
+				});
+			},
+
+			escapeHtml: function (text) {
+				var div = document.createElement("div");
+				div.textContent = text;
+				return div.innerHTML;
+			},
+		};
+
+		/**
+		 * 滚动监听器类
+		 */
+		function ScrollSpy(items) {
+			this.items = items;
+			this.activeId = null;
+			this.observer = null;
+			this.links = [];
+		}
+
+		ScrollSpy.prototype.init = function () {
+			if (this.items.length === 0) return;
+
+			this.links = Array.prototype.slice.call(
+				document.querySelectorAll(".toc-link"),
+			);
+			if (this.links.length === 0) return;
+
+			this.setupIntersectionObserver();
+		};
+
+		ScrollSpy.prototype.setupIntersectionObserver = function () {
+			var self = this;
+			this.observer = new IntersectionObserver(
+				function (entries) {
+					var visibleEntries = entries
+						.filter(function (entry) {
+							return entry.isIntersecting;
+						})
+						.sort(function (a, b) {
+							return (
+								a.target.getBoundingClientRect().top -
+								b.target.getBoundingClientRect().top
+							);
+						});
+
+					if (visibleEntries.length === 0) return;
+
+					var id = visibleEntries[0].target.id;
+					if (!id || id === self.activeId) return;
+
+					self.updateActiveLink(id);
+					self.activeId = id;
+				},
+				{
+					rootMargin: CONFIG.SCROLL.ROOT_MARGIN,
+					threshold: CONFIG.SCROLL.THRESHOLD,
+				},
+			);
+
+			this.items.forEach(
+				function (item) {
+					this.observer.observe(item.element);
+				}.bind(this),
+			);
+		};
+
+		ScrollSpy.prototype.updateActiveLink = function (id) {
+			// 移除所有活动状态
+			this.links.forEach(function (link) {
+				link.classList.remove(CONFIG.CLASSES.ACTIVE);
+			});
+
+			// 添加新的活动状态
+			var activeLink = document.querySelector(
+				'.toc-link[href="#' + id + '"]',
+			);
+			if (activeLink) {
+				activeLink.classList.add(CONFIG.CLASSES.ACTIVE);
+
+				// 自动滚动到活动项
+				var widget = activeLink.closest(CONFIG.SELECTORS.WIDGET);
+				if (widget) {
+					var linkRect = activeLink.getBoundingClientRect();
+					var widgetRect = widget.getBoundingClientRect();
+
+					// 计算相对位置
+					var relativeTop = linkRect.top - widgetRect.top;
+					var widgetHeight = widget.clientHeight;
+					var itemHeight = activeLink.offsetHeight || 32; // 默认高度估算
+
+					// 设置滚动阈值
+					// 底部阈值：倒数第7个（约250px）
+					var bottomThreshold = Math.min(
+						itemHeight * 7,
+						widgetHeight * 0.4,
+					);
+					// 顶部阈值：约3个（约100px）
+					var topThreshold = Math.min(
+						itemHeight * 3,
+						widgetHeight * 0.2,
+					);
+
+					var targetScrollTop = -1;
+
+					// 如果在可视区域上方（超过顶部阈值）
+					if (relativeTop < topThreshold) {
+						// 滚动使元素位于视口中间偏上位置
+						targetScrollTop =
+							widget.scrollTop + relativeTop - widgetHeight * 0.3;
+					}
+					// 如果在可视区域下方（超过底部阈值）
+					else if (relativeTop > widgetHeight - bottomThreshold) {
+						// 滚动使元素位于视口中间位置
+						targetScrollTop =
+							widget.scrollTop + relativeTop - widgetHeight * 0.4;
+					}
+
+					if (targetScrollTop !== -1) {
+						widget.scrollTo({
+							top: targetScrollTop,
+							behavior: "smooth",
+						});
+					}
+				}
+			}
+		};
+
+		ScrollSpy.prototype.destroy = function () {
+			if (this.observer) {
+				this.observer.disconnect();
+			}
+		};
+
+		/**
+		 * 目录切换控制器类
+		 */
+		function TocToggle(widget) {
+			this.widget = widget;
+			this.title = widget.querySelector(CONFIG.SELECTORS.TITLE);
+			this.isExpanded = true;
+		}
+
+		TocToggle.prototype.init = function () {
+			if (!this.title) return;
+
+			// 初始化展开状态
+			if (this.widget.hasAttribute("data-default-collapsed")) {
+				this.collapse();
+			}
+
+			this.bindEvents();
+		};
+
+		TocToggle.prototype.bindEvents = function () {
+			var self = this;
+			// 点击标题切换
+			this.title.addEventListener("click", function () {
+				self.toggle();
+			});
+
+			// 键盘支持
+			this.title.addEventListener("keydown", function (event) {
+				if (event.key === "Enter" || event.key === " ") {
+					event.preventDefault();
+					self.toggle();
+				}
+			});
+		};
+
+		TocToggle.prototype.toggle = function () {
+			if (this.isExpanded) {
+				this.collapse();
+			} else {
+				this.expand();
+			}
+		};
+
+		TocToggle.prototype.expand = function () {
+			this.widget.classList.remove(CONFIG.CLASSES.COLLAPSED);
+			this.title.setAttribute("aria-expanded", "true");
+			this.isExpanded = true;
+		};
+
+		TocToggle.prototype.collapse = function () {
+			this.widget.classList.add(CONFIG.CLASSES.COLLAPSED);
+			this.title.setAttribute("aria-expanded", "false");
+			this.isExpanded = false;
+		};
+
+		/**
+		 * 主目录管理器类
+		 */
+		function TableOfContentsManager(componentId) {
+			this.componentId = componentId;
+			this.widget = document.querySelector(
+				'[data-toc-id="' + componentId + '"]',
+			);
+			this.container = document.getElementById(
+				"toc-container-" + componentId,
+			);
+			this.items = [];
+			this.scrollSpy = null;
+			this.toggle = null;
+		}
+
+		TableOfContentsManager.prototype.init = function () {
+			if (!this.widget || !this.container) {
+				console.warn("TableOfContents: Required elements not found");
+				return;
+			}
+
+			this.build();
+			this.initComponents();
+		};
+
+		TableOfContentsManager.prototype.build = function () {
+			this.items = TocBuilder.collectHeadings();
+			TocBuilder.buildToc(this.container, this.items);
+		};
+
+		TableOfContentsManager.prototype.initComponents = function () {
+			this.scrollSpy = new ScrollSpy(this.items);
+			this.scrollSpy.init();
+
+			this.toggle = new TocToggle(this.widget);
+			this.toggle.init();
+		};
+
+		TableOfContentsManager.prototype.destroy = function () {
+			if (this.scrollSpy) {
+				this.scrollSpy.destroy();
+			}
+		};
+
+		TableOfContentsManager.prototype.refresh = function () {
+			this.destroy();
+			this.build();
+			this.initComponents();
+		};
+
+		// 初始化函数
+		function initTableOfContents() {
+			var widgets = document.querySelectorAll(CONFIG.SELECTORS.WIDGET);
+
+			Array.prototype.forEach.call(widgets, function (widget) {
+				var componentId = widget.dataset.tocId;
+				if (componentId) {
+					var manager = new TableOfContentsManager(componentId);
+					manager.init();
+
+					// 将管理器实例存储在元素上以便后续访问
+					widget._tocManager = manager;
+				}
+			});
+		}
+
+		// 页面加载完成后初始化
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", initTableOfContents);
+		} else {
+			initTableOfContents();
+		}
+
+		// 页面完全加载后重新构建（处理异步内容）
+		window.addEventListener("load", function () {
+			setTimeout(function () {
+				var widgets = document.querySelectorAll(
+					CONFIG.SELECTORS.WIDGET,
+				);
+				Array.prototype.forEach.call(widgets, function (widget) {
+					if (widget._tocManager) {
+						widget._tocManager.refresh();
+					}
+				});
+			}, 100);
+		});
+
+		// 导出公共API供外部使用
+		window.TableOfContents = {
+			refresh: function (selector) {
+				selector = selector || CONFIG.SELECTORS.WIDGET;
+				var widgets = document.querySelectorAll(selector);
+				Array.prototype.forEach.call(widgets, function (widget) {
+					if (widget._tocManager) {
+						widget._tocManager.refresh();
+					}
+				});
+			},
+		};
+	})();
 </script>

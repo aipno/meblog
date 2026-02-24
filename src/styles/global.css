@@ -3,6 +3,30 @@
   https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
   License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
  */
+/**
+ * 全局样式文件
+ * 
+ * 作用：
+ * - 定义网站的全局CSS变量和基础样式
+ * - 设置CSS自定义属性（颜色、尺寸、间距等）
+ * - 配置响应式断点和媒体查询
+ * - 定义通用的工具类和重置样式
+ * - 提供组件间共享的样式基础
+ * 
+ * 相关文件：
+ * - src/styles/github-markdown.css：Markdown渲染样式
+ * - src/styles/components/：各个组件的独立样式文件
+ * - src/components/目录下的所有组件：使用这些样式变量
+ * - src/layouts/目录下的布局文件：应用全局样式
+ * - astro.config.mjs：可能包含CSS处理配置
+ * 
+ * 主要内容：
+ * - CSS变量定义（颜色、尺寸、阴影等）
+ * - 基础HTML元素样式重置
+ * - 响应式布局工具类
+ * - 通用按钮和卡片样式
+ * - 动画和过渡效果定义
+ */
 
 :root {
 	--accent: #4A90E2;
@@ -16,6 +40,9 @@
 		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);
 	--card-hover-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
 	--transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	--green: #10B981;
+	--blue: #3B82F6;
+	--yellow: #F59E0B;
 }
 
 @font-face {
@@ -192,8 +219,58 @@ hr {
 	border-top: 1px solid rgb(var(--gray-light));
 }
 
-/* 移除了之前的目录样式，现在使用TableOfContents组件内的样式 */
+/* GitHub风格的通知框样式 */
+.alert {
+	padding: 1rem 1.5rem;
+	margin: 1.5rem 0;
+	border-radius: 6px;
+	border-left: 4px solid;
+}
 
+.alert-note {
+	background-color: #f0f8ff;
+	border-color: #0969da;
+}
+
+.alert-tip {
+	background-color: #f0fff4;
+	border-color: #28a745;
+}
+
+.alert-warning {
+	background-color: #fff8f0;
+	border-color: #f0ad4e;
+}
+
+.alert-important {
+	background-color: #fff0f6;
+	border-color: #d73a49;
+}
+
+.alert-caution {
+	background-color: #f8f0f0;
+	border-color: #e36209;
+}
+
+.alert-title {
+	font-weight: 600;
+	margin-bottom: 0.5rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+/* GitHub风格的任务列表 */
+.task-list-item {
+	list-style-type: none;
+}
+
+.task-list-item-checkbox {
+	margin: 0 0.2em 0.25em -1.6em;
+	vertical-align: middle;
+}
+
+/* 响应式设计 */
 @media (max-width: 720px) {
 	body {
 		font-size: 18px;
@@ -227,23 +304,38 @@ hr {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.5rem;
-	padding: 0.5rem 1rem;
-	border-radius: 6px;
+	padding: 0.75rem 1.5rem;
+	border-radius: 8px;
 	font-weight: 600;
 	transition: all 0.3s ease;
 	text-decoration: none;
+	border: none;
+	cursor: pointer;
+	font-family: inherit;
+	font-size: 1rem;
 }
 
 .btn-primary {
 	background: var(--accent);
 	color: white;
-	box-shadow: 0 4px 12px rgba(35, 55, 255, 0.3);
+	box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
 }
 
 .btn-primary:hover {
 	background: var(--accent-dark);
 	transform: translateY(-2px);
-	box-shadow: 0 6px 16px rgba(35, 55, 255, 0.4);
+	box-shadow: 0 6px 16px rgba(74, 144, 226, 0.4);
+}
+
+.btn-secondary {
+	background: rgb(var(--black));
+	color: white;
+}
+
+.btn-secondary:hover {
+	background: rgb(50, 50, 50);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .card {
@@ -260,6 +352,94 @@ hr {
 	box-shadow: 0 20px 40px rgba(var(--gray), 25%);
 	border-color: rgba(var(--accent), 20%);
 }
+
+
+/* 颜色工具类 */
+.text-accent {
+	color: var(--accent);
+}
+
+.accent-colored {
+	color: var(--accent);
+}
+
+.green-colored {
+	color: var(--green);
+}
+
+.blue-colored {
+	color: var(--blue);
+}
+
+
+
+
+
+
+/* 通用表格渲染样式 */
+.table-render {
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+	margin: 1.5rem 0;
+	font-size: 0.95rem;
+}
+
+.table-render th,
+.table-render td {
+	padding: 0.5rem 0.75rem;
+	border-width: 0.09375rem;
+	border-style: solid;
+	border-color: #d0d7de;
+	vertical-align: top;
+}
+
+.table-render thead th {
+	background-color: #f6f8fa;
+	font-weight: 600;
+	font-size: 1.05rem;
+}
+
+.table-render tbody tr:nth-child(even) {
+	background-color: #f6f8fa;
+}
+
+.table-render tbody tr:hover {
+	background-color: #ddf4ff;
+}
+
+.table-render caption {
+	caption-side: top;
+	text-align: center;
+	font-weight: 600;
+	font-size: 1.05rem;
+	margin-bottom: 0.75rem;
+	color: rgb(var(--gray-dark));
+}
+
+.table-render-wrapper {
+	width: 100%;
+	overflow-x: auto;
+}
+
+.night-mode .table-render th,
+.night-mode .table-render td {
+	border-color: #30363d;
+}
+
+.night-mode .table-render thead th {
+	background-color: #161b22;
+	color: #e6edf3;
+}
+
+.night-mode .table-render tbody tr:nth-child(even) {
+	background-color: #161b22;
+}
+
+.night-mode .table-render tbody tr:hover {
+	background-color: rgba(31, 111, 235, 0.2);
+}
+
 
 /* 响应式调整 */
 @media (max-width: 768px) {

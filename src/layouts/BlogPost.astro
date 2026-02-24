@@ -1,10 +1,37 @@
 ---
+/**
+ * 博客文章布局组件
+ *
+ * 作用：
+ * - 为单篇博客文章提供完整的页面布局
+ * - 包含文章头部信息展示（标题、日期、标签等）
+ * - 集成侧边栏目录导航功能
+ * - 应用GitHub风格的Markdown渲染样式
+ * - 提供响应式设计支持
+ *
+ * 相关文件：
+ * - src/pages/blog/[...slug].astro：动态路由文件，使用此布局
+ * - src/components/TableOfContents.astro：目录组件
+ * - src/components/Header.astro：页面头部组件
+ * - src/components/Footer.astro：页面底部组件
+ * - src/styles/github-markdown.css：Markdown样式文件
+ * - src/content.config.ts：内容集合配置
+ *
+ * 主要特性：
+ * - 中文界面支持
+ * - 阅读时间估算
+ * - 标签和分类显示
+ * - 响应式侧边栏目录
+ * - 代码高亮和表格样式
+ */
 import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import Header from "../components/Header.astro";
+import ArticleMeta from "../components/ArticleMeta.astro";
+import TableOfContents from "../components/TableOfContents.astro";
 
 type Props = CollectionEntry<"blog">["data"];
 
@@ -19,75 +46,440 @@ const {
 } = Astro.props;
 
 // 为可能为 undefined 的属性提供默认值
-const pageTitle = title || "Untitled Post";
-const pageDescription = description || "No description available";
+const pageTitle = title || "无标题文章";
+const pageDescription = description || "暂无描述";
 ---
 
-<html lang="en">
+<html lang="zh-CN">
 	<head>
 		<BaseHead title={pageTitle} description={pageDescription} />
-		<style>
-			/* 省略样式 */
+		<link rel="stylesheet" href="/github-markdown.css" />
+		<style is:global>
+			/* 文章页面样式 - 简洁清晰版本（匹配图片） */
+			:root {
+				--article-max-width: 800px;
+				--sidebar-width: 260px;
+				--content-padding: 2rem;
+				--border-radius-lg: 12px;
+				--border-radius-md: 8px;
+				--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.06);
+				--shadow-md: 0 4px 12px rgba(0, 0, 0, 0.04);
+				--transition-base: all 0.3s ease;
+				--accent-light: #e6eeff;
+			}
+
+			.article-page-wrapper {
+				min-height: 100vh;
+				background: #f8f9fa;
+				padding: 0;
+				margin: 0;
+			}
+
+			.article-container {
+				display: flex;
+				max-width: 1200px;
+				margin: 0 auto;
+				gap: 2rem;
+				padding: 2rem 1rem;
+			}
+
+			/* 主内容区域 */
+			.main-content {
+				flex: 1;
+				max-width: var(--article-max-width);
+				background: white;
+				border-radius: var(--border-radius-lg);
+				box-shadow: var(--shadow-lg);
+				overflow: hidden;
+				border: 1px solid rgba(var(--gray), 10%);
+				transition: max-width 0.3s ease; /* 添加平滑过渡 */
+			}
+
+			/* 文章头部区域 - 匹配图片中的标题区域 */
+			.article-header {
+				padding: 2rem;
+				border-bottom: 1px solid rgba(var(--gray), 10%);
+				background: white;
+			}
+
+			.article-title {
+				font-size: 2.5rem;
+				font-weight: 700;
+				color: rgb(var(--black));
+				margin: 0 0 1.5rem 0;
+				line-height: 1.3;
+			}
+
+			.article-meta {
+				display: flex;
+				align-items: center;
+				gap: 1.5rem;
+				color: rgb(var(--gray));
+				font-size: 0.95rem;
+				margin-bottom: 1.5rem;
+			}
+
+			.meta-item {
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+			}
+
+			.meta-item svg {
+				width: 16px;
+				height: 16px;
+				fill: currentColor;
+			}
+
+			.article-description {
+				color: rgb(var(--gray));
+				font-size: 1.1rem;
+				line-height: 1.6;
+				margin-bottom: 2rem;
+			}
+
+			/* 文章正文区域 - 应用GitHub Markdown样式 */
+			.article-body {
+				padding: 2rem;
+				/* 基础字体设置，具体Markdown样式由github-markdown.css提供 */
+			}
+
+			.article-body img {
+				max-width: 100%;
+				height: auto;
+				border-radius: 3px;
+				box-shadow: var(--shadow-md);
+				margin: 16px 0;
+				display: block;
+				border: 1px solid #dfe2e5;
+			}
+
+			.sidebar {
+				width: var(--sidebar-width);
+				flex-shrink: 0;
+				display: flex;
+				flex-direction: column;
+				gap: 1.5rem;
+				transition: all 0.3s ease;
+				opacity: 1;
+				transform: translateX(0);
+			}
+
+			/* 目录隐藏时的样式 */
+			.article-container.toc-hidden .sidebar {
+				width: 0;
+				opacity: 0;
+				transform: translateX(20px);
+				pointer-events: none;
+				margin: 0;
+				overflow: hidden;
+			}
+
+			.article-container.toc-hidden .main-content {
+				max-width: 1000px; /* 展开后的最大宽度 */
+			}
+
+			/* 目录切换按钮 */
+			.toc-toggle-btn {
+				position: fixed;
+				top: 8rem; /* 与目录标题大致齐平 (目录 sticky top: 6rem + header高度) */
+				right: 2rem;
+				width: 2.5rem;
+				height: 2.5rem;
+				background: white;
+				border-radius: 50%;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				cursor: pointer;
+				z-index: 100;
+				border: 1px solid rgba(0, 0, 0, 0.1);
+				transition: all 0.3s ease;
+				color: rgb(var(--gray-dark));
+			}
+
+			.toc-toggle-btn:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+				color: var(--accent);
+			}
+
+			.toc-toggle-btn svg {
+				width: 20px;
+				height: 20px;
+				transition: transform 0.3s ease;
+			}
+
+			.article-container.toc-hidden .toc-toggle-btn svg {
+				transform: rotate(180deg);
+			}
+
+			/* 回到顶部按钮 */
+			.back-to-top-btn {
+				position: fixed;
+				bottom: 2rem;
+				right: 2rem;
+				width: 3rem;
+				height: 3rem;
+				background: white;
+				border-radius: 50%;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				cursor: pointer;
+				z-index: 99;
+				border: 1px solid rgba(0, 0, 0, 0.1);
+				transition: all 0.3s ease;
+				color: rgb(var(--gray-dark));
+				opacity: 0;
+				visibility: hidden;
+				transform: translateY(20px);
+			}
+
+			.back-to-top-btn.visible {
+				opacity: 1;
+				visibility: visible;
+				transform: translateY(0);
+			}
+
+			.back-to-top-btn:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+				color: var(--accent);
+			}
+
+			/* Removed manual TOC wrapper styles */
+
+			/* 响应式设计 */
+			@media (max-width: 1024px) {
+				.article-container {
+					flex-direction: column;
+				}
+
+				.sidebar {
+					width: 100%;
+					order: -1;
+				}
+
+				.article-title {
+					font-size: 2rem;
+				}
+			}
+
+			@media (max-width: 768px) {
+				.article-container {
+					padding: 1rem;
+				}
+
+				.article-header,
+				.article-body {
+					padding: 1.5rem;
+				}
+
+				.article-title {
+					font-size: 1.8rem;
+				}
+
+				.article-meta {
+					flex-wrap: wrap;
+					gap: 1rem;
+				}
+
+				.toc-container {
+					border-radius: var(--border-radius-md);
+				}
+
+				.article-body {
+					font-size: 14px;
+				}
+
+				.article-body pre {
+					font-size: 12px;
+				}
+			}
 		</style>
 	</head>
 
-	<body>
+	<body class="article-page-wrapper">
 		<Header />
-		<main>
-			<article>
-				<!-- Hero 图片部分 -->
-				<div class="hero-image">
-					{
-						heroImage && (
-							<Image
-								width={1020}
-								height={510}
-								src={heroImage}
-								alt=""
-							/>
-						)
-					}
-				</div>
 
-				<!-- 文章正文部分 -->
-				<div class="prose">
-					<div class="title">
-						<div class="date">
+		<div class="article-container">
+			<!-- 主内容区域 -->
+			<main class="main-content">
+				<!-- 文章头部区域 -->
+				<header class="article-header">
+					<h1 class="article-title">{title}</h1>
+
+					<div class="article-meta">
+						<div class="meta-item">
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
+								<rect
+									x="3"
+									y="4"
+									width="18"
+									height="18"
+									rx="2"
+									ry="2"></rect>
+								<line x1="16" y1="2" x2="16" y2="6"></line>
+								<line x1="8" y1="2" x2="8" y2="6"></line>
+								<line x1="3" y1="10" x2="21" y2="10"></line>
+							</svg>
 							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on{" "}
-										<FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
 						</div>
-						<h1>{title}</h1>
-						<hr />
-
-						<!-- 显示 tags 和 categories -->
-						<div class="meta">
+						<div class="meta-item">
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
+								<path
+									d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+								></path>
+							</svg>
 							{
-								tags && (
-									<div class="tags">
-										Tags: {tags.join(", ")}
-									</div>
-								)
-							}
-							{
-								categories && (
-									<div class="categories">
-										Categories: {categories.join(", ")}
-									</div>
-								)
-							}
+								Math.ceil(
+									(title?.length ||
+										0 + (description?.length || 0)) / 200,
+								) + 1
+							} 分钟阅读
+						</div>
+						<div class="meta-item">
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
+								<path
+									d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"
+								></path>
+								<path
+									d="M12 15c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"
+								></path>
+							</svg>
+							{tags?.length || 0} 个标签
 						</div>
 					</div>
+
+					{
+						description && (
+							<p class="article-description">{description}</p>
+						)
+					}
+				</header>
+
+				<!-- 文章正文 - 应用GitHub Markdown样式 -->
+				<div class="article-body github-markdown">
 					<slot />
 				</div>
-			</article>
-		</main>
+			</main>
+
+			<!-- 侧边栏 - 目录 -->
+			<aside class="sidebar">
+				<TableOfContents class="toc-card" pageTitle={title} />
+			</aside>
+		</div>
+
+		<!-- 目录切换按钮 -->
+		<button
+			id="toc-toggle"
+			class="toc-toggle-btn"
+			aria-label="切换目录显示"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
+				<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+				<line x1="9" y1="3" x2="9" y2="21"></line>
+			</svg>
+		</button>
+
+		<!-- 回到顶部按钮 -->
+		<button id="back-to-top" class="back-to-top-btn" aria-label="回到顶部">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
+				<path d="M18 15l-6-6-6 6"></path>
+			</svg>
+		</button>
+
 		<Footer />
+
+		<script>
+			// 目录切换逻辑
+			const toggleBtn = document.getElementById("toc-toggle");
+			const container = document.querySelector(".article-container");
+
+			if (toggleBtn && container) {
+				toggleBtn.addEventListener("click", () => {
+					container.classList.toggle("toc-hidden");
+
+					// 保存用户偏好
+					const isHidden = container.classList.contains("toc-hidden");
+					localStorage.setItem("toc-hidden", isHidden.toString());
+				});
+
+				// 恢复用户偏好
+				const savedState = localStorage.getItem("toc-hidden");
+				if (savedState === "true") {
+					container.classList.add("toc-hidden");
+				}
+			}
+
+			// 回到顶部逻辑
+			const backToTopBtn = document.getElementById("back-to-top");
+
+			if (backToTopBtn) {
+				// 监听滚动显示/隐藏按钮
+				window.addEventListener("scroll", () => {
+					if (window.scrollY > 300) {
+						backToTopBtn.classList.add("visible");
+					} else {
+						backToTopBtn.classList.remove("visible");
+					}
+				});
+
+				// 点击回到顶部
+				backToTopBtn.addEventListener("click", () => {
+					window.scrollTo({
+						top: 0,
+						behavior: "smooth",
+					});
+				});
+			}
+		</script>
 	</body>
 </html>
+
+<style is:global>
+	.toc-card {
+		background: transparent;
+		box-shadow: none;
+		border: none;
+		padding: 1rem 0;
+	}
+</style>

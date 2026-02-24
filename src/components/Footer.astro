@@ -1,4 +1,27 @@
 ---
+/**
+ * 网站底部信息组件
+ * 
+ * 作用：
+ * - 显示网站版权和备案信息
+ * - 提供社交媒体链接
+ * - 展示站点统计信息
+ * - 包含RSS订阅和Sitemap链接
+ * - 显示技术栈相关信息
+ * 
+ * 相关文件：
+ * - src/consts.ts：网站基本信息和社交链接
+ * - src/styles/global.css：底部样式定义
+ * - 所有页面布局文件：都会引入此组件
+ * - package.json：项目技术栈信息来源
+ * 
+ * 主要内容：
+ * - 版权声明和备案号
+ * - 社交媒体图标链接
+ * - 站点运行统计
+ * - 技术栈展示
+ * - 友情链接区域
+ */
 import { SITE_TITLE } from "../consts";
 import { getCollection } from "astro:content";
 

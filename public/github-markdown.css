@@ -1,0 +1,1085 @@
+/**
+ * GitHub风格Markdown渲染样式
+ * 
+ * 作用：
+ * - 提供GitHub风格的Markdown内容渲染样式
+ * - 定义代码块、表格、引用等元素的视觉表现
+ * - 实现语法高亮和代码行号显示
+ * - 配置响应式表格和图片处理
+ * - 提供打印友好的样式支持
+ * 
+ * 相关文件：
+ * - src/layouts/BlogPost.astro：文章布局中应用此样式
+ * - src/content/blog/：Markdown文章内容
+ * - src/styles/global.css：全局样式基础
+ * - src/content.config.ts：配置shiki代码高亮
+ * 
+ * 主要特性：
+ * - 代码块语法高亮
+ * - 表格响应式处理
+ * - 引用块和通知样式
+ * - 图片和媒体元素样式
+ * - 打印样式优化
+ * - 深色模式支持
+ */
+
+/* GitHub风格的Markdown渲染样式 */
+.github-markdown {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  margin: 0;
+  color: #24292f;
+  background-color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.github-markdown .octicon {
+  display: inline-block;
+  fill: currentColor;
+  vertical-align: text-bottom;
+}
+
+.github-markdown h1:hover .anchor .octicon-link:before,
+.github-markdown h2:hover .anchor .octicon-link:before,
+.github-markdown h3:hover .anchor .octicon-link:before,
+.github-markdown h4:hover .anchor .octicon-link:before,
+.github-markdown h5:hover .anchor .octicon-link:before,
+.github-markdown h6:hover .anchor .octicon-link:before {
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  display: inline-block;
+  background-color: currentColor;
+  -webkit-mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' version='1.1' aria-hidden='true'><path fill-rule='evenodd' d='M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z'></path></svg>");
+  mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' version='1.1' aria-hidden='true'><path fill-rule='evenodd' d='M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z'></path></svg>");
+}
+
+.github-markdown details,
+.github-markdown figcaption,
+.github-markdown figure {
+  display: block;
+}
+
+.github-markdown summary {
+  display: list-item;
+}
+
+.github-markdown [hidden] {
+  display: none !important;
+}
+
+.github-markdown a {
+  background-color: transparent;
+  color: #0969da;
+  text-decoration: none;
+}
+
+.github-markdown abbr[title] {
+  border-bottom: none;
+  text-decoration: underline dotted;
+}
+
+.github-markdown b,
+.github-markdown strong {
+  font-weight: 600;
+}
+
+.github-markdown dfn {
+  font-style: italic;
+}
+
+.github-markdown h1 {
+  margin: .67em 0;
+  font-weight: 600;
+  padding-bottom: .3em;
+  font-size: 2em;
+  border-bottom: 1px solid hsla(210, 18%, 87%, 1);
+}
+
+.github-markdown mark {
+  background-color: #fff8c5;
+  color: #24292f;
+}
+
+.github-markdown small {
+  font-size: 90%;
+}
+
+.github-markdown sub,
+.github-markdown sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+.github-markdown sub {
+  bottom: -0.25em;
+}
+
+.github-markdown sup {
+  top: -0.5em;
+}
+
+.github-markdown img {
+  border-style: none;
+  max-width: 100%;
+  box-sizing: content-box;
+  background-color: #ffffff;
+}
+
+.github-markdown code,
+.github-markdown kbd,
+.github-markdown pre,
+.github-markdown samp {
+  font-family: monospace;
+  font-size: 1em;
+}
+
+.github-markdown figure {
+  margin: 1em 40px;
+}
+
+.github-markdown hr {
+  box-sizing: content-box;
+  overflow: hidden;
+  background: transparent;
+  border-bottom: 1px solid hsla(210, 18%, 87%, 1);
+  height: .25em;
+  padding: 0;
+  margin: 24px 0;
+  background-color: #d0d7de;
+  border: 0;
+}
+
+.github-markdown input {
+  font: inherit;
+  margin: 0;
+  overflow: visible;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.github-markdown [type=button],
+.github-markdown [type=reset],
+.github-markdown [type=submit] {
+  -webkit-appearance: button;
+  appearance: button;
+}
+
+.github-markdown [type=checkbox],
+.github-markdown [type=radio] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.github-markdown [type=number]::-webkit-inner-spin-button,
+.github-markdown [type=number]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+.github-markdown [type=search]::-webkit-search-cancel-button,
+.github-markdown [type=search]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+.github-markdown ::-webkit-input-placeholder {
+  color: inherit;
+  opacity: .54;
+}
+
+.github-markdown ::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  font: inherit;
+}
+
+.github-markdown a:hover {
+  text-decoration: underline;
+}
+
+.github-markdown ::placeholder {
+  color: #6e7781;
+  opacity: 1;
+}
+
+.github-markdown hr::before {
+  display: table;
+  content: "";
+}
+
+.github-markdown hr::after {
+  display: table;
+  clear: both;
+  content: "";
+}
+
+.github-markdown table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow: auto;
+}
+
+.github-markdown td,
+.github-markdown th {
+  padding: 0;
+}
+
+.github-markdown details summary {
+  cursor: pointer;
+}
+
+.github-markdown details:not([open])>*:not(summary) {
+  display: none !important;
+}
+
+.github-markdown a:focus,
+.github-markdown [role=button]:focus,
+.github-markdown input[type=radio]:focus,
+.github-markdown input[type=checkbox]:focus {
+  outline: 2px solid #0969da;
+  outline-offset: -2px;
+  box-shadow: none;
+}
+
+.github-markdown a:focus:not(:focus-visible),
+.github-markdown [role=button]:focus:not(:focus-visible),
+.github-markdown input[type=radio]:focus:not(:focus-visible),
+.github-markdown input[type=checkbox]:focus:not(:focus-visible) {
+  outline: solid 1px transparent;
+}
+
+.github-markdown a:focus-visible,
+.github-markdown [role=button]:focus-visible,
+.github-markdown input[type=radio]:focus-visible,
+.github-markdown input[type=checkbox]:focus-visible {
+  outline: 2px solid #0969da;
+  outline-offset: -2px;
+  box-shadow: none;
+}
+
+.github-markdown a:not([class]):focus,
+.github-markdown a:not([class]):focus-visible,
+.github-markdown input[type=radio]:focus,
+.github-markdown input[type=radio]:focus-visible,
+.github-markdown input[type=checkbox]:focus,
+.github-markdown input[type=checkbox]:focus-visible {
+  outline-offset: 0;
+}
+
+.github-markdown kbd {
+  display: inline-block;
+  padding: 3px 5px;
+  font: 11px ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+  line-height: 10px;
+  color: #24292f;
+  vertical-align: middle;
+  background-color: #f6f8fa;
+  border: solid 1px rgba(175, 184, 193, 0.2);
+  border-bottom-color: rgba(175, 184, 193, 0.2);
+  border-radius: 6px;
+  box-shadow: inset 0 -1px 0 rgba(175, 184, 193, 0.2);
+}
+
+.github-markdown h1,
+.github-markdown h2,
+.github-markdown h3,
+.github-markdown h4,
+.github-markdown h5,
+.github-markdown h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.github-markdown h2 {
+  font-weight: 600;
+  padding-bottom: .3em;
+  font-size: 1.5em;
+  border-bottom: 1px solid hsla(210, 18%, 87%, 1);
+}
+
+.github-markdown h3 {
+  font-weight: 600;
+  font-size: 1.25em;
+}
+
+.github-markdown h4 {
+  font-weight: 600;
+  font-size: 1em;
+}
+
+.github-markdown h5 {
+  font-weight: 600;
+  font-size: .875em;
+}
+
+.github-markdown h6 {
+  font-weight: 600;
+  font-size: .85em;
+  color: #57606a;
+}
+
+.github-markdown p {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.github-markdown blockquote {
+  margin: 0;
+  padding: 0 1em;
+  color: #57606a;
+  border-left: .25em solid #d0d7de;
+}
+
+.github-markdown ul,
+.github-markdown ol {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 2em;
+}
+
+.github-markdown ol ol,
+.github-markdown ul ol {
+  list-style-type: lower-roman;
+}
+
+.github-markdown ul ul ol,
+.github-markdown ul ol ol,
+.github-markdown ol ul ol,
+.github-markdown ol ol ol {
+  list-style-type: lower-alpha;
+}
+
+.github-markdown dd {
+  margin-left: 0;
+}
+
+.github-markdown tt,
+.github-markdown code,
+.github-markdown samp {
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+  font-size: 12px;
+}
+
+.github-markdown pre {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+  font-size: 12px;
+  word-wrap: normal;
+}
+
+.github-markdown .octicon {
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.github-markdown input::-webkit-outer-spin-button,
+.github-markdown input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.github-markdown::before {
+  display: table;
+  content: "";
+}
+
+.github-markdown::after {
+  display: table;
+  clear: both;
+  content: "";
+}
+
+.github-markdown>*:first-child {
+  margin-top: 0 !important;
+}
+
+.github-markdown>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+.github-markdown a:not([href]) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.github-markdown .absent {
+  color: #cf222e;
+}
+
+.github-markdown .anchor {
+  float: left;
+  padding-right: 4px;
+  margin-left: -20px;
+  line-height: 1;
+}
+
+.github-markdown .anchor:focus {
+  outline: none;
+}
+
+.github-markdown p,
+.github-markdown blockquote,
+.github-markdown ul,
+.github-markdown ol,
+.github-markdown dl,
+.github-markdown table,
+.github-markdown pre,
+.github-markdown details {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.github-markdown blockquote>:first-child {
+  margin-top: 0;
+}
+
+.github-markdown blockquote>:last-child {
+  margin-bottom: 0;
+}
+
+.github-markdown h1 .octicon-link,
+.github-markdown h2 .octicon-link,
+.github-markdown h3 .octicon-link,
+.github-markdown h4 .octicon-link,
+.github-markdown h5 .octicon-link,
+.github-markdown h6 .octicon-link {
+  color: #24292f;
+  vertical-align: middle;
+  visibility: hidden;
+}
+
+.github-markdown h1:hover .anchor,
+.github-markdown h2:hover .anchor,
+.github-markdown h3:hover .anchor,
+.github-markdown h4:hover .anchor,
+.github-markdown h5:hover .anchor,
+.github-markdown h6:hover .anchor {
+  text-decoration: none;
+}
+
+.github-markdown h1:hover .anchor .octicon-link,
+.github-markdown h2:hover .anchor .octicon-link,
+.github-markdown h3:hover .anchor .octicon-link,
+.github-markdown h4:hover .anchor .octicon-link,
+.github-markdown h5:hover .anchor .octicon-link,
+.github-markdown h6:hover .anchor .octicon-link {
+  visibility: visible;
+}
+
+.github-markdown h1 tt,
+.github-markdown h1 code,
+.github-markdown h2 tt,
+.github-markdown h2 code,
+.github-markdown h3 tt,
+.github-markdown h3 code,
+.github-markdown h4 tt,
+.github-markdown h4 code,
+.github-markdown h5 tt,
+.github-markdown h5 code,
+.github-markdown h6 tt,
+.github-markdown h6 code {
+  padding: 0 .2em;
+  font-size: inherit;
+}
+
+.github-markdown summary h1,
+.github-markdown summary h2,
+.github-markdown summary h3,
+.github-markdown summary h4,
+.github-markdown summary h5,
+.github-markdown summary h6 {
+  display: inline-block;
+}
+
+.github-markdown summary h1 .anchor,
+.github-markdown summary h2 .anchor,
+.github-markdown summary h3 .anchor,
+.github-markdown summary h4 .anchor,
+.github-markdown summary h5 .anchor,
+.github-markdown summary h6 .anchor {
+  margin-left: -40px;
+}
+
+.github-markdown summary h1,
+.github-markdown summary h2 {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.github-markdown ul.no-list,
+.github-markdown ol.no-list {
+  padding: 0;
+  list-style-type: none;
+}
+
+.github-markdown ol[type=a] {
+  list-style-type: lower-alpha;
+}
+
+.github-markdown ol[type=A] {
+  list-style-type: upper-alpha;
+}
+
+.github-markdown ol[type=i] {
+  list-style-type: lower-roman;
+}
+
+.github-markdown ol[type=I] {
+  list-style-type: upper-roman;
+}
+
+.github-markdown ol[type="1"] {
+  list-style-type: decimal;
+}
+
+.github-markdown div>ol:not([type]) {
+  list-style-type: decimal;
+}
+
+.github-markdown ul ul,
+.github-markdown ul ol,
+.github-markdown ol ol,
+.github-markdown ol ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.github-markdown li>p {
+  margin-top: 16px;
+}
+
+.github-markdown li+li {
+  margin-top: .25em;
+}
+
+.github-markdown dl {
+  padding: 0;
+}
+
+.github-markdown dl dt {
+  padding: 0;
+  margin-top: 16px;
+  font-size: 1em;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.github-markdown dl dd {
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+
+.github-markdown table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+.github-markdown table thead th {
+  background-color: #f6f8fa;
+  font-weight: 600;
+  font-size: 1.1em;
+}
+
+.github-markdown table th,
+.github-markdown table td {
+  padding: 0.5rem 0.75rem;
+  border-width: 0.09375rem;
+  border-style: solid;
+  border-color: #d0d7de;
+  vertical-align: top;
+}
+
+.github-markdown table tbody tr {
+  background-color: #ffffff;
+}
+
+.github-markdown table tbody tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+.github-markdown table tbody tr:hover {
+  background-color: #ddf4ff;
+}
+
+.github-markdown table caption {
+  caption-side: top;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: 0.75rem;
+  color: #24292f;
+}
+
+@media (max-width: 768px) {
+  .github-markdown table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+}
+
+.github-markdown table img {
+  background-color: transparent;
+}
+
+.github-markdown img[align=right] {
+  padding-left: 20px;
+}
+
+.github-markdown img[align=left] {
+  padding-right: 20px;
+}
+
+.github-markdown .emoji {
+  max-width: none;
+  vertical-align: text-top;
+  background-color: transparent;
+}
+
+.github-markdown span.frame {
+  display: block;
+  overflow: hidden;
+}
+
+.github-markdown span.frame>span {
+  display: block;
+  float: left;
+  width: auto;
+  padding: 7px;
+  margin: 13px 0 0;
+  overflow: hidden;
+  border: 1px solid #d0d7de;
+}
+
+.github-markdown span.frame span img {
+  display: block;
+  float: left;
+}
+
+.github-markdown span.frame span span {
+  display: block;
+  padding: 5px 0 0;
+  clear: both;
+  color: #24292f;
+}
+
+.github-markdown span.align-center {
+  display: block;
+  overflow: hidden;
+  clear: both;
+}
+
+.github-markdown span.align-center>span {
+  display: block;
+  margin: 13px auto 0;
+  overflow: hidden;
+  text-align: center;
+}
+
+.github-markdown span.align-center span img {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.github-markdown span.align-right {
+  display: block;
+  overflow: hidden;
+  clear: both;
+}
+
+.github-markdown span.align-right>span {
+  display: block;
+  margin: 13px 0 0;
+  overflow: hidden;
+  text-align: right;
+}
+
+.github-markdown span.align-right span img {
+  margin: 0;
+  text-align: right;
+}
+
+.github-markdown span.float-left {
+  display: block;
+  float: left;
+  margin-right: 13px;
+  overflow: hidden;
+}
+
+.github-markdown span.float-left span {
+  margin: 13px 0 0;
+}
+
+.github-markdown span.float-right {
+  display: block;
+  float: right;
+  margin-left: 13px;
+  overflow: hidden;
+}
+
+.github-markdown span.float-right>span {
+  display: block;
+  margin: 13px auto 0;
+  overflow: hidden;
+  text-align: right;
+}
+
+.github-markdown code,
+.github-markdown tt {
+  padding: .2em .4em;
+  margin: 0;
+  font-size: 85%;
+  white-space: break-spaces;
+  background-color: rgba(175, 184, 193, 0.2);
+  border-radius: 6px;
+}
+
+.github-markdown code br,
+.github-markdown tt br {
+  display: none;
+}
+
+.github-markdown del code {
+  text-decoration: inherit;
+}
+
+.github-markdown samp {
+  font-size: 85%;
+}
+
+.github-markdown pre code {
+  font-size: 100%;
+}
+
+.github-markdown pre>code {
+  padding: 0;
+  margin: 0;
+  word-break: normal;
+  white-space: pre;
+  background: transparent;
+  border: 0;
+}
+
+.github-markdown .highlight {
+  margin-bottom: 16px;
+}
+
+.github-markdown .highlight pre {
+  margin-bottom: 0;
+  word-break: normal;
+}
+
+.github-markdown .highlight pre,
+.github-markdown pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border-radius: 6px;
+  border: 1px solid #d0d7de;
+}
+
+.github-markdown pre code,
+.github-markdown pre tt {
+  display: inline;
+  max-width: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: transparent;
+  border: 0;
+}
+
+.github-markdown .csv-data td,
+.github-markdown .csv-data th {
+  padding: 5px;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.github-markdown .csv-data .blob-num {
+  padding: 10px 8px 9px;
+  text-align: right;
+  background: #ffffff;
+  border: 0;
+}
+
+.github-markdown .csv-data tr {
+  border-top: 0;
+}
+
+.github-markdown .csv-data th {
+  font-weight: 600;
+  background: #f6f8fa;
+  border-top: 0;
+}
+
+.night-mode .github-markdown table th,
+.night-mode .github-markdown table td {
+  border-color: #30363d;
+}
+
+.night-mode .github-markdown table thead th {
+  background-color: #161b22;
+  color: #e6edf3;
+}
+
+.night-mode .github-markdown table tbody tr:nth-child(2n) {
+  background-color: #161b22;
+}
+
+.night-mode .github-markdown table tbody tr:hover {
+  background-color: rgba(31, 111, 235, 0.2);
+}
+
+.github-markdown [data-footnote-ref]::before {
+  content: "[";
+}
+
+.github-markdown [data-footnote-ref]::after {
+  content: "]";
+}
+
+.github-markdown .footnotes {
+  font-size: 12px;
+  color: #57606a;
+  border-top: 1px solid #d0d7de;
+}
+
+.github-markdown .footnotes ol {
+  padding-left: 16px;
+}
+
+.github-markdown .footnotes ol ul {
+  display: inline-block;
+  padding-left: 16px;
+  margin-top: 16px;
+}
+
+.github-markdown .footnotes li {
+  position: relative;
+}
+
+.github-markdown .footnotes li:target::before {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  bottom: -8px;
+  left: -24px;
+  pointer-events: none;
+  content: "";
+  border: 2px solid #0969da;
+  border-radius: 6px;
+}
+
+.github-markdown .footnotes li:target {
+  color: #24292f;
+}
+
+.github-markdown .footnotes .data-footnote-backref g-emoji {
+  font-family: monospace;
+}
+
+.github-markdown .pl-c {
+  color: #6e7781;
+}
+
+.github-markdown .pl-c1,
+.github-markdown .pl-s .pl-v {
+  color: #0550ae;
+}
+
+.github-markdown .pl-e,
+.github-markdown .pl-en {
+  color: #8250df;
+}
+
+.github-markdown .pl-smi,
+.github-markdown .pl-s .pl-s1 {
+  color: #24292f;
+}
+
+.github-markdown .pl-ent {
+  color: #116329;
+}
+
+.github-markdown .pl-k {
+  color: #cf222e;
+}
+
+.github-markdown .pl-s,
+.github-markdown .pl-pds,
+.github-markdown .pl-s .pl-pse .pl-s1,
+.github-markdown .pl-sr,
+.github-markdown .pl-sr .pl-cce,
+.github-markdown .pl-sr .pl-sre,
+.github-markdown .pl-sr .pl-sra {
+  color: #0a3069;
+}
+
+.github-markdown .pl-v,
+.github-markdown .pl-smw {
+  color: #953800;
+}
+
+.github-markdown .pl-bu {
+  color: #82071e;
+}
+
+.github-markdown .pl-ii {
+  color: #f6f8fa;
+  background-color: #82071e;
+}
+
+.github-markdown .pl-c2 {
+  color: #f6f8fa;
+  background-color: #cf222e;
+}
+
+.github-markdown .pl-sr .pl-cce {
+  font-weight: bold;
+  color: #116329;
+}
+
+.github-markdown .pl-ml {
+  color: #3b2300;
+}
+
+.github-markdown .pl-mh,
+.github-markdown .pl-mh .pl-en,
+.github-markdown .pl-ms {
+  font-weight: bold;
+  color: #0550ae;
+}
+
+.github-markdown .pl-mi {
+  font-style: italic;
+  color: #24292f;
+}
+
+.github-markdown .pl-mb {
+  font-weight: bold;
+  color: #24292f;
+}
+
+.github-markdown .pl-md {
+  color: #82071e;
+  background-color: #ffebe9;
+}
+
+.github-markdown .pl-mi1 {
+  color: #116329;
+  background-color: #dafbe1;
+}
+
+.github-markdown .pl-mc {
+  color: #953800;
+  background-color: #ffd8b5;
+}
+
+.github-markdown .pl-mi2 {
+  color: #eaeef2;
+  background-color: #0550ae;
+}
+
+.github-markdown .pl-mdr {
+  font-weight: bold;
+  color: #8250df;
+}
+
+.github-markdown .pl-ba {
+  color: #57606a;
+}
+
+.github-markdown .pl-sg {
+  color: #8c959f;
+}
+
+.github-markdown .pl-corl {
+  text-decoration: underline;
+  color: #0a3069;
+}
+
+.github-markdown g-emoji {
+  display: inline-block;
+  min-width: 1ch;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 1em;
+  font-style: normal !important;
+  font-weight: 400;
+  line-height: 1;
+  vertical-align: -0.075em;
+}
+
+.github-markdown g-emoji img {
+  width: 1em;
+  height: 1em;
+}
+
+.github-markdown .task-list-item {
+  list-style-type: none;
+}
+
+.github-markdown .task-list-item label {
+  font-weight: 400;
+}
+
+.github-markdown .task-list-item.enabled label {
+  cursor: pointer;
+}
+
+.github-markdown .task-list-item+.task-list-item {
+  margin-top: 4px;
+}
+
+.github-markdown .task-list-item .handle {
+  display: none;
+}
+
+.github-markdown .task-list-item-checkbox {
+  margin: 0 .2em .25em -1.4em;
+  vertical-align: middle;
+}
+
+.github-markdown .contains-task-list:dir(rtl) .task-list-item-checkbox {
+  margin: 0 -1.6em .25em .2em;
+}
+
+.github-markdown .contains-task-list {
+  position: relative;
+}
+
+.github-markdown .contains-task-list:hover .task-list-item-convert-container,
+.github-markdown .contains-task-list:focus-within .task-list-item-convert-container {
+  display: block;
+  width: auto;
+  height: 24px;
+  overflow: visible;
+  clip: auto;
+}
+
+.github-markdown ::-webkit-calendar-picker-indicator {
+  filter: invert(50%);
+}

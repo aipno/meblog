@@ -1,3 +1,23 @@
+/**
+ * TypeScript编译配置文件
+ * 
+ * 作用：
+ * - 配置TypeScript编译选项
+ * - 定义项目类型检查规则
+ * - 设置路径别名映射
+ * - 配置严格的类型检查选项
+ * 
+ * 相关文件：
+ * - astro.config.mjs：Astro配置文件
+ * - package.json：项目依赖配置
+ * - src/目录下的.ts/.astro文件：TypeScript源文件
+ * 
+ * 重要配置：
+ * - strictNullChecks：启用严格的null检查
+ * - baseUrl + paths：路径别名配置
+ * - moduleResolution：模块解析策略
+ */
+
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "src/**/*"],
