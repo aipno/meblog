@@ -264,11 +264,16 @@ const latestPosts = (await getCollection("blog"))
 			}
 		</script>
 		<style>
+			/* 首页特有样式 - 移除冗余代码，使用全局样式和CSS变量 */
+			
+			/* 页面布局 */
 			.page-root {
 				min-height: 100vh;
 				display: flex;
 				flex-direction: column;
 			}
+			
+			/* 英雄区域特有样式 */
 			.hero {
 				position: relative;
 				min-height: 100vh;
@@ -276,18 +281,14 @@ const latestPosts = (await getCollection("blog"))
 				background-position: center center;
 				background-repeat: no-repeat;
 			}
+			
 			.hero-overlay {
 				position: relative;
 				min-height: inherit;
-				/* background: linear-gradient(
-					to bottom,
-					rgba(0, 0, 0, 0.4),
-					rgba(0, 0, 0, 0.3),
-					rgba(255, 255, 255, 0.2)
-				); */
 				display: flex;
 				flex-direction: column;
 			}
+			
 			.hero-content {
 				display: flex;
 				flex-direction: column;
@@ -298,69 +299,61 @@ const latestPosts = (await getCollection("blog"))
 				color: #fff;
 				flex: 1;
 			}
+			
 			.hero-content .title {
 				margin: 0 0 1rem;
 				font-size: 2.8rem;
 				text-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
 			}
+			
 			.hero-content .subtitle {
 				margin: 0;
 				font-size: 1.2rem;
 				max-width: 640px;
 				text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-				/* 打字机效果相关样式 */
 				position: relative;
-				min-height: 1.5em; /* 确保有足够的空间显示光标 */
-				transition: all 0.1s ease; /* 平滑过渡效果 */
+				min-height: 1.5em;
+				transition: all 0.1s ease;
 			}
 
-			/* 打字机光标效果 - 增强版 */
+			/* 打字机光标效果 */
 			.hero-content .subtitle::after {
 				content: "|";
 				animation: blink 0.8s infinite;
 				color: #fff;
 				margin-left: 4px;
 				text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-				/* 根据打字状态调整光标样式 */
 				opacity: 1;
 			}
 
-			/* 删除状态下的光标样式 */
 			.hero-content .subtitle[data-deleting="true"]::after {
-				content: "⌫"; /* 退格符号 */
-				color: #ff6b6b; /* 红色表示删除状态 */
+				content: "⌫";
+				color: #ff6b6b;
 				animation: blinkDelete 0.6s infinite;
 			}
 
 			@keyframes blink {
-				0%,
-				100% {
-					opacity: 1;
-				}
-				50% {
-					opacity: 0;
-				}
+				0%, 100% { opacity: 1; }
+				50% { opacity: 0; }
 			}
 
 			@keyframes blinkDelete {
-				0%,
-				100% {
-					opacity: 1;
+				0%, 100% { 
+					opacity: 1; 
 					transform: scale(1.2);
 				}
-				50% {
-					opacity: 0.3;
+				50% { 
+					opacity: 0.3; 
 					transform: scale(1);
 				}
 			}
 
-			/* 打字机文本变化时的淡入效果 */
 			.hero-content .subtitle.changing {
 				opacity: 0.8;
 				transform: translateY(-2px);
 			}
 
-			/* 新的联系组件样式 - 固定在hero界面右下角 */
+			/* 联系组件样式 */
 			.contact-container {
 				position: absolute;
 				bottom: 2rem;
@@ -373,9 +366,6 @@ const latestPosts = (await getCollection("blog"))
 				box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
 				backdrop-filter: blur(12px);
 				-webkit-backdrop-filter: blur(12px);
-				-moz-backdrop-filter: blur(12px);
-				-o-backdrop-filter: blur(12px);
-				-ms-backdrop-filter: blur(12px);
 				z-index: 10;
 				gap: 0.4rem;
 				border: 1px solid rgba(255, 255, 255, 0.3);
@@ -440,7 +430,6 @@ const latestPosts = (await getCollection("blog"))
 				color: rgb(80, 80, 80);
 				font-size: 0.9rem;
 				line-height: 1.5;
-				/* 添加居中对齐 */
 				display: flex;
 				flex-direction: column;
 				align-items: center;
@@ -466,14 +455,12 @@ const latestPosts = (await getCollection("blog"))
 				z-index: 1;
 			}
 
-			/* 悬停效果 */
 			.contact-icon-with-tooltip:hover .tooltip-bubble {
 				opacity: 1;
 				visibility: visible;
 				transform: translateX(50%) translateY(-8px);
 			}
 
-			/* 动画效果 */
 			.tooltip-bubble {
 				transform: translateX(50%) translateY(10px);
 			}
@@ -482,82 +469,12 @@ const latestPosts = (await getCollection("blog"))
 				transform: translateX(50%) translateY(-8px);
 			}
 
-			/* 移除原有的contact-buttons样式 */
-			.contact-buttons {
+			/* 隐藏不需要的旧样式 */
+			.contact-buttons, .contact-btn, .contact-separator {
 				display: none;
 			}
 
-			.contact-btn {
-				display: none;
-			}
-
-			.contact-separator {
-				display: none;
-			}
-
-			.hero-bottom {
-				position: absolute;
-				left: 50%;
-				bottom: 2rem;
-				transform: translateX(-50%);
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				gap: 0.9rem;
-			}
-			.hero-social {
-				display: flex;
-				gap: 0.6rem;
-			}
-			.hero-side {
-				position: absolute;
-				right: 1.5rem;
-				top: 50%;
-				transform: translateY(-50%);
-				display: flex;
-				flex-direction: column;
-				gap: 0.6rem;
-			}
-			.circle-btn {
-				width: 36px;
-				height: 36px;
-				border-radius: 999px;
-				border: none;
-				outline: none;
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
-				background: rgba(255, 255, 255, 0.88);
-				color: rgb(80, 80, 80);
-				box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-				cursor: pointer;
-				text-decoration: none;
-				font-size: 0.95rem;
-				transition:
-					transform 0.1s ease,
-					box-shadow 0.15s ease,
-					background 0.15s ease;
-			}
-			.circle-btn:hover {
-				transform: translateY(-1px);
-				box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-				background: #fff;
-			}
-			.hero-side .side-btn {
-				background: rgba(255, 192, 203, 0.92);
-				color: #a83c5f;
-			}
-			.home-intro h2 {
-				margin: 0 0 0.75rem;
-				font-size: 1.5rem;
-			}
-			.home-intro p {
-				margin: 0;
-				color: rgb(var(--gray-dark));
-				font-size: 0.98rem;
-				line-height: 1.9;
-			}
-
+			/* 最新文章区域 - 使用全局样式 */
 			.latest-posts-section {
 				padding: 3.5rem 1.5rem 3rem;
 				max-width: 1120px;
@@ -633,6 +550,7 @@ const latestPosts = (await getCollection("blog"))
 				line-height: 1;
 			}
 
+			/* 文章网格 - 使用全局卡片样式 */
 			.posts-grid {
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -723,7 +641,7 @@ const latestPosts = (await getCollection("blog"))
 			.post-category {
 				display: inline-block;
 				padding: 0.3rem 0.8rem;
-				background: rgba(var(--accent), 10%);
+				background: rgba(var(--accent), 0.1);
 				color: var(--accent);
 				border-radius: 20px;
 				font-size: 0.75rem;
@@ -742,7 +660,7 @@ const latestPosts = (await getCollection("blog"))
 
 			.post-tag {
 				padding: 0.2rem 0.6rem;
-				background: rgba(var(--gray), 10%);
+				background: rgba(var(--gray), 0.1);
 				color: rgb(var(--gray));
 				border-radius: 20px;
 				font-size: 0.7rem;
@@ -751,7 +669,7 @@ const latestPosts = (await getCollection("blog"))
 			}
 
 			.post-tag:hover {
-				background: rgba(var(--gray), 20%);
+				background: rgba(var(--gray), 0.2);
 				color: rgb(var(--black));
 			}
 
@@ -831,6 +749,7 @@ const latestPosts = (await getCollection("blog"))
 				}
 			}
 
+			/* 夜间模式样式 */
 			.night-mode .latest-posts-section {
 				background: transparent;
 			}

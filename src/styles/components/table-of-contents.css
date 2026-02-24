@@ -1,0 +1,279 @@
+/**
+ * 目录组件样式文件
+ * 
+ * 作用：
+ * - 定义目录组件的所有视觉样式
+ * - 提供响应式设计支持
+ * - 实现动画和交互效果
+ * - 确保可访问性标准
+ * 
+ * 相关文件：
+ * - src/components/TableOfContents.astro：使用此样式文件的组件
+ * - src/styles/global.css：继承的全局样式变量
+ * 
+ * 设计原则：
+ * - 使用CSS变量保持一致性
+ * - 移动优先的响应式设计
+ * - 平滑的过渡动画
+ * - 清晰的视觉层次
+ */
+
+/* 目录容器基础样式 */
+.toc-widget {
+	background: transparent;
+	border-radius: 0;
+	box-shadow: none;
+	padding: 0;
+	position: sticky;
+	top: 6rem;
+	max-height: 70vh;
+	overflow-y: auto;
+	
+	/* 滚动条样式 */
+	scrollbar-width: thin;
+	scrollbar-color: rgba(var(--gray), 0.3) transparent;
+}
+
+.toc-widget::-webkit-scrollbar {
+	width: 6px;
+}
+
+.toc-widget::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.toc-widget::-webkit-scrollbar-thumb {
+	background: rgba(var(--gray), 0.3);
+	border-radius: 3px;
+	transition: background 0.2s ease;
+}
+
+.toc-widget::-webkit-scrollbar-thumb:hover {
+	background: rgba(var(--gray), 0.5);
+}
+
+/* 目录标题样式 */
+.toc-title {
+	font-size: 0.95rem;
+	font-weight: 600;
+	color: rgb(var(--black));
+	margin: 0 0 0.75rem 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	cursor: pointer;
+	user-select: none;
+	outline: none;
+	
+	/* 焦点样式 */
+	&:focus {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+		border-radius: 4px;
+	}
+	
+	/* 悬停效果 */
+	&:hover {
+		color: var(--accent);
+	}
+}
+
+.toc-title-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.toc-title-icon {
+	font-size: 1rem;
+	flex-shrink: 0;
+}
+
+/* 折叠状态指示器 */
+.toc-title::after {
+	content: "▾";
+	font-size: 0.75rem;
+	color: rgb(var(--gray));
+	transition: transform 0.2s ease;
+	transform-origin: center;
+}
+
+.toc-widget.toc-collapsed .toc-title::after {
+	transform: rotate(-90deg);
+}
+
+/* 折叠状态下的容器 */
+.toc-widget.toc-collapsed {
+	max-height: none;
+}
+
+.toc-widget.toc-collapsed .toc-content {
+	display: none;
+}
+
+/* 目录内容区域 */
+.toc-content {
+	transition: opacity 0.2s ease;
+}
+
+/* 空状态样式 */
+.toc-empty {
+	padding: 1rem;
+	font-size: 0.85rem;
+	color: rgb(var(--gray));
+	text-align: center;
+	font-style: italic;
+}
+
+/* 目录列表样式 */
+.toc-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.toc-item + .toc-item {
+	margin-top: 0.25rem;
+}
+
+/* 目录链接样式 */
+.toc-link {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.4rem;
+	padding: 0.25rem 0.35rem;
+	color: rgb(var(--gray));
+	text-decoration: none;
+	border-radius: 4px;
+	font-size: 0.9rem;
+	transition: all 0.2s ease;
+	line-height: 1.5;
+	
+	/* 可访问性 */
+	&:focus {
+		outline: 2px solid var(--accent);
+		outline-offset: 1px;
+	}
+	
+	/* 悬停状态 */
+	&:hover {
+		color: var(--accent);
+		background: rgba(var(--accent), 0.1);
+		transform: translateX(2px);
+	}
+	
+	/* 活动状态 */
+	&.active {
+		color: var(--accent);
+		font-weight: 600;
+		background: rgba(var(--accent), 0.16);
+		
+		.toc-link-bullet {
+			background: var(--accent);
+			transform: scale(1.2);
+		}
+	}
+}
+
+/* 目录链接装饰元素 */
+.toc-link-bullet {
+	flex-shrink: 0;
+	width: 0.35rem;
+	height: 0.35rem;
+	border-radius: 999px;
+	background: rgba(var(--gray), 0.45);
+	margin-top: 0.45rem;
+	transition: all 0.2s ease;
+}
+
+.toc-link-label {
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* 不同级别的缩进 */
+.toc-link.level-2 {
+	padding-left: 0.6rem;
+}
+
+.toc-link.level-3 {
+	padding-left: 1.3rem;
+	font-size: 0.85rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+	.toc-widget {
+		position: static;
+		margin-bottom: 1.5rem;
+		max-height: none;
+	}
+	
+	/* 调整移动端链接样式 */
+	.toc-link {
+		font-size: 0.9rem;
+		padding: 0.25rem 0.3rem;
+	}
+	
+	.toc-link.level-2 {
+		padding-left: 0.8rem;
+	}
+	
+	.toc-link.level-3 {
+		padding-left: 1.4rem;
+	}
+}
+
+@media (max-width: 768px) {
+	.toc-title {
+		font-size: 0.95rem;
+		padding: 0.5rem;
+	}
+	
+	.toc-link {
+		font-size: 0.85rem;
+		padding: 0.2rem 0.25rem;
+	}
+	
+	/* 移动端简化样式 */
+	.toc-link:hover {
+		transform: none;
+	}
+	
+	.toc-link.level-2 {
+		padding-left: 0.7rem;
+	}
+	
+	.toc-link.level-3 {
+		padding-left: 1.2rem;
+		font-size: 0.8rem;
+	}
+}
+
+/* 打印样式 */
+@media print {
+	.toc-widget {
+		position: static;
+		max-height: none;
+		overflow: visible;
+	}
+	
+	.toc-title::after {
+		display: none;
+	}
+	
+	.toc-link {
+		color: black !important;
+		background: none !important;
+		text-decoration: underline;
+	}
+	
+	.toc-link:hover,
+	.toc-link.active {
+		background: none !important;
+		transform: none !important;
+	}
+}
