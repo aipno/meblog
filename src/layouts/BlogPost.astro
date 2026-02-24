@@ -1,14 +1,14 @@
 ---
 /**
  * 博客文章布局组件
- * 
+ *
  * 作用：
  * - 为单篇博客文章提供完整的页面布局
  * - 包含文章头部信息展示（标题、日期、标签等）
  * - 集成侧边栏目录导航功能
  * - 应用GitHub风格的Markdown渲染样式
  * - 提供响应式设计支持
- * 
+ *
  * 相关文件：
  * - src/pages/blog/[...slug].astro：动态路由文件，使用此布局
  * - src/components/TableOfContents.astro：目录组件
@@ -16,7 +16,7 @@
  * - src/components/Footer.astro：页面底部组件
  * - src/styles/github-markdown.css：Markdown样式文件
  * - src/content.config.ts：内容集合配置
- * 
+ *
  * 主要特性：
  * - 中文界面支持
  * - 阅读时间估算
@@ -92,6 +92,7 @@ const pageDescription = description || "暂无描述";
 				box-shadow: var(--shadow-lg);
 				overflow: hidden;
 				border: 1px solid rgba(var(--gray), 10%);
+				transition: max-width 0.3s ease; /* 添加平滑过渡 */
 			}
 
 			/* 文章头部区域 - 匹配图片中的标题区域 */
@@ -159,6 +160,94 @@ const pageDescription = description || "暂无描述";
 				display: flex;
 				flex-direction: column;
 				gap: 1.5rem;
+				transition: all 0.3s ease;
+				opacity: 1;
+				transform: translateX(0);
+			}
+
+			/* 目录隐藏时的样式 */
+			.article-container.toc-hidden .sidebar {
+				width: 0;
+				opacity: 0;
+				transform: translateX(20px);
+				pointer-events: none;
+				margin: 0;
+				overflow: hidden;
+			}
+
+			.article-container.toc-hidden .main-content {
+				max-width: 1000px; /* 展开后的最大宽度 */
+			}
+
+			/* 目录切换按钮 */
+			.toc-toggle-btn {
+				position: fixed;
+				bottom: 6rem; /* 上移 */
+				right: 2rem;
+				width: 3rem;
+				height: 3rem;
+				background: white;
+				border-radius: 50%;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				cursor: pointer;
+				z-index: 100;
+				border: 1px solid rgba(0, 0, 0, 0.1);
+				transition: all 0.3s ease;
+				color: rgb(var(--gray-dark));
+			}
+
+			.toc-toggle-btn:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+				color: var(--accent);
+			}
+
+			.toc-toggle-btn svg {
+				width: 20px;
+				height: 20px;
+				transition: transform 0.3s ease;
+			}
+
+			.article-container.toc-hidden .toc-toggle-btn svg {
+				transform: rotate(180deg);
+			}
+
+			/* 回到顶部按钮 */
+			.back-to-top-btn {
+				position: fixed;
+				bottom: 2rem;
+				right: 2rem;
+				width: 3rem;
+				height: 3rem;
+				background: white;
+				border-radius: 50%;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				cursor: pointer;
+				z-index: 99;
+				border: 1px solid rgba(0, 0, 0, 0.1);
+				transition: all 0.3s ease;
+				color: rgb(var(--gray-dark));
+				opacity: 0;
+				visibility: hidden;
+				transform: translateY(20px);
+			}
+
+			.back-to-top-btn.visible {
+				opacity: 1;
+				visibility: visible;
+				transform: translateY(0);
+			}
+
+			.back-to-top-btn:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+				color: var(--accent);
 			}
 
 			/* Removed manual TOC wrapper styles */
@@ -201,11 +290,11 @@ const pageDescription = description || "暂无描述";
 				.toc-container {
 					border-radius: var(--border-radius-md);
 				}
-				
+
 				.article-body {
 					font-size: 14px;
 				}
-				
+
 				.article-body pre {
 					font-size: 12px;
 				}
@@ -222,11 +311,22 @@ const pageDescription = description || "暂无描述";
 				<!-- 文章头部区域 -->
 				<header class="article-header">
 					<h1 class="article-title">{title}</h1>
-					
+
 					<div class="article-meta">
 						<div class="meta-item">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
+								<rect
+									x="3"
+									y="4"
+									width="18"
+									height="18"
+									rx="2"
+									ry="2"></rect>
 								<line x1="16" y1="2" x2="16" y2="6"></line>
 								<line x1="8" y1="2" x2="8" y2="6"></line>
 								<line x1="3" y1="10" x2="21" y2="10"></line>
@@ -234,25 +334,46 @@ const pageDescription = description || "暂无描述";
 							<FormattedDate date={pubDate} />
 						</div>
 						<div class="meta-item">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
+								<path
+									d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+								></path>
 							</svg>
-							{Math.ceil((title?.length || 0 + (description?.length || 0)) / 200) + 1} 分钟阅读
+							{
+								Math.ceil(
+									(title?.length ||
+										0 + (description?.length || 0)) / 200,
+								) + 1
+							} 分钟阅读
 						</div>
 						<div class="meta-item">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path>
-								<path d="M12 15c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"></path>
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
+								<path
+									d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"
+								></path>
+								<path
+									d="M12 15c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"
+								></path>
 							</svg>
 							{tags?.length || 0} 个标签
 						</div>
 					</div>
-					
-					{description && (
-						<p class="article-description">
-							{description}
-						</p>
-					)}
+
+					{
+						description && (
+							<p class="article-description">{description}</p>
+						)
+					}
 				</header>
 
 				<!-- 文章正文 - 应用GitHub Markdown样式 -->
@@ -263,19 +384,102 @@ const pageDescription = description || "暂无描述";
 
 			<!-- 侧边栏 - 目录 -->
 			<aside class="sidebar">
-				<TableOfContents class="toc-card" />
+				<TableOfContents class="toc-card" pageTitle={title} />
 			</aside>
 		</div>
+
+		<!-- 目录切换按钮 -->
+		<button
+			id="toc-toggle"
+			class="toc-toggle-btn"
+			aria-label="切换目录显示"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
+				<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+				<line x1="9" y1="3" x2="9" y2="21"></line>
+			</svg>
+		</button>
+
+		<!-- 回到顶部按钮 -->
+		<button id="back-to-top" class="back-to-top-btn" aria-label="回到顶部">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
+				<path d="M18 15l-6-6-6 6"></path>
+			</svg>
+		</button>
+
 		<Footer />
+
+		<script>
+			// 目录切换逻辑
+			const toggleBtn = document.getElementById("toc-toggle");
+			const container = document.querySelector(".article-container");
+
+			if (toggleBtn && container) {
+				toggleBtn.addEventListener("click", () => {
+					container.classList.toggle("toc-hidden");
+
+					// 保存用户偏好
+					const isHidden = container.classList.contains("toc-hidden");
+					localStorage.setItem("toc-hidden", isHidden.toString());
+				});
+
+				// 恢复用户偏好
+				const savedState = localStorage.getItem("toc-hidden");
+				if (savedState === "true") {
+					container.classList.add("toc-hidden");
+				}
+			}
+
+			// 回到顶部逻辑
+			const backToTopBtn = document.getElementById("back-to-top");
+
+			if (backToTopBtn) {
+				// 监听滚动显示/隐藏按钮
+				window.addEventListener("scroll", () => {
+					if (window.scrollY > 300) {
+						backToTopBtn.classList.add("visible");
+					} else {
+						backToTopBtn.classList.remove("visible");
+					}
+				});
+
+				// 点击回到顶部
+				backToTopBtn.addEventListener("click", () => {
+					window.scrollTo({
+						top: 0,
+						behavior: "smooth",
+					});
+				});
+			}
+		</script>
 	</body>
 </html>
 
 <style is:global>
 	.toc-card {
-		background: white;
-		border-radius: var(--border-radius-lg);
-		box-shadow: var(--shadow-lg);
-		border: 1px solid rgba(var(--gray), 10%);
-		padding: 1rem;
+		background: transparent;
+		box-shadow: none;
+		border: none;
+		padding: 1rem 0;
 	}
 </style>

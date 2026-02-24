@@ -26,89 +26,41 @@
 	padding: 0;
 	position: sticky;
 	top: 6rem;
-	max-height: 70vh;
+	z-index: 10;
+	max-height: calc(100vh - 8rem);
+	/* 确保在视口内 */
 	overflow-y: auto;
-	
-	/* 滚动条样式 */
-	scrollbar-width: thin;
-	scrollbar-color: rgba(var(--gray), 0.3) transparent;
+
+	/* 隐藏滚动条 */
+	scrollbar-width: none;
+	-ms-overflow-style: none;
 }
 
 .toc-widget::-webkit-scrollbar {
-	width: 6px;
+	display: none;
 }
 
-.toc-widget::-webkit-scrollbar-track {
-	background: transparent;
+/* 目录头部样式 */
+.toc-header {
+	margin-bottom: 1.5rem;
 }
 
-.toc-widget::-webkit-scrollbar-thumb {
-	background: rgba(var(--gray), 0.3);
-	border-radius: 3px;
-	transition: background 0.2s ease;
-}
-
-.toc-widget::-webkit-scrollbar-thumb:hover {
-	background: rgba(var(--gray), 0.5);
-}
-
-/* 目录标题样式 */
-.toc-title {
-	font-size: 0.95rem;
-	font-weight: 600;
-	color: rgb(var(--black));
-	margin: 0 0 0.75rem 0;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 0.5rem;
-	cursor: pointer;
-	user-select: none;
-	outline: none;
-	
-	/* 焦点样式 */
-	&:focus {
-		outline: 2px solid var(--accent);
-		outline-offset: 2px;
-		border-radius: 4px;
-	}
-	
-	/* 悬停效果 */
-	&:hover {
-		color: var(--accent);
-	}
-}
-
-.toc-title-label {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.35rem;
-}
-
-.toc-title-icon {
-	font-size: 1rem;
-	flex-shrink: 0;
-}
-
-/* 折叠状态指示器 */
-.toc-title::after {
-	content: "▾";
-	font-size: 0.75rem;
+.toc-label {
+	font-size: 0.85rem;
 	color: rgb(var(--gray));
-	transition: transform 0.2s ease;
-	transform-origin: center;
+	margin-bottom: 0.5rem;
+	font-weight: 500;
 }
 
-.toc-widget.toc-collapsed .toc-title::after {
-	transform: rotate(-90deg);
+.toc-page-title {
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: rgb(var(--black));
+	line-height: 1.3;
 }
 
-/* 折叠状态下的容器 */
-.toc-widget.toc-collapsed {
-	max-height: none;
-}
-
-.toc-widget.toc-collapsed .toc-content {
+/* 目录标题样式（保留用于兼容性，但隐藏默认显示） */
+.toc-title {
 	display: none;
 }
 
@@ -133,7 +85,7 @@
 	margin: 0;
 }
 
-.toc-item + .toc-item {
+.toc-item+.toc-item {
 	margin-top: 0.25rem;
 }
 
@@ -141,66 +93,70 @@
 .toc-link {
 	display: flex;
 	align-items: flex-start;
-	gap: 0.4rem;
-	padding: 0.25rem 0.35rem;
+	gap: 0.5rem;
+	padding: 0.2rem 0.5rem 0.2rem 0;
 	color: rgb(var(--gray));
 	text-decoration: none;
-	border-radius: 4px;
+	border-radius: 0;
 	font-size: 0.9rem;
 	transition: all 0.2s ease;
-	line-height: 1.5;
-	
+	line-height: 1.4;
+	position: relative;
+	border-left: 3px solid transparent;
+	padding-left: 1rem;
+
 	/* 可访问性 */
 	&:focus {
 		outline: 2px solid var(--accent);
-		outline-offset: 1px;
+		outline-offset: -2px;
+		border-radius: 2px;
 	}
-	
+
 	/* 悬停状态 */
 	&:hover {
-		color: var(--accent);
-		background: rgba(var(--accent), 0.1);
-		transform: translateX(2px);
+		color: var(--black);
+		border-left-color: rgba(var(--gray), 0.3);
 	}
-	
+
 	/* 活动状态 */
 	&.active {
-		color: var(--accent);
+		color: #b91c1c;
+		/* 使用深红色，接近参考图 */
 		font-weight: 600;
-		background: rgba(var(--accent), 0.16);
-		
+		background: transparent;
+		border-left-color: #b91c1c;
+
 		.toc-link-bullet {
-			background: var(--accent);
-			transform: scale(1.2);
+			display: none;
 		}
 	}
 }
 
-/* 目录链接装饰元素 */
+/* 目录链接装饰元素 - 隐藏原有的圆点 */
 .toc-link-bullet {
-	flex-shrink: 0;
-	width: 0.35rem;
-	height: 0.35rem;
-	border-radius: 999px;
-	background: rgba(var(--gray), 0.45);
-	margin-top: 0.45rem;
-	transition: all 0.2s ease;
+	display: none;
 }
 
 .toc-link-label {
 	flex: 1;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	white-space: nowrap;
+	white-space: normal;
+	/* 允许换行 */
 }
 
 /* 不同级别的缩进 */
 .toc-link.level-2 {
-	padding-left: 0.6rem;
+	padding-left: 1rem;
 }
 
 .toc-link.level-3 {
-	padding-left: 1.3rem;
+	padding-left: 2rem;
+	font-size: 0.9rem;
+}
+
+.toc-link.level-4 {
+	padding-left: 3rem;
 	font-size: 0.85rem;
 }
 
@@ -211,17 +167,17 @@
 		margin-bottom: 1.5rem;
 		max-height: none;
 	}
-	
+
 	/* 调整移动端链接样式 */
 	.toc-link {
 		font-size: 0.9rem;
 		padding: 0.25rem 0.3rem;
 	}
-	
+
 	.toc-link.level-2 {
 		padding-left: 0.8rem;
 	}
-	
+
 	.toc-link.level-3 {
 		padding-left: 1.4rem;
 	}
@@ -232,21 +188,21 @@
 		font-size: 0.95rem;
 		padding: 0.5rem;
 	}
-	
+
 	.toc-link {
 		font-size: 0.85rem;
 		padding: 0.2rem 0.25rem;
 	}
-	
+
 	/* 移动端简化样式 */
 	.toc-link:hover {
 		transform: none;
 	}
-	
+
 	.toc-link.level-2 {
 		padding-left: 0.7rem;
 	}
-	
+
 	.toc-link.level-3 {
 		padding-left: 1.2rem;
 		font-size: 0.8rem;
@@ -260,17 +216,17 @@
 		max-height: none;
 		overflow: visible;
 	}
-	
+
 	.toc-title::after {
 		display: none;
 	}
-	
+
 	.toc-link {
 		color: black !important;
 		background: none !important;
 		text-decoration: underline;
 	}
-	
+
 	.toc-link:hover,
 	.toc-link.active {
 		background: none !important;

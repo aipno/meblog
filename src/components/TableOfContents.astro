@@ -1,20 +1,20 @@
 ---
 /**
  * 文章目录导航组件
- * 
+ *
  * 作用：
  * - 自动生成文章内容的目录结构
  * - 提供页面内锚点导航功能
  * - 支持目录展开/收起交互
  * - 实现滚动时的活动章节高亮
  * - 响应式设计适应不同屏幕尺寸
- * 
+ *
  * 相关文件：
  * - src/layouts/BlogPost.astro：文章布局组件（使用此组件）
  * - src/styles/components/table-of-contents.css：样式定义
  * - src/content/blog/：Markdown文章目录
  * - src/utils/tocUtils.ts：目录工具函数
- * 
+ *
  * 主要改进：
  * - 样式分离到独立CSS文件
  * - TypeScript类型安全
@@ -28,35 +28,33 @@ interface Props {
 	defaultExpanded?: boolean;
 	/** 目录标题 */
 	title?: string;
+	/** 页面主标题（用于显示在目录上方） */
+	pageTitle?: string;
 	/** 自定义CSS类名 */
 	class?: string;
 }
 
-const { 
-	defaultExpanded = true, 
+const {
+	defaultExpanded = true,
 	title = "目录",
-	class: customClass = ""
+	pageTitle = "",
+	class: customClass = "",
 } = Astro.props;
 
 // 引入样式
-import '../styles/components/table-of-contents.css';
+import "../styles/components/table-of-contents.css";
 
 // 生成唯一ID用于组件实例区分
 const componentId = Math.random().toString(36).substr(2, 9);
 ---
 
 <!-- 目录容器 -->
-<div 
-	class={`toc-widget ${customClass}`} 
-	data-toc-id={componentId}
->
+<div class={`toc-widget ${customClass}`} data-toc-id={componentId}>
 	<!-- 目录标题栏 -->
-	<h3 class="toc-title" role="button" tabindex="0" aria-expanded={defaultExpanded ? "true" : "false"}>
-		<span class="toc-title-label">
-			<span class="toc-title-icon" aria-hidden="true">📋</span>
-			<span>{title}</span>
-		</span>
-	</h3>
+	<div class="toc-header">
+		<div class="toc-label">{title}</div>
+		{pageTitle && <div class="toc-page-title">{pageTitle}</div>}
+	</div>
 
 	<!-- 目录内容容器 -->
 	<div id={`toc-container-${componentId}`} class="toc-content"></div>
@@ -65,27 +63,28 @@ const componentId = Math.random().toString(36).substr(2, 9);
 <!-- 目录交互逻辑 -->
 <script is:inline>
 	// 目录组件逻辑（重构版本）
-	(function() {
-		'use strict';
-		
+	(function () {
+		"use strict";
+
 		// 组件配置常量
 		const CONFIG = {
 			SELECTORS: {
-				HEADINGS: '.article-body h2, .article-body h3, .article-body h4',
-				WIDGET: '[data-toc-id]',
-				TITLE: '.toc-title',
-				CONTENT: '.toc-content'
+				HEADINGS:
+					".article-body h2, .article-body h3, .article-body h4",
+				WIDGET: "[data-toc-id]",
+				TITLE: ".toc-title",
+				CONTENT: ".toc-content",
 			},
 			CLASSES: {
-				COLLAPSED: 'toc-collapsed',
-				ACTIVE: 'active',
-				LEVEL_PREFIX: 'level-'
+				COLLAPSED: "toc-collapsed",
+				ACTIVE: "active",
+				LEVEL_PREFIX: "level-",
 			},
 			SCROLL: {
 				OFFSET: 96,
-				ROOT_MARGIN: '-120px 0px -60% 0px',
-				THRESHOLD: 0.1
-			}
+				ROOT_MARGIN: "-100px 0px -80% 0px",
+				THRESHOLD: 0,
+			},
 		};
 
 		/**
@@ -102,78 +101,96 @@ const componentId = Math.random().toString(36).substr(2, 9);
 		 * 目录构建器类
 		 */
 		var TocBuilder = {
-			collectHeadings: function() {
-				var headings = Array.prototype.slice.call(document.querySelectorAll(CONFIG.SELECTORS.HEADINGS));
-				return headings.map(function(heading, index) {
-					var level = parseInt(heading.tagName.charAt(1), 10);
-					var text = heading.textContent ? heading.textContent.trim() : '';
-					var id = heading.id || 'heading-' + index;
-					
-					if (!heading.id) {
-						heading.id = id;
-					}
-					
-					return new TocItem(heading, level, text, id);
-				}).filter(function(item) { return item.text; });
+			collectHeadings: function () {
+				var headings = Array.prototype.slice.call(
+					document.querySelectorAll(CONFIG.SELECTORS.HEADINGS),
+				);
+				return headings
+					.map(function (heading, index) {
+						var level = parseInt(heading.tagName.charAt(1), 10);
+						var text = heading.textContent
+							? heading.textContent.trim()
+							: "";
+						var id = heading.id || "heading-" + index;
+
+						if (!heading.id) {
+							heading.id = id;
+						}
+
+						return new TocItem(heading, level, text, id);
+					})
+					.filter(function (item) {
+						return item.text;
+					});
 			},
 
-			buildToc: function(container, items) {
+			buildToc: function (container, items) {
 				if (items.length === 0) {
-					container.innerHTML = '<div class="toc-empty">暂无目录</div>';
+					container.innerHTML =
+						'<div class="toc-empty">暂无目录</div>';
 					return;
 				}
 
-				var list = document.createElement('ul');
-				list.className = 'toc-list';
+				var list = document.createElement("ul");
+				list.className = "toc-list";
 
-				items.forEach(function(item) {
-					var listItem = this.createListItem(item);
-					list.appendChild(listItem);
-				}.bind(this));
+				items.forEach(
+					function (item) {
+						var listItem = this.createListItem(item);
+						list.appendChild(listItem);
+					}.bind(this),
+				);
 
-				container.innerHTML = '';
+				container.innerHTML = "";
 				container.appendChild(list);
 			},
 
-			createListItem: function(item) {
-				var li = document.createElement('li');
-				li.className = 'toc-item';
+			createListItem: function (item) {
+				var li = document.createElement("li");
+				li.className = "toc-item";
 
-				var link = document.createElement('a');
-				link.href = '#' + item.id;
-				link.className = 'toc-link ' + CONFIG.CLASSES.LEVEL_PREFIX + item.level;
-				link.innerHTML = 
+				var link = document.createElement("a");
+				link.href = "#" + item.id;
+				link.className =
+					"toc-link " + CONFIG.CLASSES.LEVEL_PREFIX + item.level;
+				link.innerHTML =
 					'<span class="toc-link-bullet" aria-hidden="true"></span>' +
-					'<span class="toc-link-label">' + this.escapeHtml(item.text) + '</span>';
+					'<span class="toc-link-label">' +
+					this.escapeHtml(item.text) +
+					"</span>";
 
-				link.addEventListener('click', function(event) {
-					event.preventDefault();
-					this.scrollToHeading(item.id);
-				}.bind(this));
+				link.addEventListener(
+					"click",
+					function (event) {
+						event.preventDefault();
+						this.scrollToHeading(item.id);
+					}.bind(this),
+				);
 
 				li.appendChild(link);
 				return li;
 			},
 
-			scrollToHeading: function(id) {
+			scrollToHeading: function (id) {
 				var target = document.getElementById(id);
 				if (!target) return;
 
 				var rect = target.getBoundingClientRect();
-				var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+				var scrollTop =
+					window.pageYOffset || document.documentElement.scrollTop;
 				var offset = CONFIG.SCROLL.OFFSET;
 
 				window.scrollTo({
 					top: scrollTop + rect.top - offset,
-					behavior: 'smooth'
+					behavior: "smooth",
 				});
 			},
 
-			escapeHtml: function(text) {
-				var div = document.createElement('div');
+			escapeHtml: function (text) {
+				var div = document.createElement("div");
 				div.textContent = text;
 				return div.innerHTML;
-			}
+			},
 		};
 
 		/**
@@ -186,56 +203,115 @@ const componentId = Math.random().toString(36).substr(2, 9);
 			this.links = [];
 		}
 
-		ScrollSpy.prototype.init = function() {
+		ScrollSpy.prototype.init = function () {
 			if (this.items.length === 0) return;
 
-			this.links = Array.prototype.slice.call(document.querySelectorAll('.toc-link'));
+			this.links = Array.prototype.slice.call(
+				document.querySelectorAll(".toc-link"),
+			);
 			if (this.links.length === 0) return;
 
 			this.setupIntersectionObserver();
 		};
 
-		ScrollSpy.prototype.setupIntersectionObserver = function() {
+		ScrollSpy.prototype.setupIntersectionObserver = function () {
 			var self = this;
-			this.observer = new IntersectionObserver(function(entries) {
-				var visibleEntries = entries
-					.filter(function(entry) { return entry.isIntersecting; })
-					.sort(function(a, b) {
-						return a.target.getBoundingClientRect().top - 
-							   b.target.getBoundingClientRect().top;
-					});
+			this.observer = new IntersectionObserver(
+				function (entries) {
+					var visibleEntries = entries
+						.filter(function (entry) {
+							return entry.isIntersecting;
+						})
+						.sort(function (a, b) {
+							return (
+								a.target.getBoundingClientRect().top -
+								b.target.getBoundingClientRect().top
+							);
+						});
 
-				if (visibleEntries.length === 0) return;
+					if (visibleEntries.length === 0) return;
 
-				var id = visibleEntries[0].target.id;
-				if (!id || id === self.activeId) return;
+					var id = visibleEntries[0].target.id;
+					if (!id || id === self.activeId) return;
 
-				self.updateActiveLink(id);
-				self.activeId = id;
-			}, {
-				rootMargin: CONFIG.SCROLL.ROOT_MARGIN,
-				threshold: CONFIG.SCROLL.THRESHOLD
-			});
+					self.updateActiveLink(id);
+					self.activeId = id;
+				},
+				{
+					rootMargin: CONFIG.SCROLL.ROOT_MARGIN,
+					threshold: CONFIG.SCROLL.THRESHOLD,
+				},
+			);
 
-			this.items.forEach(function(item) {
-				this.observer.observe(item.element);
-			}.bind(this));
+			this.items.forEach(
+				function (item) {
+					this.observer.observe(item.element);
+				}.bind(this),
+			);
 		};
 
-		ScrollSpy.prototype.updateActiveLink = function(id) {
+		ScrollSpy.prototype.updateActiveLink = function (id) {
 			// 移除所有活动状态
-			this.links.forEach(function(link) {
+			this.links.forEach(function (link) {
 				link.classList.remove(CONFIG.CLASSES.ACTIVE);
 			});
 
 			// 添加新的活动状态
-			var activeLink = document.querySelector('.toc-link[href="#' + id + '"]');
+			var activeLink = document.querySelector(
+				'.toc-link[href="#' + id + '"]',
+			);
 			if (activeLink) {
 				activeLink.classList.add(CONFIG.CLASSES.ACTIVE);
+
+				// 自动滚动到活动项
+				var widget = activeLink.closest(CONFIG.SELECTORS.WIDGET);
+				if (widget) {
+					var linkRect = activeLink.getBoundingClientRect();
+					var widgetRect = widget.getBoundingClientRect();
+
+					// 计算相对位置
+					var relativeTop = linkRect.top - widgetRect.top;
+					var widgetHeight = widget.clientHeight;
+					var itemHeight = activeLink.offsetHeight || 32; // 默认高度估算
+
+					// 设置滚动阈值
+					// 底部阈值：倒数第7个（约250px）
+					var bottomThreshold = Math.min(
+						itemHeight * 7,
+						widgetHeight * 0.4,
+					);
+					// 顶部阈值：约3个（约100px）
+					var topThreshold = Math.min(
+						itemHeight * 3,
+						widgetHeight * 0.2,
+					);
+
+					var targetScrollTop = -1;
+
+					// 如果在可视区域上方（超过顶部阈值）
+					if (relativeTop < topThreshold) {
+						// 滚动使元素位于视口中间偏上位置
+						targetScrollTop =
+							widget.scrollTop + relativeTop - widgetHeight * 0.3;
+					}
+					// 如果在可视区域下方（超过底部阈值）
+					else if (relativeTop > widgetHeight - bottomThreshold) {
+						// 滚动使元素位于视口中间位置
+						targetScrollTop =
+							widget.scrollTop + relativeTop - widgetHeight * 0.4;
+					}
+
+					if (targetScrollTop !== -1) {
+						widget.scrollTo({
+							top: targetScrollTop,
+							behavior: "smooth",
+						});
+					}
+				}
 			}
 		};
 
-		ScrollSpy.prototype.destroy = function() {
+		ScrollSpy.prototype.destroy = function () {
 			if (this.observer) {
 				this.observer.disconnect();
 			}
@@ -250,34 +326,34 @@ const componentId = Math.random().toString(36).substr(2, 9);
 			this.isExpanded = true;
 		}
 
-		TocToggle.prototype.init = function() {
+		TocToggle.prototype.init = function () {
 			if (!this.title) return;
 
 			// 初始化展开状态
-			if (this.widget.hasAttribute('data-default-collapsed')) {
+			if (this.widget.hasAttribute("data-default-collapsed")) {
 				this.collapse();
 			}
 
 			this.bindEvents();
 		};
 
-		TocToggle.prototype.bindEvents = function() {
+		TocToggle.prototype.bindEvents = function () {
 			var self = this;
 			// 点击标题切换
-			this.title.addEventListener('click', function() {
+			this.title.addEventListener("click", function () {
 				self.toggle();
 			});
 
 			// 键盘支持
-			this.title.addEventListener('keydown', function(event) {
-				if (event.key === 'Enter' || event.key === ' ') {
+			this.title.addEventListener("keydown", function (event) {
+				if (event.key === "Enter" || event.key === " ") {
 					event.preventDefault();
 					self.toggle();
 				}
 			});
 		};
 
-		TocToggle.prototype.toggle = function() {
+		TocToggle.prototype.toggle = function () {
 			if (this.isExpanded) {
 				this.collapse();
 			} else {
@@ -285,15 +361,15 @@ const componentId = Math.random().toString(36).substr(2, 9);
 			}
 		};
 
-		TocToggle.prototype.expand = function() {
+		TocToggle.prototype.expand = function () {
 			this.widget.classList.remove(CONFIG.CLASSES.COLLAPSED);
-			this.title.setAttribute('aria-expanded', 'true');
+			this.title.setAttribute("aria-expanded", "true");
 			this.isExpanded = true;
 		};
 
-		TocToggle.prototype.collapse = function() {
+		TocToggle.prototype.collapse = function () {
 			this.widget.classList.add(CONFIG.CLASSES.COLLAPSED);
-			this.title.setAttribute('aria-expanded', 'false');
+			this.title.setAttribute("aria-expanded", "false");
 			this.isExpanded = false;
 		};
 
@@ -302,16 +378,20 @@ const componentId = Math.random().toString(36).substr(2, 9);
 		 */
 		function TableOfContentsManager(componentId) {
 			this.componentId = componentId;
-			this.widget = document.querySelector('[data-toc-id="' + componentId + '"]');
-			this.container = document.getElementById('toc-container-' + componentId);
+			this.widget = document.querySelector(
+				'[data-toc-id="' + componentId + '"]',
+			);
+			this.container = document.getElementById(
+				"toc-container-" + componentId,
+			);
 			this.items = [];
 			this.scrollSpy = null;
 			this.toggle = null;
 		}
 
-		TableOfContentsManager.prototype.init = function() {
+		TableOfContentsManager.prototype.init = function () {
 			if (!this.widget || !this.container) {
-				console.warn('TableOfContents: Required elements not found');
+				console.warn("TableOfContents: Required elements not found");
 				return;
 			}
 
@@ -319,12 +399,12 @@ const componentId = Math.random().toString(36).substr(2, 9);
 			this.initComponents();
 		};
 
-		TableOfContentsManager.prototype.build = function() {
+		TableOfContentsManager.prototype.build = function () {
 			this.items = TocBuilder.collectHeadings();
 			TocBuilder.buildToc(this.container, this.items);
 		};
 
-		TableOfContentsManager.prototype.initComponents = function() {
+		TableOfContentsManager.prototype.initComponents = function () {
 			this.scrollSpy = new ScrollSpy(this.items);
 			this.scrollSpy.init();
 
@@ -332,13 +412,13 @@ const componentId = Math.random().toString(36).substr(2, 9);
 			this.toggle.init();
 		};
 
-		TableOfContentsManager.prototype.destroy = function() {
+		TableOfContentsManager.prototype.destroy = function () {
 			if (this.scrollSpy) {
 				this.scrollSpy.destroy();
 			}
 		};
 
-		TableOfContentsManager.prototype.refresh = function() {
+		TableOfContentsManager.prototype.refresh = function () {
 			this.destroy();
 			this.build();
 			this.initComponents();
@@ -347,13 +427,13 @@ const componentId = Math.random().toString(36).substr(2, 9);
 		// 初始化函数
 		function initTableOfContents() {
 			var widgets = document.querySelectorAll(CONFIG.SELECTORS.WIDGET);
-			
-			Array.prototype.forEach.call(widgets, function(widget) {
+
+			Array.prototype.forEach.call(widgets, function (widget) {
 				var componentId = widget.dataset.tocId;
 				if (componentId) {
 					var manager = new TableOfContentsManager(componentId);
 					manager.init();
-					
+
 					// 将管理器实例存储在元素上以便后续访问
 					widget._tocManager = manager;
 				}
@@ -361,17 +441,19 @@ const componentId = Math.random().toString(36).substr(2, 9);
 		}
 
 		// 页面加载完成后初始化
-		if (document.readyState === 'loading') {
-			document.addEventListener('DOMContentLoaded', initTableOfContents);
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", initTableOfContents);
 		} else {
 			initTableOfContents();
 		}
 
 		// 页面完全加载后重新构建（处理异步内容）
-		window.addEventListener('load', function() {
-			setTimeout(function() {
-				var widgets = document.querySelectorAll(CONFIG.SELECTORS.WIDGET);
-				Array.prototype.forEach.call(widgets, function(widget) {
+		window.addEventListener("load", function () {
+			setTimeout(function () {
+				var widgets = document.querySelectorAll(
+					CONFIG.SELECTORS.WIDGET,
+				);
+				Array.prototype.forEach.call(widgets, function (widget) {
 					if (widget._tocManager) {
 						widget._tocManager.refresh();
 					}
@@ -381,15 +463,15 @@ const componentId = Math.random().toString(36).substr(2, 9);
 
 		// 导出公共API供外部使用
 		window.TableOfContents = {
-			refresh: function(selector) {
+			refresh: function (selector) {
 				selector = selector || CONFIG.SELECTORS.WIDGET;
 				var widgets = document.querySelectorAll(selector);
-				Array.prototype.forEach.call(widgets, function(widget) {
+				Array.prototype.forEach.call(widgets, function (widget) {
 					if (widget._tocManager) {
 						widget._tocManager.refresh();
 					}
 				});
-			}
+			},
 		};
 	})();
 </script>
