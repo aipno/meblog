@@ -4,21 +4,20 @@ pubDate: 2026-01-22T17:05:25Z
 tags: 
   - Pwn
 ---
-
 ret2libc (Return to Libc) 是一种非常经典且常用的栈溢出攻击技术，主要用于绕过 NX (No-Execute) 保护。
 
 它的核心原理是：既然我们无法在栈上执行 Shellcode（因为 NX 开启），那我们就去借用程序已经加载的动态链接库（libc.so）里的函数来帮我们干坏事。 最常用的目标就是 libc 里的 `system` 函数。
 
-### ret2libc 的核心原理
+## ret2libc 的核心原理
 
 要理解 ret2libc，需要搞懂两个概念：动态链接库 和 ASLR。
 
-#### 为什么要借用 libc？
+### 为什么要借用 libc？
 
 * 资源丰富：libc 是 Linux 下 C 语言的标准库，几乎所有程序都会加载它。里面包含了大量强大的函数（如 `system`, `execve`, `mprotect`）和字符串（如 `"/bin/sh"`）。
 * 自带执行权限：libc 的代码段本身就是可执行的（r-x），NX 防不住它。
 
-#### 难点：ASLR (地址空间布局随机化)
+### 难点：ASLR (地址空间布局随机化)
 
 现代系统开启 ASLR 后，libc 每次加载到内存的基地址 (Base Address) 都是随机变化的。
 
@@ -26,19 +25,21 @@ ret2libc (Return to Libc) 是一种非常经典且常用的栈溢出攻击技术
 * 但是，libc 内部函数之间的相对偏移 (Offset) 是固定的（由 libc 版本决定）。
 
 攻击公式：
+
 1. 泄露 (Leak)：利用溢出调用 `puts` 或 `printf`，打印出某个已解析函数（如 `read` 或 `puts`）在 GOT 表中的真实地址。
 2. 计算 (Calculate)：
+
 * `libc_base` = `泄露地址` - `该函数的固定偏移`
 * `system_addr` = `libc_base` + `system的固定偏移`
 * `binsh_addr` = `libc_base` + `str_bin_sh的固定偏移`
 
 1. 攻击 (Exploit)：再次触发溢出，调用 `system("/bin/sh")`。
 
-### 一个典型的 ret2libc 例子 (32位)
+## 一个典型的 ret2libc 例子 (32位)
 
 为了方便理解栈结构，我们以 32位 程序为例（64位原理一样，只是传参方式不同）。
 
-#### 漏洞源码
+### 漏洞源码
 
 ```c
 // gcc -m32 -fno-stack-protector -o pwn_libc source.c
@@ -59,7 +60,7 @@ int main() {
 }
 ```
 
-#### 攻击步骤详解
+### 攻击步骤详解
 
 假设我们拿到了二进制文件 `pwn_libc` 和目标系统使用的 `libc.so.6`。
 
@@ -93,7 +94,7 @@ int main() {
 +---------------------+
 ```
 
-#### Exploit 脚本 (Pwntools)
+### Exploit 脚本 (Pwntools)
 
 ```python
 from pwn import *
@@ -165,7 +166,7 @@ p.sendline(payload2)
 p.interactive()
 ```
 
-### 32位与64位的区别
+## 32位与64位的区别
 
 上面的例子是 32 位的。如果是 64 位程序，ret2libc 的逻辑完全一样，但Payload 的构造有区别：
 
@@ -181,7 +182,7 @@ p.interactive()
 `Padding + [pop_rdi_ret] + [binsh_addr] + [system_addr]`
 *(注意：64位不需要像32位那样在 system 和参数之间塞一个 4 字节的伪造返回地址，因为参数已经被 pop 走了)*
 
-### 总结
+## 总结
 
 * ret2libc = 泄露 (Leak) + 计算 (Calculate) + 调用 (Call)。
 * 它是 Pwn 中最通用的技巧，专门用来对付 NX + ASLR。
