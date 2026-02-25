@@ -1,8 +1,10 @@
 ---
 title: BROP (Blind ROP)
-pubDate: 2026-01-26T09:51:07Z
+pubDate: 2026-01-26T09:51:07
+updateDate: 2026-02-25T13:09:00
 tags:
   - Pwn
+  - BROP
 ---
 BROP (Blind Return-Oriented Programming) 是一种高级的 ROP 攻击技术。
 

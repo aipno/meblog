@@ -1,8 +1,10 @@
 ---
 title: COP (Call-oriented programming)
-pubDate: 2026-02-04T00:46:14Z
+pubDate: 2026-02-04T00:46:14
+updateDate: 2026-02-25T13:09:00
 tags:
   - Pwn
+  - COP
 ---
 COP (Call-Oriented Programming) 是一种代码复用攻击技术，它是 ROP (Return-Oriented Programming) 的一种变体或进化形式。
 

@@ -1,8 +1,10 @@
 ---
 title: ret2libc
-pubDate: 2026-01-22T17:05:25Z
-tags: 
+pubDate: 2026-01-22T17:05:25
+updateDate: 2026-02-25T13:08:00
+tags:
   - Pwn
+  - ret2libc
 ---
 ret2libc (Return to Libc) 是一种非常经典且常用的栈溢出攻击技术，主要用于绕过 NX (No-Execute) 保护。
 

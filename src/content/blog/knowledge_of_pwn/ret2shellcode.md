@@ -1,8 +1,10 @@
 ---
 title: ret2shellcode
-pubDate: 2026-01-22T17:05:16Z
-tags: 
+pubDate: 2026-01-22T17:05:16
+updateDate: 2026-02-25T13:09:00
+tags:
   - Pwn
+  - ret2shellcode
 ---
 ret2shellcode (Return to Shellcode) 是一种非常经典的栈溢出攻击方式。
 

@@ -1,17 +1,28 @@
 ---
+import { parseChinaTime, formatChinaTime } from "../utils/blogUtils";
+
 interface Props {
-	date: Date;
+	date: Date | string; // 支持Date对象或ISO时间字符串
+	showTimezone?: boolean; // 是否显示时区信息
 }
 
-const { date } = Astro.props;
+const { date, showTimezone = false } = Astro.props;
+
+// 智能处理时间
+let displayDate: Date;
+if (typeof date === 'string') {
+	displayDate = parseChinaTime(date);
+} else {
+	displayDate = date;
+}
+
+// 格式化显示
+const formattedTime = formatChinaTime(
+	typeof date === 'string' ? date : date.toISOString(), 
+	showTimezone
+);
 ---
 
-<time datetime={date.toISOString()}>
-	{
-		date.toLocaleDateString("en-us", {
-			year: "numeric",
-			month: "short",
-			day: "numeric",
-		})
-	}
+<time datetime={displayDate.toISOString()}>
+	{formattedTime}
 </time>

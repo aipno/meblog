@@ -1,8 +1,10 @@
 ---
 title: ret2reg
-pubDate: 2026-02-04T00:47:47Z
+pubDate: 2026-02-04T00:47:47
+updateDate: 2026-02-25T13:09:00
 tags:
   - Pwn
+  - ret2reg
 ---
 
 Ret2Reg (Return-to-Register) 是一种经典的缓冲区溢出利用技术。
