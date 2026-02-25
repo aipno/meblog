@@ -1,25 +1,26 @@
 ---
 title: ret2syscall
-pubDate: 2026-01-22T17:05:33Z
-tags: 
+pubDate: 2026-01-22T17:05:33
+updateDate: 2026-02-25T13:09:00
+tags:
   - Pwn
+  - ret2syscall
 ---
-
 ret2syscall (Return to System Call) 是一种利用 ROP (Return Oriented Programming) 技术来绕过 NX (No-Execute) 保护的攻击手段。
 
 它的核心原理是：我们不再依赖程序里现有的函数（如 `system`）或自己写入的 Shellcode，而是利用程序中零散的汇编指令片段（Gadgets），拼凑出一套“系统调用（System Call）”的参数，最后执行系统调用指令进内核拿 Shell。
 
-### ret2syscall 的核心原理
+## ret2syscall 的核心原理
 
 要理解 ret2syscall，必须先理解 Linux 系统是如何执行系统调用的。
 
-#### 为什么要用它？
+### 为什么要用它？
 
 * NX 开启：栈不可执行，无法使用 `ret2shellcode`。
 * 静态编译 (Statically Linked)：这是 `ret2syscall` 最常见的应用场景。静态编译的程序没有动态链接库 (libc)，虽然体积大，但里面包含了大量的代码片段（Gadgets），非常适合我们在里面“淘宝”凑指令。
 * 没有 `system` 函数**：程序里没调用过 `system`，无法直接 `ret2text`。
 
-#### 系统调用规则 (以 32位 x86 为例)
+### 系统调用规则 (以 32位 x86 为例)
 
 在 Linux 32位系统中，触发系统调用（如 `execve`）需要满足以下寄存器状态：
 
@@ -34,11 +35,11 @@ ret2syscall (Return to System Call) 是一种利用 ROP (Return Oriented Program
 攻击逻辑：
 我们需要在栈上构造一个 ROP 链，利用 `pop` 指令把栈上的数据弹入寄存器，最后跳转到 `int 0x80`。
 
-### 一个典型的 ret2syscall 例子
+## 一个典型的 ret2syscall 例子
 
 假设我们有一个静态编译的 32 位程序 `pwn_static`。
 
-#### 漏洞源码
+### 漏洞源码
 
 ```c
 // gcc -m32 -static -fno-stack-protector -o pwn_static source.c
@@ -59,7 +60,7 @@ int main() {
 
 ```
 
-#### 攻击准备：寻找 Gadgets
+### 攻击准备：寻找 Gadgets
 
 我们需要用工具（如 `ROPgadget`）在二进制文件里寻找能够操作寄存器的指令片段。
 
@@ -92,7 +93,7 @@ $ ROPgadget --binary pwn_static --opcode "cd80"
 
 ```
 
-#### 构造 Payload
+### 构造 Payload
 
 我们需要在栈上精心排列数据，让 `pop` 指令像吃豆人一样，把我们放在栈上的数据“吃”进寄存器。
 
@@ -119,7 +120,7 @@ $ ROPgadget --binary pwn_static --opcode "cd80"
 
 ```
 
-#### Exploit 脚本 (Pwntools)
+### Exploit 脚本 (Pwntools)
 
 ```python
 from pwn import *
@@ -162,22 +163,24 @@ payload = flat([
 
 ```
 
-### 64位系统的区别 (ret2syscall 64-bit)
+## 64位系统的区别 (ret2syscall 64-bit)
 
 如果是 64 位程序，原理完全一样，但有三点不同：
 
 1. 寄存器不同：
+
 * 调用号存入 RAX (execve 是 59，即 0x3b)。
 * 参数顺序：RDI (filename), RSI (argv), RDX (envp)。
 
 1. 触发指令不同：
+
 * 使用 `syscall` 而不是 `int 0x80`。
 
 1. Gadget 查找：
+
 * 你需要找 `pop rdi; ret`, `pop rsi; ret` 等。
 
-
-### 总结
+## 总结
 
 * ret2syscall = 收集 Gadgets -> 设置系统调用号和参数寄存器 -> 执行 syscall/int 0x80。
 * 它是手动拼装出一个 `execve("/bin/sh")`。
