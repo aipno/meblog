@@ -1,0 +1,91 @@
+/**
+ * 文章元信息组件样式
+ * 
+ * 作用：
+ * - 定义文章元信息的视觉样式
+ * - 统一标签、分类、日期等元素的显示
+ * - 提供响应式布局支持
+ * 
+ * 相关文件：
+ * - src/components/ArticleMeta.astro：使用此样式的组件
+ * - src/styles/global.css：继承的全局样式变量
+ */
+
+.article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.meta-icon {
+    font-size: 1.1rem;
+    color: #3498db;
+}
+
+.meta-text {
+    font-weight: 500;
+}
+
+.meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: #3498db;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.meta-chip:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+}
+
+.meta-chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.updated-badge {
+    background: #e74c3c;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .article-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .meta-item {
+        width: 100%;
+    }
+}

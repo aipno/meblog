@@ -156,7 +156,7 @@ const componentId = Math.random().toString(36).substr(2, 9);
 				link.innerHTML =
 					'<span class="toc-link-bullet" aria-hidden="true"></span>' +
 					'<span class="toc-link-label">' +
-					this.escapeHtml(item.text) +
+					item.text +
 					"</span>";
 
 				link.addEventListener(
@@ -184,12 +184,6 @@ const componentId = Math.random().toString(36).substr(2, 9);
 					top: scrollTop + rect.top - offset,
 					behavior: "smooth",
 				});
-			},
-
-			escapeHtml: function (text) {
-				var div = document.createElement("div");
-				div.textContent = text;
-				return div.innerHTML;
 			},
 		};
 

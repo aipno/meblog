@@ -12,13 +12,8 @@ export async function getStaticPaths() {
 	const map = new Map<string, BlogEntry[]>();
 
 	for (const post of posts) {
-		const categories = (post.data as any).categories as
-			| string[]
-			| undefined;
-		if (!Array.isArray(categories)) continue;
-
-		for (const category of categories) {
-			if (!category) continue;
+		const category = post.data.category;
+		if (category) {
 			const list = map.get(category) ?? [];
 			list.push(post);
 			map.set(category, list);

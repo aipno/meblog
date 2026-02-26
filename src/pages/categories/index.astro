@@ -9,8 +9,8 @@ const posts = await getCollection("blog");
 const categoryCounts = new Map<string, number>();
 
 for (const post of posts) {
-	const categories = post.data.categories ?? [];
-	for (const category of categories) {
+	const category = post.data.category;
+	if (category) {
 		categoryCounts.set(category, (categoryCounts.get(category) ?? 0) + 1);
 	}
 }

@@ -5,6 +5,7 @@ updateDate: 2026-02-25T13:08:00
 tags:
   - Pwn
   - ret2text
+category: Pwn小知识
 ---
 ret2text (Return to Text) 是 Pwn 中最基础、最简单的一种栈溢出攻击技术。
 

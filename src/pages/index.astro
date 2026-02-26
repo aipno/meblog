@@ -15,9 +15,6 @@ const latestPosts = (await getCollection("blog"))
 <html lang="zh-CN">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<link rel="stylesheet" href="/fontawesome/fontawesome.min.css" />
-		<link rel="stylesheet" href="/fontawesome/brands.min.css" />
-		<link rel="stylesheet" href="/fontawesome/solid.min.css" />
 	</head>
 	<body>
 		<div class="page-root">
@@ -87,9 +84,9 @@ const latestPosts = (await getCollection("blog"))
 								)}
 								<div class="post-content">
 									<!-- 分类标签 -->
-									{post.data.categories && post.data.categories.length > 0 && (
+									{post.data.category && post.data.category.length > 0 && (
 										<span class="post-category">
-											{post.data.categories[0]}
+											{post.data.category}
 										</span>
 									)}
 									

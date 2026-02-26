@@ -5,6 +5,7 @@ updateDate: 2026-02-25T13:01:00
 tags:
   - Pwn
   - SROP
+category: Pwn小知识
 ---
 ## 核心原理：信号处理机制 (The Mechanism)
 

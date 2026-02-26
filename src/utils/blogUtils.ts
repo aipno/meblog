@@ -35,20 +35,20 @@
 export function parseChinaTime(timeString: string): Date {
   // 创建Date对象
   const date = new Date(timeString);
-  
+
   // 检查原始字符串是否包含时区信息
   const hasTimezone = timeString.includes('+') || timeString.includes('-') || timeString.includes('Z');
-  
+
   // 如果没有明确的时区信息，假设是本地时间，转换为东八区
   if (!hasTimezone) {
     return new Date(date.getTime() + 8 * 60 * 60 * 1000);
   }
-  
+
   // 如果是UTC时间(Z结尾)，转换为东八区
   if (timeString.endsWith('Z')) {
     return new Date(date.getTime() + 8 * 60 * 60 * 1000);
   }
-  
+
   // 如果已经有时区信息，保持原样
   return date;
 }
@@ -61,19 +61,19 @@ export function parseChinaTime(timeString: string): Date {
  */
 export function formatChinaTime(timeString: string, showTimezone: boolean = false): string {
   const date = parseChinaTime(timeString);
-  
+
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
     timeZone: 'Asia/Shanghai'
   };
-  
+
   if (showTimezone) {
     options.hour = '2-digit';
     options.minute = '2-digit';
     options.timeZoneName = 'short';
   }
-  
+
   return date.toLocaleDateString('zh-CN', options);
 }

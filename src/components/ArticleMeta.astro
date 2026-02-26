@@ -1,5 +1,6 @@
 ---
 import FormattedDate from "../components/FormattedDate.astro";
+import "@/styles/article-meta.css";
 
 interface Props {
 	pubDate: Date;
@@ -12,85 +13,6 @@ const { pubDate, updatedDate, tags, categories } = Astro.props;
 ---
 
 <div class="article-meta">
-	<style is:global>
-		.article-meta {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 1.5rem;
-			align-items: center;
-		}
-
-		.meta-item {
-			display: flex;
-			align-items: center;
-			gap: 0.5rem;
-			font-size: 0.9rem;
-			color: #7f8c8d;
-		}
-
-		.meta-icon {
-			font-size: 1.1rem;
-			color: #3498db;
-		}
-
-		.meta-text {
-			font-weight: 500;
-		}
-
-		.meta-chip {
-			display: inline-flex;
-			align-items: center;
-			gap: 0.25rem;
-			background: #3498db;
-			color: white;
-			padding: 0.25rem 0.75rem;
-			border-radius: 20px;
-			font-size: 0.8rem;
-			font-weight: 500;
-			transition: all 0.2s ease;
-		}
-
-		.meta-chip:hover {
-			background: #2980b9;
-			transform: translateY(-1px);
-		}
-
-		.meta-chips-container {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 0.5rem;
-		}
-
-		.updated-badge {
-			background: #e74c3c;
-			animation: pulse 2s infinite;
-		}
-
-		@keyframes pulse {
-			0% {
-				opacity: 1;
-			}
-			50% {
-				opacity: 0.7;
-			}
-			100% {
-				opacity: 1;
-			}
-		}
-
-		@media (max-width: 768px) {
-			.article-meta {
-				flex-direction: column;
-				align-items: flex-start;
-				gap: 1rem;
-			}
-
-			.meta-item {
-				width: 100%;
-			}
-		}
-	</style>
-
 	<!-- 发布日期 -->
 	<div class="meta-item">
 		<span class="meta-icon">📅</span>

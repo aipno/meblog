@@ -5,6 +5,7 @@ updateDate: 2026-02-25T13:09:00
 tags:
   - Pwn
   - JOP
+category: Pwn小知识
 ---
 JOP (Jump-Oriented Programming)** 是一种代码复用攻击技术，它是 ROP 的另一种进化形式。
 

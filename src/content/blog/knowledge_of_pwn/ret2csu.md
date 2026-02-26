@@ -5,6 +5,7 @@ updateDate: 2026-02-25T13:08:00
 tags:
   - Pwn
   - ret2csu
+category: Pwn小知识
 ---
 在 x64 Linux 环境下，函数调用的前三个参数是通过寄存器 `rdi`, `rsi`, `rdx` 传递的。
 

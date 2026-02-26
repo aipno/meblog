@@ -5,6 +5,7 @@ updateDate: 2026-02-25T13:09:00
 tags:
   - Pwn
   - ret2reg
+category: Pwn小知识
 ---
 
 Ret2Reg (Return-to-Register) 是一种经典的缓冲区溢出利用技术。

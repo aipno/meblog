@@ -34,30 +34,30 @@ export interface TocOptions {
 	 * @default 'h1, h2, h3, h4, h5, h6'
 	 */
 	headingSelector?: string;
-	
+
 	/**
 	 * 标题最小级别
 	 * @default 1
 	 */
 	minLevel?: number;
-	
+
 	/**
 	 * 标题最大级别
 	 * @default 6
 	 */
 	maxLevel?: number;
-	
+
 	/**
 	 * 是否跳过没有ID的标题
 	 * @default false
 	 */
 	skipWithoutId?: boolean;
-	
+
 	/**
 	 * ID生成策略
 	 */
 	idGenerator?: (text: string, index: number) => string;
-	
+
 	/**
 	 * 文本清理函数
 	 */
@@ -86,27 +86,27 @@ const DEFAULT_OPTIONS: Required<TocOptions> = {
  * @returns 目录项或null
  */
 export function parseHeadingElement(
-	element: HTMLElement, 
-	index: number, 
+	element: HTMLElement,
+	index: number,
 	options: TocOptions = {}
 ): TocItem | null {
 	const config = { ...DEFAULT_OPTIONS, ...options };
-	
+
 	// 检查级别是否在范围内
 	const level = parseInt(element.tagName.charAt(1), 10);
 	if (level < config.minLevel || level > config.maxLevel) {
 		return null;
 	}
-	
+
 	// 获取文本内容
 	const rawText = element.textContent || '';
 	const text = config.textProcessor(rawText);
-	
+
 	// 跳过空文本
 	if (!text) {
 		return null;
 	}
-	
+
 	// 处理ID
 	let id = element.id;
 	if (!id) {
@@ -116,7 +116,7 @@ export function parseHeadingElement(
 		id = config.idGenerator(text, index);
 		element.id = id;
 	}
-	
+
 	return {
 		id,
 		text,
@@ -138,7 +138,7 @@ export function collectHeadings(
 	const config = { ...DEFAULT_OPTIONS, ...options };
 	const selector = config.headingSelector;
 	const elements = Array.from(container.querySelectorAll(selector)) as HTMLElement[];
-	
+
 	return elements
 		.map((element, index) => parseHeadingElement(element, index, config))
 		.filter((item): item is TocItem => item !== null);
@@ -151,7 +151,7 @@ export function collectHeadings(
  */
 export function buildTocTree(items: TocItem[]): TocItem[] {
 	if (items.length === 0) return [];
-	
+
 	const root: TocItem = {
 		id: 'root',
 		text: 'Root',
@@ -159,27 +159,27 @@ export function buildTocTree(items: TocItem[]): TocItem[] {
 		element: document.createElement('div'),
 		children: []
 	};
-	
+
 	const stack: TocItem[] = [root];
-	
+
 	items.forEach(item => {
 		const currentItem = { ...item, children: [] };
-		
+
 		// 找到合适的父节点
 		while (stack.length > 1 && stack[stack.length - 1].level >= item.level) {
 			stack.pop();
 		}
-		
+
 		// 添加到父节点
 		const parent = stack[stack.length - 1];
 		if (parent.children) {
 			parent.children.push(currentItem);
 		}
-		
+
 		// 将当前项压入栈
 		stack.push(currentItem);
 	});
-	
+
 	return root.children || [];
 }
 
@@ -214,12 +214,12 @@ export function generateTocHtml(
 	} = {}
 ): string {
 	const { wrapInNav = true, className = 'toc-list', linkPrefix = '#' } = options;
-	
+
 	const listItems = items.map(item => {
 		const indent = '  '.repeat(Math.max(0, item.level - 1));
 		const linkClass = `toc-link level-${item.level}`;
 		const escapedText = escapeHtml(item.text);
-		
+
 		return `${indent}<li class="toc-item">
 ${indent}  <a href="${linkPrefix}${item.id}" class="${linkClass}">
 ${indent}    <span class="toc-link-bullet" aria-hidden="true"></span>
@@ -227,10 +227,10 @@ ${indent}    <span class="toc-link-label">${escapedText}</span>
 ${indent}  </a>
 ${indent}</li>`;
 	}).join('\n');
-	
+
 	const listHtml = `<ul class="${className}">\n${listItems}\n</ul>`;
-	
-	return wrapInNav 
+
+	return wrapInNav
 		? `<nav class="table-of-contents" aria-label="文章目录">\n${listHtml}\n</nav>`
 		: listHtml;
 }
@@ -252,11 +252,11 @@ export function escapeHtml(text: string): string {
 export class TocPerformanceMonitor {
 	private startTime: number = 0;
 	private measurements: Map<string, number[]> = new Map();
-	
+
 	start(): void {
 		this.startTime = performance.now();
 	}
-	
+
 	end(label: string): number {
 		const elapsed = performance.now() - this.startTime;
 		if (!this.measurements.has(label)) {
@@ -265,11 +265,11 @@ export class TocPerformanceMonitor {
 		this.measurements.get(label)!.push(elapsed);
 		return elapsed;
 	}
-	
+
 	getStats(label: string): { avg: number; min: number; max: number; count: number } | null {
 		const times = this.measurements.get(label);
 		if (!times || times.length === 0) return null;
-		
+
 		const sum = times.reduce((a, b) => a + b, 0);
 		return {
 			avg: sum / times.length,
@@ -278,7 +278,7 @@ export class TocPerformanceMonitor {
 			count: times.length
 		};
 	}
-	
+
 	logStats(): void {
 		console.group('TOC Performance Stats');
 		this.measurements.forEach((_, label) => {
@@ -298,11 +298,11 @@ export class TocCache {
 	private cache: Map<string, TocItem[]> = new Map();
 	private timestamps: Map<string, number> = new Map();
 	private maxSize: number;
-	
+
 	constructor(maxSize: number = 100) {
 		this.maxSize = maxSize;
 	}
-	
+
 	set(key: string, items: TocItem[]): void {
 		// 如果缓存已满，删除最老的项
 		if (this.cache.size >= this.maxSize) {
@@ -311,44 +311,44 @@ export class TocCache {
 				this.delete(oldestKey);
 			}
 		}
-		
+
 		this.cache.set(key, items);
 		this.timestamps.set(key, Date.now());
 	}
-	
+
 	get(key: string): TocItem[] | undefined {
 		this.timestamps.set(key, Date.now());
 		return this.cache.get(key);
 	}
-	
+
 	has(key: string): boolean {
 		return this.cache.has(key);
 	}
-	
+
 	delete(key: string): boolean {
 		this.timestamps.delete(key);
 		return this.cache.delete(key);
 	}
-	
+
 	clear(): void {
 		this.cache.clear();
 		this.timestamps.clear();
 	}
-	
+
 	private getOldestKey(): string | null {
 		let oldestKey: string | null = null;
 		let oldestTime = Infinity;
-		
+
 		this.timestamps.forEach((timestamp, key) => {
 			if (timestamp < oldestTime) {
 				oldestTime = timestamp;
 				oldestKey = key;
 			}
 		});
-		
+
 		return oldestKey;
 	}
-	
+
 	get size(): number {
 		return this.cache.size;
 	}
@@ -360,9 +360,9 @@ export const perfMonitor = new TocPerformanceMonitor();
 
 // 类型守卫
 export function isTocItem(obj: any): obj is TocItem {
-	return obj && 
-		   typeof obj.id === 'string' &&
-		   typeof obj.text === 'string' &&
-		   typeof obj.level === 'number' &&
-		   obj.element instanceof HTMLElement;
+	return obj &&
+		typeof obj.id === 'string' &&
+		typeof obj.text === 'string' &&
+		typeof obj.level === 'number' &&
+		obj.element instanceof HTMLElement;
 }

@@ -5,6 +5,7 @@ updateDate: 2026-02-25T13:09:00
 tags:
   - Pwn
   - ret2syscall
+category: Pwn小知识
 ---
 ret2syscall (Return to System Call) 是一种利用 ROP (Return Oriented Programming) 技术来绕过 NX (No-Execute) 保护的攻击手段。
 

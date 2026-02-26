@@ -5,6 +5,7 @@ updateDate: 2026-02-25T13:09:00
 tags:
   - Pwn
   - ret2shellcode
+category: Pwn小知识
 ---
 ret2shellcode (Return to Shellcode) 是一种非常经典的栈溢出攻击方式。
 

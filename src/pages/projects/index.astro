@@ -1,13 +1,286 @@
 ---
 import BaseHead from "@/components/BaseHead.astro";
+import Footer from "@/components/Footer.astro";
+import Header from "@/components/Header.astro";
+import "@/styles/projects-light.css";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+
+import type { Project } from "../../utils/projectUtils";
+import { getStatusColorClass, getStatusText, groupProjectsByYear, getSortedYears, getStatusStats } from "../../utils/projectUtils";
+
+const projects: Project[] = [
+  {
+    id: 'test-project',
+    title: '测试项目',
+    description: '测试项目介绍',
+    tags: ['网络安全', '二进制安全','Astro'],
+    // githubUrl: 'https://github.com/example/pwn-learning',
+    // demoUrl: 'https://pwn.example.com',
+    status: 'completed',
+    year: 2025
+  },
+];
+
+// 按年份分组项目
+const projectsByYear = groupProjectsByYear(projects);
+const sortedYears = getSortedYears(projectsByYear);
+const statusStats = getStatusStats(projects);
 ---
 
 <!doctype html>
 <html lang="zh-CN">
   <head>
-    <BaseHead/>
+    <BaseHead title={`项目 - ${SITE_TITLE}`} description="我的技术项目作品集" />
+
   </head>
   <body>
-    <h1>页面尚在开发阶段</h1>
+    <div class="page-wrapper">
+      <Header />
+      
+      <!-- 现代化英雄区域 -->
+      <section class="hero-modern">
+        <div class="hero-container">
+          <div class="hero-content-modern">
+            <h1 class="hero-title">
+              <span class="hero-highlight">项目作品集</span>
+            </h1>
+            <p class="hero-description">
+              展示我在技术领域的项目实践与创新探索
+            </p>
+            <div class="hero-stats">
+              <div class="stat-item">
+                <span class="stat-number">{projects.length}</span>
+                <span class="stat-label">个项目</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{statusStats.completed || 0}</span>
+                <span class="stat-label">已完成</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{statusStats['in-progress'] || 0}</span>
+                <span class="stat-label">进行中</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 项目筛选导航 -->
+      <section class="filter-navigation">
+        <div class="filter-container-modern">
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">
+              <i class="fas fa-th-large"></i>
+              全部项目
+              <span class="tab-count">{projects.length}</span>
+            </button>
+            <button class="filter-tab" data-filter="completed">
+              <i class="fas fa-check-circle"></i>
+              已完成
+              <span class="tab-count">{statusStats.completed || 0}</span>
+            </button>
+            <button class="filter-tab" data-filter="in-progress">
+              <i class="fas fa-sync-alt"></i>
+              进行中
+              <span class="tab-count">{statusStats['in-progress'] || 0}</span>
+            </button>
+            <button class="filter-tab" data-filter="planned">
+              <i class="fas fa-lightbulb"></i>
+              计划中
+              <span class="tab-count">{statusStats.planned || 0}</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 项目展示区域 -->
+      <main class="projects-showcase">
+        {
+          sortedYears.map((year) => (
+            <section class="year-section-modern" data-year={year}>
+              <div class="year-header">
+                <h2 class="year-title">
+                  <span class="year-badge">{year}</span>
+                </h2>
+                <div class="year-divider"></div>
+              </div>
+              
+              <div class="projects-masonry">
+                {
+                  projectsByYear[year].map((project) => (
+                    <article 
+                      class={`project-card-modern ${getStatusColorClass(project.status)}`}
+                      data-project-id={project.id}
+                      data-status={project.status}
+                    >
+                      <!-- 项目状态指示器 -->
+                      <div class="status-indicator">
+                        <span class={`status-dot ${getStatusColorClass(project.status)}`}></span>
+                        <span class="status-text">{getStatusText(project.status)}</span>
+                      </div>
+                      
+                      <!-- 项目内容 -->
+                      <div class="project-content-modern">
+                        <h3 class="project-title-modern">{project.title}</h3>
+                        
+                        <p class="project-description-modern">
+                          {project.description}
+                        </p>
+                        
+                        <!-- 技术标签 -->
+                        <div class="tech-tags">
+                          {project.tags.map((tag) => (
+                            <span class="tech-tag">{tag}</span>
+                          ))}
+                        </div>
+                        
+                        <!-- 项目链接 -->
+                        <div class="project-links">
+                          {project.githubUrl && (
+                            <a 
+                              href={project.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="project-link github-link"
+                              aria-label={`${project.title} GitHub仓库`}
+                            >
+                              <i class="fab fa-github"></i>
+                            </a>
+                          )}
+                          {project.demoUrl && (
+                            <a 
+                              href={project.demoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="project-link demo-link"
+                              aria-label={`${project.title} 在线演示`}
+                            >
+                              <i class="fas fa-external-link-alt"></i>
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <!-- 年份标记 -->
+                      <div class="project-year-modern">{project.year}</div>
+                    </article>
+                  ))
+                }
+              </div>
+            </section>
+          ))
+        }
+      </main>
+
+      <!-- 行动召唤区域 -->
+      <section class="cta-section-modern">
+        <div class="cta-container">
+          <div class="cta-content">
+            <h3 class="cta-title">一起创造精彩</h3>
+            <p class="cta-description">
+              对我的项目感兴趣？欢迎查看源代码、提出建议或探讨合作机会。
+            </p>
+            <div class="cta-actions">
+              <a href="mailto:contact@example.com" class="cta-button primary">
+                <i class="fas fa-envelope"></i>
+                联系我
+              </a>
+              <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" class="cta-button secondary">
+                <i class="fab fa-github"></i>
+                GitHub
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+
+    <!-- 现代化交互脚本 -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // 项目筛选功能
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        const projectCards = document.querySelectorAll('.project-card-modern');
+        
+        filterTabs.forEach(tab => {
+          tab.addEventListener('click', function(this: HTMLElement) {
+            const filterStatus = this.dataset.filter;
+            
+            // 更新标签状态
+            filterTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // 筛选项目卡片
+            projectCards.forEach(card => {
+              const cardElement = card as HTMLElement;
+              const projectStatus = cardElement.dataset.status;
+              if (filterStatus === 'all' || projectStatus === filterStatus) {
+                cardElement.style.display = 'block';
+                cardElement.style.opacity = '0';
+                cardElement.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                  cardElement.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                  cardElement.style.opacity = '1';
+                  cardElement.style.transform = 'translateY(0)';
+                }, 50);
+              } else {
+                cardElement.style.display = 'none';
+              }
+            });
+          });
+        });
+        
+        // 滚动动画观察器
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const targetElement = entry.target as HTMLElement;
+              targetElement.style.opacity = '1';
+              targetElement.style.transform = 'translateY(0)';
+            }
+          });
+        }, {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        });
+        
+        // 观察所有项目卡片
+        projectCards.forEach((card, index) => {
+          const cardElement = card as HTMLElement;
+          cardElement.style.opacity = '0';
+          cardElement.style.transform = 'translateY(20px)';
+          cardElement.style.transition = `all 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.1}s`;
+          observer.observe(cardElement);
+        });
+        
+        // 平滑滚动到顶部
+        const createBackToTop = () => {
+          const button = document.createElement('button');
+          button.innerHTML = '<i class="fas fa-arrow-up"></i>';
+          button.className = 'back-to-top';
+          document.body.appendChild(button);
+          
+          window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+              button.classList.add('visible');
+            } else {
+              button.classList.remove('visible');
+            }
+          });
+          
+          button.addEventListener('click', () => {
+            window.scrollTo({
+              top: 0,
+              behavior: 'smooth'
+            });
+          });
+        };
+        
+        createBackToTop();
+      });
+    </script>
   </body>
 </html>
