@@ -25,15 +25,7 @@
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
 import "../styles/global.css";
-// 引入FontAwesome图标字体
 import "../assets/site.webmanifest";
-import "../../public/fontawesome/solid.min.css";
-import "../../public/fontawesome/regular.min.css";
-import "../../public/fontawesome/light.min.css";
-import "../../public/fontawesome/thin.min.css";
-import "../../public/fontawesome/sharp-solid.min.css";
-import "../../public/fontawesome/v4-font-face.min.css";
-import "../../public/fontawesome/v5-font-face.min.css";
 import type { ImageMetadata } from "astro";
 import { SITE_TITLE } from "../consts";
 
@@ -61,6 +53,16 @@ const { title, description, image } = Astro.props;
 	href={new URL("rss.xml", Astro.site)}
 />
 <meta name="generator" content={Astro.generator} />
+
+<!-- 引入FontAwesome图标字体 -->
+<link rel="stylesheet" href="/fontawesome/all.min.css" />
+<link rel="stylesheet" href="/fontawesome/solid.min.css" />
+<link rel="stylesheet" href="/fontawesome/regular.min.css" />
+<link rel="stylesheet" href="/fontawesome/light.min.css" />
+<link rel="stylesheet" href="/fontawesome/thin.min.css" />
+<link rel="stylesheet" href="/fontawesome/sharp-solid.min.css" />
+<link rel="stylesheet" href="/fontawesome/v4-font-face.min.css" />
+<link rel="stylesheet" href="/fontawesome/v5-font-face.min.css" />
 
 <!-- Font preloads -->
 <link

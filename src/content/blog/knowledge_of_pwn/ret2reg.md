@@ -7,8 +7,7 @@ tags:
   - ret2reg
 category: Pwn小知识
 ---
-
-Ret2Reg (Return-to-Register) 是一种经典的缓冲区溢出利用技术。
+ret2reg (Return-to-Register) 是一种经典的缓冲区溢出利用技术。
 
 它的核心思想是：当攻击者无法预知 Shellcode 在栈上的精确绝对地址，但知道某个 CPU 寄存器恰好指向 Shellcode 所在的位置时，利用程序中的跳转指令（如 `jmp eax`, `call ebx` 等）作为“跳板”，间接跳转到 Shellcode 执行。
 
@@ -16,26 +15,26 @@ Ret2Reg (Return-to-Register) 是一种经典的缓冲区溢出利用技术。
 
 ## Ret2Reg 的核心原理
 
-### 1. 问题背景
+### 问题背景
 
 在传统的栈溢出攻击中，我们需要覆盖返回地址（Return Address），将其指向 Shellcode 的起始地址。
 
 * 难点：在实际环境中，栈的绝对地址往往是不固定的（受环境变量、调试器干扰、ASLR 微弱抖动影响）。如果硬编码一个栈地址（如 `0xbffff123`），一旦实际运行偏移了 16 字节，攻击就会失败。
 
-### 2. 观察现象
+### 观察现象
 
 在函数返回（执行 `ret` 指令）的一瞬间，虽然我们不知道栈顶的绝对地址，但 CPU 的某些通用寄存器（如 `eax`, `edx`, `esp` 等）往往保存着相关的数据指针。
 
 * 例如，`strcpy(dst, src)` 执行完后，`eax` 寄存器通常会保存 `dst` 缓冲区的地址（即 Shellcode 的存放位置）。
 
-### 3. 解决方案（跳板）
+### 解决方案（跳板）
 
 我们不再硬编码栈地址，而是寻找程序代码段（`.text`）或动态库中一条现成的指令，这条指令的内容是跳转到那个寄存器。
 
 * Gadget：寻找 `jmp eax`、`call eax`、`jmp esp` 或 `call esp` 等指令。
 * 操作：将栈上的“返回地址”覆盖为这条指令的地址。
 
-### 4. 执行流程
+### 执行流程
 
 1. 函数执行完毕，`ret` 弹出我们覆盖的地址。
 2. CPU 跳转到该指令地址（例如找到的 `jmp eax` 的地址）。
@@ -47,7 +46,7 @@ Ret2Reg (Return-to-Register) 是一种经典的缓冲区溢出利用技术。
 
 假设我们攻击一个简单的 32 位 Linux 程序。
 
-### 1. 漏洞代码
+### 漏洞代码
 
 ```c
 // vulnerable.c
@@ -68,7 +67,7 @@ int main(int argc, char **argv) {
 }
 ```
 
-### 2. 分析与调试
+### 分析与调试
 
 假设该程序编译时关闭了 NX 保护（栈可执行），但我们不知道 `buffer` 的确切地址。
 
@@ -90,7 +89,7 @@ $ ROPgadget --binary vulnerable --opcode "ffe0"  # ffe0 是 jmp eax 的机器码
 
 我们要利用的地址是 `0x0804834b`。
 
-### 3. 构造 Payload
+### 构造 Payload
 
 我们需要填充 buffer，溢出覆盖 EBP，最后覆盖返回地址。
 
@@ -113,7 +112,7 @@ Payload 结构：
 
 > 注意：地址是小端序
 
-### 4. 攻击执行流
+### 攻击执行流
 
 1. `func` 执行 `strcpy`，我们的 Shellcode 被复制到栈上。
 2. `strcpy` 结束，EAX 寄存器指向栈上 Shellcode 的开头。

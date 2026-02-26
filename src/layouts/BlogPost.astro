@@ -32,6 +32,7 @@ import FormattedDate from "../components/FormattedDate.astro";
 import Header from "../components/Header.astro";
 import ArticleMeta from "../components/ArticleMeta.astro";
 import TableOfContents from "../components/TableOfContents.astro";
+import "../styles/github-markdown.css";
 
 type Props = CollectionEntry<"blog">["data"];
 
@@ -39,7 +40,7 @@ const {
 	title,
 	description,
 	tags,
-	categories,
+	category,
 	pubDate,
 	updatedDate,
 	heroImage,
@@ -53,7 +54,6 @@ const pageDescription = description || "暂无描述";
 <html lang="zh-CN">
 	<head>
 		<BaseHead title={pageTitle} description={pageDescription} />
-		<link rel="stylesheet" href="/src/styles/github-markdown.css" />
 		<style is:global>
 			/* 文章页面样式 - 简洁清晰版本（匹配图片） */
 			:root {

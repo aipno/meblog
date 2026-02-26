@@ -24,6 +24,7 @@
  */
 import { SITE_TITLE } from "../consts";
 import { getCollection } from "astro:content";
+import gongan from "../assets/备案图标.png";
 
 // 获取文章数量和字数统计
 const posts = await getCollection("blog");
@@ -48,6 +49,7 @@ const icpInfo = [
 	{
 		text: "鲁公网安备37172402000442号",
 		url: "https://beian.mps.gov.cn/#/query/webSearch?code=37172402000442",
+		showIcon: true,
 	},
 	{ text: "萌ICP备20250716号", url: "https://icp.gov.moe/?keyword=20250716" },
 ];
@@ -80,7 +82,22 @@ function formatNumber(num: number): string {
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							{item.text}
+							{typeof item.text === "string" ? (
+								item.showIcon ? (
+									<>
+										<img
+											src={gongan.src}
+											alt="公安备案图标"
+											style="height: 1.1em; vertical-align: middle; margin-right: 0em;"
+										/>
+										{item.text}
+									</>
+								) : (
+									item.text
+								)
+							) : (
+								item.text
+							)}
 						</a>
 						{index < icpInfo.length - 1 && " | "}
 					</span>
