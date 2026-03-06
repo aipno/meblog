@@ -39,6 +39,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 const { title, description, image } = Astro.props;
 ---
+<!-- 网站分析脚本 -->
+<script defer src="https://analyze.iswxl.cn/script.js" data-website-id="669d8db9-b0b5-48b3-a171-7cad9060f158"></script>
 
 <!-- 强制禁止缓存，确保每次访问都获取最新内容 -->
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
