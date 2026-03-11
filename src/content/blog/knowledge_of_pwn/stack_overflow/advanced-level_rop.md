@@ -1,17 +1,17 @@
 ---
-title: SROP (Sigreturn Oriented Programming)
-pubDate: 2026-01-26T09:50:42
-updateDate: 2026-02-25T13:01:00
-tags:
-  - Pwn
-  - SROP
+title: 高级ROP
+pubDate: 2026-03-09T16:02:00
 category: Pwn小知识
+tags:
+  - Stack
 ---
-## 核心原理：信号处理机制 (The Mechanism)
+## SROP
+
+### 核心原理：信号处理机制 (The Mechanism)
 
 要理解 SROP，必须先理解 Linux 是如何处理“信号”（Signal）的。
 
-### 正常流程
+#### 正常流程
 
 ![SROP (SigreturnOrientedProgramming)-1](https://image.iswxl.cn/meblog/SROP%20(Sigreturn%20Oriented%20Programming)-1.png)
 
@@ -21,7 +21,7 @@ category: Pwn小知识
 4. 恢复上下文 (Context Restoring)：处理函数结束后，会执行一个特殊的系统调用——`sigreturn`。
 5. 内核动作：内核收到 `sigreturn` 请求，它会去栈顶读取刚才保存的那个 Signal Frame，把里面的值填回对应的寄存器，从而让进程完美复原，就像没发生过中断一样。
 
-### 攻击原理
+#### 攻击原理
 
 SROP 的核心思想是：“伪造现场”。
 
@@ -29,7 +29,7 @@ SROP 的核心思想是：“伪造现场”。
 
 我们可以在栈上伪造一个 Signal Frame。在这个伪造的 Frame 里，把 `rax` 填成 59 (execve)，`rdi` 填成 "/bin/sh" 的地址，`rip` 填成 `syscall` 指令的地址。进程就会强行触发 `sigreturn` 系统调用。内核就会把我们要执行的攻击参数全部加载到寄存器中，并跳转执行。
 
-## 攻击的前提条件
+### 攻击的前提条件
 
 要发动 SROP，需要满足以下条件：
 
@@ -40,7 +40,7 @@ syscall 指令：程序中需要有一个 `syscall` 指令的 gadget。
 > 如何控制 RAX = 15？
 > 最常用的方法是利用 `read` 函数。`read` 函数的返回值（读入的字节数）会存放在 `rax` 中。如果我们控制 `read` 刚好读取 15 个字节，`rax` 就变成了 15。
 
-## 攻击流程
+### 攻击流程
 
 假设我们通过栈溢出控制了程序执行流。
 
@@ -78,7 +78,7 @@ syscall 指令：程序中需要有一个 `syscall` 指令的 gadget。
 2. CPU 按照恢复后的 `rip` 继续执行，也就是再次执行 `syscall`。
 3. 这一次 `rax` 是 59，于是执行了 `execve("/bin/sh", 0, 0)` -> Get Shell。
 
-## 攻击脚本
+### 攻击脚本
 
 `pwntools` 提供了极其方便的工具 `SigreturnFrame()` 来自动生成伪造的结构体。
 
@@ -125,3 +125,11 @@ payload += bytes(frame)       # 伪造的 Frame 数据
 2. 利用 `read` 读入 payload，并控制读入字节数为 15。
 3. 利用 15 字节的 `read` 返回值设置 `rax=15`，随后 ret 到 `syscall`。
 4. 触发 SROP get shell。
+
+## ret2dlresolve
+
+
+
+## ret2VDSO
+
+
